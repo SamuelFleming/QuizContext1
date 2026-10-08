@@ -1,0 +1,15 @@
+---
+description: Backend conventions for both Express APIs
+globs: server-webApp/**,server-data/**
+alwaysApply: false
+---
+# Backend conventions
+- Follow `CLAUDE.md` and the approved ticket; inspect nearby code before adding patterns.
+- Keep controllers focused on HTTP translation; keep application workflows in `server-webApp` services.
+- `server-data` owns Mongoose repositories, persistence validation, and user-scoped operations; it never calls OpenAI.
+- Pass trusted user identity from authenticated `server-webApp` through the protected internal channel; enforce ownership for every data access. Do not trust `userId` supplied by a browser.
+- Return consistent response envelopes and typed, safe error codes; don't leak internal details or secrets.
+- Maintain each service's live OpenAPI for endpoints actually implemented or changed.
+- AI client/prompt examples may be consulted under `docs/reference/`; adapt rather than copy indiscriminately.
+- Use bounded inputs, validated AI output schemas, and best-effort usage/run logging for AI flows.
+- Check authentication/authorisation, invalid input, and the main successful path for modified endpoints.
