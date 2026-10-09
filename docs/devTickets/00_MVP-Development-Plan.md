@@ -35,7 +35,7 @@ The browser calls `server-webApp` only. `server-webApp` calls `server-data` with
 
 Both processes run separately in local development. Each documents the endpoints it actually implements in Swagger/OpenAPI. User-facing quiz and content operations stay on the business API so a later client (including Recall Radio) can call them. The MVP does not build that client, voice, or a second UI.
 
-From the first real screens (Phase 2), the UI is a minimalist, dark, responsive shell: authentication outside the app, then header navigation for Dashboard, Subjects, Quizzes, and Profile. Screens may share layouts. Flows F01–F09 and screens S01–S08 are defined in core-scope; this plan only assigns them to phases.
+From the first real screens (Phase 2), the UI is a minimalist, responsive shell: authentication outside the app, then header navigation for Dashboard, Subjects, Quizzes, and Profile. Screens may share layouts. Visual styling follows `docs/design/01_design-concept.md` (current palette: Light Mint & Indigo). Colours are named tokens in one client theme file; components use the token names. Flows F01–F09 and screens S01–S08 are defined in core-scope; this plan only assigns them to phases.
 
 ## 3. Cross-phase constraints
 

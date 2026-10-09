@@ -4,7 +4,7 @@ globs: docs/**
 alwaysApply: false
 ---
 # Documentation conventions
-- QuizContext charter/core scope outrank CareerContext reference exports.
+- QuizContext charter/core scope outrank CareerContext reference exports. Visual styling follows `docs/design/01_design-concept.md`; do not restate the palette in tickets or other scope docs.
 - Tickets describe one shippable unit, with status, dependencies, scope, out of scope, and testable acceptance criteria.
 - Update `devTickets_next.md` and `devCompletion.md` as part of implementing a ticket, not as a separate documentation sprint.
 - Keep requirements concise and implementation-neutral unless an explicit decision is already established.

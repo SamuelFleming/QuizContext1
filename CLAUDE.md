@@ -5,9 +5,10 @@ QuizContext is a MERN study app: user-managed Subjects → recursive Topics → 
 
 ## Sources of truth (read selectively)
 1. `docs/core-scope/` — QuizContext product decisions and user flows (00 charter; 01–04 scope).
-2. Current approved ticket in `docs/devTickets/` — task boundaries and acceptance.
-3. Existing QuizContext code and live OpenAPI — implemented behaviour.
-4. `docs/reference/` — CareerContext examples, **advisory only**, never requirements.
+2. `docs/design/01_design-concept.md` — visual source of truth (current palette: Light Mint & Indigo, via one token set).
+3. Current approved ticket in `docs/devTickets/` — task boundaries and acceptance.
+4. Existing QuizContext code and live OpenAPI — implemented behaviour.
+5. `docs/reference/` — CareerContext examples, **advisory only**, never requirements.
 
 If docs contradict code or each other, flag the precise conflict instead of silently inventing a resolution. Do not load every reference file by default.
 

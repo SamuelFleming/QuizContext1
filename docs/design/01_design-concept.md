@@ -1,8 +1,8 @@
 # QuizContext.io — Design Concept
 
-**Status:** Initial Design Reference
-**Theme:** Mint & Indigo
-**Purpose:** Guide consistent frontend styling, layouts, components, and interactions throughout MVP development.
+**Status:** Visual source of truth
+**Theme:** Light Mint & Indigo (current palette)
+**Purpose:** Define frontend styling, layouts, components, and interactions for MVP development. Product behaviour stays in `docs/core-scope/`.
 
 ## 1. Visual Direction
 
@@ -34,7 +34,9 @@ Avoid excessive decoration, heavy gamification, and unnecessarily complex compon
 | Warning          | `#F59E0B` | Warnings and partial results               |
 | Error            | `#EF4444` | Incorrect answers and errors               |
 
-Implement colours through shared CSS variables/design tokens.
+Implement colours as named tokens in a single client theme file (CSS variables). Components refer to those names and do not hard-code hex values. Light Mint & Indigo is the only palette the MVP ships. A later change, including a possible post-MVP setting where a user selects a palette, replaces or swaps that token set. The MVP does not include a theme picker.
+
+Use the secondary accent and success colours for fills, borders, and icons. Body text and small labels use the text tokens, because those accent hex values are weak as small text on the light background.
 
 ## 3. Layout & Navigation
 
