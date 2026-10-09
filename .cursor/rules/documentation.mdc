@@ -1,0 +1,13 @@
+---
+description: Scope documents, tickets, and reference hygiene
+globs: docs/**
+alwaysApply: false
+---
+# Documentation conventions
+- QuizContext charter/core scope outrank CareerContext reference exports.
+- Tickets describe one shippable unit, with status, dependencies, scope, out of scope, and testable acceptance criteria.
+- Update `devTickets_next.md` and `devCompletion.md` as part of implementing a ticket, not as a separate documentation sprint.
+- Keep requirements concise and implementation-neutral unless an explicit decision is already established.
+- Include only representative file paths in reference notes; do not paste entire source trees into docs.
+- Mark proposed vs implemented behaviour clearly; OpenAPI describes implemented behaviour only.
+- Do not read or reproduce `docs/reference/source-extract/` unless the current task specifically benefits from it.
