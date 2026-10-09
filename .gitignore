@@ -1,0 +1,5 @@
+# docs/reference/source-extract/*
+
+server-webApp/.env
+server-data/.env
+client-webApp/.env
