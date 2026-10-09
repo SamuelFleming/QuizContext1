@@ -1,6 +1,6 @@
 # P5-01 — Ownership-scoped context package
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 5  
 **Depends on:** P4-05  
 **Relevant scope:** MVP plan §3 "One content-resolution path" and "Context mode", Phase 5; `03_product-theory.md` §4; `02_high-level-solution.md` §5.1
@@ -25,13 +25,13 @@ One resolver in `server-webApp` turns a subject or topic selection into a bounde
 - Storing the package. Phase 6 decides what a quiz snapshots.
 
 ## Acceptance checks
-- [ ] Focused check against the running data API: a three-level tree with notes and documents produces the expected order and labels for a subject, for a topic with descendants, and for a topic without descendants.
-- [ ] With a small `maxChars`, exactly one source is `truncated`, later ones are `excluded`, and `truncated` is true.
-- [ ] A subject with only a name, or blank notes, returns `insufficient: true`.
-- [ ] Source text containing the delimiter and "ignore previous instructions" stays inside its labelled block.
-- [ ] User B's call for user A's subject or topic returns 404 at the data API. Missing key or `X-User-Id` returns 401.
-- [ ] An unknown `contextMode` is rejected. Omitting it gives `targeted`.
-- [ ] `server-data` Swagger lists the new route.
+- [x] Focused check against the running data API: a three-level tree with notes and documents produces the expected order and labels for a subject, for a topic with descendants, and for a topic without descendants.
+- [x] With a small `maxChars`, exactly one source is `truncated`, later ones are `excluded`, and `truncated` is true.
+- [x] A subject with only a name, or blank notes, returns `insufficient: true`.
+- [x] Source text containing the delimiter and "ignore previous instructions" stays inside its labelled block.
+- [x] User B's call for user A's subject or topic returns 404 at the data API. Missing key or `X-User-Id` returns 401.
+- [x] An unknown `contextMode` is rejected. Omitting it gives `targeted`.
+- [x] `server-data` Swagger lists the new route.
 
 ## Implementation notes
 - Document list routes currently omit `content` (`documentRepository.listDocuments`). This ticket adds a content-bearing read instead of making one read per document.

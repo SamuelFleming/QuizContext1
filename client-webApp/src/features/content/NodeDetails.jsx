@@ -23,6 +23,8 @@ export default function NodeDetails({
   onDirtyChange,
   onAddTopic,
   onDelete,
+  suggestionScope,
+  onOpenProfile,
   children,
 }) {
   const [name, setName] = useState(node.name);
@@ -89,7 +91,13 @@ export default function NodeDetails({
       </form>
       <Feedback message={message} source="rename" />
 
-      <NotesEditor node={node} onSave={onSaveNotes} onDirtyChange={onDirtyChange} />
+      <NotesEditor
+        node={node}
+        onSave={onSaveNotes}
+        onDirtyChange={onDirtyChange}
+        suggestionScope={suggestionScope}
+        onOpenProfile={onOpenProfile}
+      />
 
       {children}
 

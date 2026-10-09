@@ -49,6 +49,57 @@ export const documentPaths = {
       },
     },
   },
+  "/subjects/{subjectId}/context-sources": {
+    get: {
+      summary: "Source material for context assembly, with document content (keyed, internal only)",
+      description:
+        "Without topicId: the subject, all its topics, and all its documents. With topicId: that topic (and its descendants unless includeDescendants=false) and their documents; subject-level documents are excluded. `ancestors` is the selected topic's path from the top level.",
+      parameters: [
+        ...keyed,
+        subjectId,
+        { in: "query", name: "topicId", required: false, schema: { type: "string" } },
+        {
+          in: "query",
+          name: "includeDescendants",
+          required: false,
+          schema: { type: "string", enum: ["true", "false"], default: "true" },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Owner-scoped sources",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "object",
+                    properties: {
+                      subject: { $ref: "#/components/schemas/Subject" },
+                      topicId: { type: "string", nullable: true },
+                      ancestors: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: { id: { type: "string" }, name: { type: "string" } },
+                        },
+                      },
+                      topics: { type: "array", items: { $ref: "#/components/schemas/Topic" } },
+                      documents: { type: "array", items: { $ref: "#/components/schemas/Document" } },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        400: { $ref: "#/components/responses/BadRequest" },
+        401: { $ref: "#/components/responses/Unauthorized" },
+        404: { $ref: "#/components/responses/NotFound" },
+      },
+    },
+  },
   "/documents": {
     post: {
       summary: "Save a reviewed document (keyed, internal only)",

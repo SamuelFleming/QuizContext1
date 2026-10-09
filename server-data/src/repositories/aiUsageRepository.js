@@ -3,6 +3,7 @@ import { AiUsage } from "../models/aiUsage.js";
 
 const FIELDS = [
   "operation",
+  "promptVersion",
   "providerMode",
   "model",
   "inputTokens",
@@ -11,6 +12,7 @@ const FIELDS = [
   "status",
   "errorCode",
   "latencyMs",
+  "context",
 ];
 
 // The owner always comes from the trusted X-User-Id, never from the record body.

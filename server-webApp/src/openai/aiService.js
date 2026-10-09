@@ -6,7 +6,7 @@ import { resolveAiKey } from "./keyResolver.js";
 import { getApplicationAllowance } from "./usageLimit.js";
 
 // Best-effort: a usage-logging failure must not fail the user's call. Records never hold
-// prompt text, the key, or a key fingerprint.
+// prompt text, source text, the key, or a key fingerprint; `context` is counts only.
 async function recordUsage(userId, record) {
   try {
     await createAiUsage(userId, record);
@@ -20,6 +20,8 @@ async function recordUsage(userId, record) {
 export async function runAiOperation({
   userId,
   operation,
+  promptVersion = null,
+  context = null,
   instructions,
   input,
   jsonSchema,
@@ -60,6 +62,8 @@ export async function runAiOperation({
 
     await recordUsage(userId, {
       operation,
+      promptVersion,
+      context,
       providerMode,
       model: result.model,
       inputTokens: result.usage.inputTokens,
@@ -79,6 +83,8 @@ export async function runAiOperation({
     const usedModel = err.model || model;
     await recordUsage(userId, {
       operation,
+      promptVersion,
+      context,
       providerMode: err.providerMode || providerMode || "application",
       model: usedModel,
       inputTokens: usage.inputTokens,

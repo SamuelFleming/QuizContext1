@@ -9,8 +9,9 @@ export function errorHandler(err, _req, res, _next) {
   // 5xx messages are hidden unless the thrower marked the message as safe with `expose`.
   const message =
     status >= 500 && !err.expose ? "Internal server error" : err.message || "Request failed";
-  if (err.aiErrorCode) {
-    res.status(status).json({ message, code: err.aiErrorCode });
+  const code = err.aiErrorCode || err.errorCode;
+  if (code) {
+    res.status(status).json({ message, code });
     return;
   }
   sendMessage(res, status, message);

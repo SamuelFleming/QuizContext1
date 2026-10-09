@@ -1,28 +1,31 @@
 import { useEffect, useState } from "react";
 import MarkdownEditor from "../../components/markdown/MarkdownEditor.jsx";
+import DescriptionSuggestion from "./DescriptionSuggestion.jsx";
 
 const DESCRIPTION_MAX = 2000;
 const NOTES_MAX = 50000;
 
-// Description and notes for the selected subject or topic, saved together.
-export default function NotesEditor({ node, onSave, onDirtyChange }) {
+// Description and notes for the selected subject or topic, saved together. An accepted AI
+// suggestion saves the description alone and leaves unsaved notes in place.
+export default function NotesEditor({ node, onSave, onDirtyChange, suggestionScope, onOpenProfile }) {
   const [description, setDescription] = useState(node.description || "");
   const [notes, setNotes] = useState(node.notes || "");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+  const [suggestionPending, setSuggestionPending] = useState(false);
 
   const dirty = description !== (node.description || "") || notes !== (node.notes || "");
 
   useEffect(() => {
-    onDirtyChange?.(dirty);
-  }, [dirty, onDirtyChange]);
+    onDirtyChange?.(dirty || suggestionPending);
+  }, [dirty, suggestionPending, onDirtyChange]);
 
   useEffect(() => {
-    if (!dirty) return undefined;
+    if (!dirty && !suggestionPending) return undefined;
     const warn = (event) => event.preventDefault();
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
-  }, [dirty]);
+  }, [dirty, suggestionPending]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -40,6 +43,12 @@ export default function NotesEditor({ node, onSave, onDirtyChange }) {
     }
   }
 
+  async function acceptSuggestion(text) {
+    await onSave({ description: text });
+    setDescription(text);
+    setMessage({ type: "success", text: "Description saved." });
+  }
+
   return (
     <form className="notes-form" onSubmit={handleSubmit} noValidate>
       <MarkdownEditor
@@ -49,6 +58,14 @@ export default function NotesEditor({ node, onSave, onDirtyChange }) {
         maxLength={DESCRIPTION_MAX}
         rows={3}
       />
+      {suggestionScope ? (
+        <DescriptionSuggestion
+          {...suggestionScope}
+          onAccept={acceptSuggestion}
+          onPendingChange={setSuggestionPending}
+          onOpenProfile={onOpenProfile}
+        />
+      ) : null}
       <MarkdownEditor
         label="Notes"
         value={notes}

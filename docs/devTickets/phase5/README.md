@@ -8,7 +8,7 @@
 
 **Roadmap.** [Phase 5 in the MVP plan](../00_MVP-Development-Plan.md#phase-5).
 
-**Tickets.** Planned. Implement in order.
+**Tickets.** All done (see `devCompletion.md`). Phase 6 reuses `services/contextService.js` (`assembleContext`) and the `promptVersion`/`context` fields on `runAiOperation`.
 
 1. [P5-01](P5-01-context-package.md) — ownership-scoped context resolver: data API source read, ordering, labelling, character budget, truncation and insufficient-content reporting, context-mode input.
 2. [P5-02](P5-02-description-suggestion-api.md) — `POST /ai/description-suggestions` through `runAiOperation`, versioned prompt and validator, `AiUsage` extended with prompt version and context counts.

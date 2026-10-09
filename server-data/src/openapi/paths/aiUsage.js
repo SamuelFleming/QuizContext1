@@ -17,6 +17,8 @@ export const aiUsagePaths = {
               required: ["operation", "providerMode", "status"],
               properties: {
                 operation: { type: "string" },
+                promptVersion: { type: "string", nullable: true },
+                context: { $ref: "#/components/schemas/AiUsageContext" },
                 providerMode: { type: "string", enum: ["application", "user"] },
                 model: { type: "string", nullable: true },
                 inputTokens: { type: "integer", nullable: true },

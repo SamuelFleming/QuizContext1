@@ -209,6 +209,7 @@ export const components = {
       properties: {
         id: { type: "string" },
         operation: { type: "string" },
+        promptVersion: { type: "string", nullable: true },
         providerMode: { type: "string", enum: ["application", "user"] },
         model: { type: "string", nullable: true },
         inputTokens: { type: "integer", nullable: true },
@@ -217,7 +218,20 @@ export const components = {
         status: { type: "string", enum: ["succeeded", "failed"] },
         errorCode: { type: "string", nullable: true },
         latencyMs: { type: "integer", nullable: true },
+        context: { $ref: "#/components/schemas/AiUsageContext" },
         createdAt: { type: "string", format: "date-time" },
+      },
+    },
+    AiUsageContext: {
+      type: "object",
+      nullable: true,
+      description: "Counts describing the context package. Never holds source text.",
+      properties: {
+        contextMode: { type: "string", enum: ["very_strict", "targeted", "loose"] },
+        includedChars: { type: "integer" },
+        sourcesIncluded: { type: "integer" },
+        sourcesTruncated: { type: "integer" },
+        sourcesExcluded: { type: "integer" },
       },
     },
     AiUsageTotals: {

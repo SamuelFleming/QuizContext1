@@ -1,6 +1,6 @@
 # P5-02 — Description suggestion API, versioned prompt, and run log
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 5  
 **Depends on:** P5-01  
 **Relevant scope:** MVP plan Phase 5 and §3 "AI setup before product AI" and "Failure isolation"; F04 steps 2–4; `CLAUDE.md` engineering invariants
@@ -23,14 +23,14 @@ A JWT-protected business route takes a subject or topic selection and returns an
 - Quiz prompts, a prompt registry or admin, and streaming.
 
 ## Acceptance checks
-- [ ] With a mocked provider, a topic with notes and documents returns a suggestion and its manifest. The usage record shows `description_suggestion`, `promptVersion`, context counts, tokens, and `succeeded`.
-- [ ] Mocked output that is empty, over 2,000 characters, or the wrong shape returns `AI_INVALID_OUTPUT` and writes a failed record. The subject or topic `description` is unchanged.
-- [ ] Oversized content returns the suggestion with `context.truncated: true`.
-- [ ] Insufficient content returns 422 `CONTEXT_INSUFFICIENT` and makes no AI call or usage record.
-- [ ] With AI disabled, a missing user key, or the limit reached, the matching typed error is returned, and content routes still work.
-- [ ] User B asking about user A's subject or topic gets 404. No token gives 401.
-- [ ] No response, log line, or `AiUsage` document contains the key, prompt instructions, or source text.
-- [ ] Swagger on both APIs reflects the new route and the extended usage fields.
+- [x] With a mocked provider, a topic with notes and documents returns a suggestion and its manifest. The usage record shows `description_suggestion`, `promptVersion`, context counts, tokens, and `succeeded`.
+- [x] Mocked output that is empty, over 2,000 characters, or the wrong shape returns `AI_INVALID_OUTPUT` and writes a failed record. The subject or topic `description` is unchanged.
+- [x] Oversized content returns the suggestion with `context.truncated: true`.
+- [x] Insufficient content returns 422 `CONTEXT_INSUFFICIENT` and makes no AI call or usage record.
+- [x] With AI disabled, a missing user key, or the limit reached, the matching typed error is returned, and content routes still work.
+- [x] User B asking about user A's subject or topic gets 404. No token gives 401.
+- [x] No response, log line, or `AiUsage` document contains the key, prompt instructions, or source text.
+- [x] Swagger on both APIs reflects the new route and the extended usage fields.
 
 ## Implementation notes
 - A real OpenAI call is still unrun locally (Phase 3 follow-up). Run one if a key is available; otherwise record the limitation.

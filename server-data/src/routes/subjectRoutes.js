@@ -1,4 +1,5 @@
 import { Router } from "express";
+import * as contextController from "../controllers/contextController.js";
 import * as documentController from "../controllers/documentController.js";
 import * as subjectController from "../controllers/subjectController.js";
 import * as topicController from "../controllers/topicController.js";
@@ -16,3 +17,4 @@ subjectRoutes.delete("/:subjectId", subjectController.remove);
 subjectRoutes.get("/:subjectId/topics", topicController.listForSubject);
 subjectRoutes.post("/:subjectId/topics", topicController.createForSubject);
 subjectRoutes.get("/:subjectId/documents", documentController.listForSubject);
+subjectRoutes.get("/:subjectId/context-sources", contextController.getSources);
