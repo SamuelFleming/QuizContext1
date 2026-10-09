@@ -10,7 +10,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 3 | User profile, secure AI key configuration + usage; code organisation refactor | Done |
 | 4 | Subjects, recursive topics, Markdown + document ingestion | Done |
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
-| 6 | Quiz generation, completion, evaluation, history + export | Roadmapped |
+| 6 | Quiz generation, completion, evaluation, history + export | Ticketed |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -18,7 +18,15 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None. Phase 5 is complete (P5-01 to P5-03). Run `/plan-phase` for Phase 6 when ready. Generation should call `assembleContext(userId, { subjectId, topicId, includeDescendants, contextMode })` in `server-webApp/src/services/contextService.js`, block on `insufficient`, and pass `promptVersion` and context counts to `runAiOperation`.
+[P6-01](phase6/P6-01-quiz-generation-api.md) — quiz generation API and persistence. Generation should call `assembleContext(userId, { subjectId, topicId, includeDescendants, contextMode })` in `server-webApp/src/services/contextService.js`, block on `insufficient`, and pass `promptVersion` and context counts to `runAiOperation`. Evaluation (P6-04) uses the stored snapshot, not a live re-resolve. Planning decisions are in the [Phase 6 README](phase6/README.md).
+
+## Phase 6 proposed order
+1. [P6-01](phase6/P6-01-quiz-generation-api.md) — generation API, quiz persistence, study-view projection.
+2. [P6-02](phase6/P6-02-quiz-generation-ui.md) — generation form and saved-quiz detail.
+3. [P6-03](phase6/P6-03-attempt-player.md) — attempts and Quiz Player (no marking).
+4. [P6-04](phase6/P6-04-attempt-evaluation-api.md) — submit evaluates; MC by comparison, short answer via AI.
+5. [P6-05](phase6/P6-05-quiz-results.md) — results screen and evaluation-failed retry.
+6. [P6-06](phase6/P6-06-library-repeat-export.md) — library, history, delete, export, dashboard, phase close-out.
 
 ## Phase 5 proposed order
 1. [P5-01](phase5/P5-01-context-package.md) — context resolver, data API source read with document content, budget, truncation and insufficient-content reporting, context-mode input. Done.
