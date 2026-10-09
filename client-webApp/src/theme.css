@@ -1,0 +1,18 @@
+:root {
+  --color-background: #f5faff;
+  --color-surface: #ffffff;
+  --color-elevated-surface: #e6f5f7;
+  --color-border: #d7e5ec;
+  --color-primary-accent: #6366f1;
+  --color-secondary-accent: #14b8a6;
+  --color-text: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --radius-card: 12px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+}

@@ -1,6 +1,6 @@
 # P1-01 — Local applications and run conventions
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 1  
 **Depends on:** None  
 **Relevant scope:** MVP plan Phase 1; charter architecture
@@ -23,11 +23,11 @@ Create the three local applications and the conventions later tickets will reuse
 - Application shell navigation. That starts in Phase 2.
 
 ## Acceptance checks
-- [ ] Each app starts with its own command on the ports above.
-- [ ] `GET /health` on both APIs returns `{ data }` and is listed in that API's Swagger.
-- [ ] An unknown route returns `{ message }` and no stack trace.
-- [ ] `.env.example` files contain placeholders only. A real `.env` is not committed.
-- [ ] Verification is a local start plus the health requests above.
+- [x] Each app starts with its own command on the ports above.
+- [x] `GET /health` on both APIs returns `{ data }` and is listed in that API's Swagger.
+- [x] An unknown route returns `{ message }` and no stack trace.
+- [x] `.env.example` files contain placeholders only. A real `.env` is not committed.
+- [x] Verification is a local start plus the health requests above.
 
 ## Implementation notes
 Suggested environment names, as placeholders in the examples: `PORT`, and on `server-webApp` only `CLIENT_ORIGIN` (default `http://localhost:5173`). Database and internal-key variables are added in P1-02.

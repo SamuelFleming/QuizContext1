@@ -1,0 +1,14 @@
+{
+  "name": "server-webapp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "swagger-ui-express": "^5.0.1"
+  }
+}

@@ -1,5 +1,9 @@
 # docs/reference/source-extract/*
 
+node_modules/
+dist/
+build/
+
 server-webApp/.env
 server-data/.env
 client-webApp/.env

@@ -1,6 +1,6 @@
 # P1-02 — Internal diagnostic path to MongoDB
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 1  
 **Depends on:** P1-01  
 **Relevant scope:** MVP plan Phase 1; charter dual-API boundary
@@ -24,11 +24,11 @@ Prove `server-webApp` can reach MongoDB through `server-data`, with the data API
 - Accepting a user id from the caller. Phase 2 decides how verified user identity travels with this key.
 
 ## Acceptance checks
-- [ ] With MongoDB running and the key set, the webApp diagnostic reports all three parts ok.
-- [ ] A wrong or missing key is rejected by `server-data` with 401.
-- [ ] Stopping MongoDB, or stopping `server-data`, produces a diagnostic body that marks the failed part. The response does not include the key or the connection string.
-- [ ] Swagger on both APIs matches the implemented diagnostic routes.
-- [ ] Verification is those requests. No automated suite is required.
+- [x] With MongoDB running and the key set, the webApp diagnostic reports all three parts ok.
+- [x] A wrong or missing key is rejected by `server-data` with 401.
+- [x] Stopping MongoDB, or stopping `server-data`, produces a diagnostic body that marks the failed part. The response does not include the key or the connection string.
+- [x] Swagger on both APIs matches the implemented diagnostic routes.
+- [x] Verification is those requests. No automated suite is required.
 
 ## Implementation notes
 Add the new variables to `.env.example` only. The same internal key value is configured in both servers' local environments. Keep the data-API client in `server-webApp`; `server-data` stays persistence and validation only.
