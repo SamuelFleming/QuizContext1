@@ -22,6 +22,44 @@ export async function findUserById(id) {
   return User.findById(id);
 }
 
+// Only fields on this list can change through a profile update.
+const UPDATABLE_FIELDS = ["displayName"];
+
+export async function updateUserById(id, changes) {
+  if (!mongoose.isValidObjectId(id)) {
+    return null;
+  }
+  const update = {};
+  for (const field of UPDATABLE_FIELDS) {
+    if (changes[field] !== undefined) {
+      update[field] = changes[field];
+    }
+  }
+  return User.findByIdAndUpdate(id, update, { new: true, runValidators: true });
+}
+
+export async function setAiAccessMode(id, aiAccessMode) {
+  if (!mongoose.isValidObjectId(id)) {
+    return null;
+  }
+  return User.findByIdAndUpdate(id, { aiAccessMode }, { new: true, runValidators: true });
+}
+
+export async function setAiKey(id, { ciphertext, iv, authTag, keyVersion }) {
+  if (!mongoose.isValidObjectId(id)) {
+    return null;
+  }
+  const aiKey = { ciphertext, iv, authTag, keyVersion, updatedAt: new Date() };
+  return User.findByIdAndUpdate(id, { aiKey }, { new: true, runValidators: true });
+}
+
+export async function removeAiKey(id) {
+  if (!mongoose.isValidObjectId(id)) {
+    return null;
+  }
+  return User.findByIdAndUpdate(id, { $unset: { aiKey: 1 } }, { new: true });
+}
+
 export function isDuplicateKeyError(err) {
   return err && err.code === 11000;
 }

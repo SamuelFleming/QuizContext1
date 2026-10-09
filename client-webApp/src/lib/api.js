@@ -15,9 +15,10 @@ export function clearToken() {
 }
 
 export class ApiError extends Error {
-  constructor(status, message) {
+  constructor(status, message, code) {
     super(message);
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -52,7 +53,7 @@ async function request(path, { method = "GET", body, auth = false } = {}) {
   }
 
   if (!response.ok) {
-    throw new ApiError(response.status, payload?.message || "Request failed");
+    throw new ApiError(response.status, payload?.message || "Request failed", payload?.code);
   }
   return payload?.data;
 }
@@ -60,4 +61,14 @@ async function request(path, { method = "GET", body, auth = false } = {}) {
 export const register = (payload) => request("/auth/register", { method: "POST", body: payload });
 export const login = (payload) => request("/auth/login", { method: "POST", body: payload });
 export const getMe = () => request("/users/me", { auth: true });
+export const updateMe = (payload) =>
+  request("/users/me", { method: "PATCH", body: payload, auth: true });
 export const getConnectivity = () => request("/diagnostics/connectivity");
+export const getAiSettings = () => request("/settings/ai", { auth: true });
+export const setAiMode = (aiAccessMode) =>
+  request("/settings/ai/mode", { method: "PUT", body: { aiAccessMode }, auth: true });
+export const saveAiKey = (apiKey) =>
+  request("/settings/ai/key", { method: "PUT", body: { apiKey }, auth: true });
+export const removeAiKey = () => request("/settings/ai/key", { method: "DELETE", auth: true });
+export const checkAiConnection = () => request("/settings/ai/check", { method: "POST", auth: true });
+export const getAiUsage = () => request("/settings/ai/usage", { auth: true });

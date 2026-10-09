@@ -1,5 +1,6 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
+import { aiUsageRoutes } from "./aiUsageRoutes.js";
 import { pingDatabase } from "./db.js";
 import { errorHandler, notFound, sendData } from "./http.js";
 import { requireInternalKey } from "./internalAuth.js";
@@ -25,6 +26,7 @@ export function createApp() {
   });
 
   app.use("/users", userRoutes);
+  app.use("/ai-usage", aiUsageRoutes);
 
   app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 

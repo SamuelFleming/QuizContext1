@@ -5,6 +5,7 @@ import AuthPage from "./pages/AuthPage.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Diagnostics from "./pages/Diagnostics.jsx";
 import Placeholder from "./pages/Placeholder.jsx";
+import Profile from "./pages/Profile.jsx";
 
 export default function App() {
   const [path, setPath] = useState(window.location.pathname);
@@ -106,9 +107,7 @@ export default function App() {
       );
       break;
     case "/profile":
-      content = (
-        <Placeholder title="Profile" message="Profile editing arrives in a later phase." />
-      );
+      content = <Profile user={user} onUserUpdated={setUser} onUnauthorized={handleLogout} />;
       break;
     default:
       content = <Dashboard user={user} />;

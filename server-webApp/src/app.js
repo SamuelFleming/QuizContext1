@@ -5,6 +5,7 @@ import { authRoutes } from "./authRoutes.js";
 import { fetchDatabaseDiagnostic } from "./dataClient.js";
 import { errorHandler, notFound, sendData } from "./http.js";
 import { openApiSpec } from "./openapi.js";
+import { settingsRoutes } from "./settingsRoutes.js";
 import { userRoutes } from "./userRoutes.js";
 
 export function createApp() {
@@ -28,6 +29,7 @@ export function createApp() {
 
   app.use("/auth", authRoutes);
   app.use("/users", userRoutes);
+  app.use("/settings", settingsRoutes);
 
   app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 

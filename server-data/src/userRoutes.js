@@ -1,12 +1,16 @@
 import { Router } from "express";
 import { sendData, sendMessage } from "./http.js";
 import { requireInternalKey, requireUserId } from "./internalAuth.js";
-import { toAuthUser, toPublicUser } from "./models/user.js";
+import { toAiSettings, toAuthUser, toPublicUser } from "./models/user.js";
 import {
   createUser,
   findUserByEmail,
   findUserById,
   isDuplicateKeyError,
+  removeAiKey,
+  setAiAccessMode,
+  setAiKey,
+  updateUserById,
 } from "./userRepository.js";
 
 export const userRoutes = Router();
@@ -58,6 +62,92 @@ userRoutes.get("/me", requireUserId, async (req, res, next) => {
       return;
     }
     sendData(res, toPublicUser(user));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Update the current user's profile. Fields outside the repository allow-list are ignored,
+// and the target is always X-User-Id, never an id in the body.
+userRoutes.patch("/me", requireUserId, async (req, res, next) => {
+  try {
+    const displayName = req.body?.displayName;
+    if (typeof displayName !== "string" || !displayName.trim() || displayName.trim().length > 80) {
+      sendMessage(res, 400, "displayName must be 1-80 characters");
+      return;
+    }
+    const user = await updateUserById(req.userId, { displayName: displayName.trim() });
+    if (!user) {
+      sendMessage(res, 404, "User not found");
+      return;
+    }
+    sendData(res, toPublicUser(user));
+  } catch (err) {
+    next(err);
+  }
+});
+
+function sendAiSettings(res, user) {
+  if (!user) {
+    sendMessage(res, 404, "User not found");
+    return;
+  }
+  sendData(res, toAiSettings(user));
+}
+
+userRoutes.get("/me/ai-settings", requireUserId, async (req, res, next) => {
+  try {
+    sendAiSettings(res, await findUserById(req.userId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+userRoutes.put("/me/ai-settings/mode", requireUserId, async (req, res, next) => {
+  try {
+    const mode = req.body?.aiAccessMode;
+    if (mode !== "application" && mode !== "user") {
+      sendMessage(res, 400, "aiAccessMode must be application or user");
+      return;
+    }
+    sendAiSettings(res, await setAiAccessMode(req.userId, mode));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Internal only: returns the encrypted blob so server-webApp can decrypt it for one call.
+userRoutes.get("/me/ai-key", requireUserId, async (req, res, next) => {
+  try {
+    const user = await findUserById(req.userId);
+    if (!user?.aiKey?.ciphertext) {
+      sendMessage(res, 404, "No stored key");
+      return;
+    }
+    const { ciphertext, iv, authTag, keyVersion } = user.aiKey;
+    sendData(res, { ciphertext, iv, authTag, keyVersion });
+  } catch (err) {
+    next(err);
+  }
+});
+
+userRoutes.put("/me/ai-key", requireUserId, async (req, res, next) => {
+  try {
+    const { ciphertext, iv, authTag, keyVersion } = req.body || {};
+    const strings = [ciphertext, iv, authTag];
+    if (strings.some((v) => typeof v !== "string" || !v) || !Number.isInteger(keyVersion)) {
+      sendMessage(res, 400, "ciphertext, iv, authTag, and integer keyVersion are required");
+      return;
+    }
+    sendAiSettings(res, await setAiKey(req.userId, { ciphertext, iv, authTag, keyVersion }));
+  } catch (err) {
+    next(err);
+  }
+});
+
+userRoutes.delete("/me/ai-key", requireUserId, async (req, res, next) => {
+  try {
+    sendAiSettings(res, await removeAiKey(req.userId));
   } catch (err) {
     next(err);
   }

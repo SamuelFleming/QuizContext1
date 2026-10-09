@@ -1,6 +1,6 @@
 # P3-04 — Usage summary and application-key limit
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 3  
 **Depends on:** P3-03  
 **Relevant scope:** MVP plan Phase 3; F02; S08
@@ -21,12 +21,14 @@ The user sees a simple summary of their AI usage, and calls on the application k
 - Limits on user-provided keys.
 
 ## Acceptance checks
-- [ ] After one or more checks, the panel shows matching call count, tokens, and cost.
-- [ ] With the limit set below current usage, an `application`-mode check returns `AI_LIMIT_REACHED`, while a `user`-mode check (if a key is available) still runs.
-- [ ] A second user's summary does not include the first user's records.
-- [ ] Account access works while the limit is reached.
-- [ ] Swagger on both APIs lists the usage routes.
-- [ ] Focused verification may lower the limit via env. A real OpenAI key is needed only for the success path; otherwise document it as unrun.
+- [x] After one or more checks, the panel shows matching call count, tokens, and cost.
+- [x] With the limit set below current usage, an `application`-mode check returns `AI_LIMIT_REACHED`, while a `user`-mode check (if a key is available) still runs.
+- [x] A second user's summary does not include the first user's records.
+- [x] Account access works while the limit is reached.
+- [x] Swagger on both APIs lists the usage routes.
+- [x] Focused verification may lower the limit via env. A real OpenAI key is needed only for the success path; otherwise document it as unrun.
 
 ## Implementation notes
 Put the limit check inside the P3-03 boundary, so Phase 5 and Phase 6 calls inherit it.
+
+The check lives in `runAiOperation` (via `server-webApp/src/ai/usageLimit.js`) and runs after key resolution, so a refused call is recorded as a `failed` application-mode record. Default limit is 100,000 tokens. Successful calls were verified against a local mock provider with the limit at 40; a real OpenAI success path is unrun (no local key).

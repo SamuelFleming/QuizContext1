@@ -1,6 +1,6 @@
 # P3-02 — AI access mode and encrypted user key
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 3  
 **Depends on:** P3-01  
 **Relevant scope:** MVP plan Phase 3 and §3 "AI setup before product AI"; F02; S08
@@ -27,12 +27,14 @@ The user chooses application-provided or their own OpenAI access, and can add, r
 - Usage records and limits.
 
 ## Acceptance checks
-- [ ] Add a key: the status shows a key is set. No response, log line, or page contains the key.
-- [ ] MongoDB holds only `ciphertext`/`iv`/`authTag`/`keyVersion`. Saving the same key twice produces different ciphertext.
-- [ ] Replace then remove works. After removal the status shows no key.
-- [ ] A focused round-trip check (encrypt then decrypt in `server-webApp`) returns the original value. A tampered `authTag` fails to decrypt.
-- [ ] Another user's settings are not readable or changeable. No token is 401; a missing internal key or `X-User-Id` is 401 at `server-data`.
-- [ ] Swagger on both APIs lists the settings routes. The blob route is marked internal.
+- [x] Add a key: the status shows a key is set. No response, log line, or page contains the key.
+- [x] MongoDB holds only `ciphertext`/`iv`/`authTag`/`keyVersion`. Saving the same key twice produces different ciphertext.
+- [x] Replace then remove works. After removal the status shows no key.
+- [x] A focused round-trip check (encrypt then decrypt in `server-webApp`) returns the original value. A tampered `authTag` fails to decrypt.
+- [x] Another user's settings are not readable or changeable. No token is 401; a missing internal key or `X-User-Id` is 401 at `server-data`.
+- [x] Swagger on both APIs lists the settings routes. The blob route is marked internal.
 
 ## Implementation notes
 Keep encryption in one small `server-webApp` module (encrypt/decrypt only). Do not add a crypto library.
+
+Implemented in `server-webApp/src/ai/keyCrypto.js`. The stored blob also carries `updatedAt`, set by `server-data`. The shared `errorHandler` now passes through 5xx messages only when the thrower sets `err.expose`, so the "key storage not configured" 503 is readable. Data client errors are marked the same way.

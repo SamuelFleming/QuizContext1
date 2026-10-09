@@ -129,6 +129,98 @@ button:disabled {
   font-size: 0.9rem;
 }
 
+.success-text {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  padding-left: var(--space-2);
+  border-left: 3px solid var(--color-success);
+}
+
+.field input:disabled {
+  background: var(--color-elevated-surface);
+  color: var(--color-text-secondary);
+}
+
+.stack {
+  display: grid;
+  gap: var(--space-4);
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.choice-group {
+  border: 0;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.choice-group legend {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--color-primary-accent);
+  background: var(--color-elevated-surface);
+}
+
+.subheading {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: 1rem;
+}
+
+.usage-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.usage-list li {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.usage-meta {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.check-row {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.key-status {
+  margin: var(--space-3) 0 0;
+  color: var(--color-text);
+}
+
 .switch {
   margin: var(--space-3) 0 0;
   color: var(--color-text-secondary);
