@@ -8,7 +8,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 1 | Local foundations + one dual-API vertical slice | Done |
 | 2 | Authentication, ownership + foundational persistence | Done |
 | 3 | User profile, secure AI key configuration + usage; code organisation refactor | Done |
-| 4 | Subjects, recursive topics, Markdown + document ingestion | Roadmapped |
+| 4 | Subjects, recursive topics, Markdown + document ingestion | Ticketed |
 | 5 | OpenAI integration + AI-assisted descriptions | Roadmapped |
 | 6 | Quiz generation, completion, evaluation, history + export | Roadmapped |
 
@@ -18,7 +18,16 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None. Phase 3 is complete, including the code organisation refactor (P3-05 to P3-08, [pattern-refactor.md](phase3/pattern-refactor.md)). Phase 4 tickets must follow `docs/core-scope/02_high-level-solution.md` §5.1. Run `/plan-phase` for Phase 4 when ready.
+None yet. Phase 4 is planned; approve [P4-01](phase4/P4-01-subjects.md) to start, or run `/implement-phase` for Phase 4.
+
+## Phase 4 proposed order
+1. [P4-01](phase4/P4-01-subjects.md) — subject CRUD, Subjects screen, Dashboard list. Planned.
+2. [P4-02](phase4/P4-02-topic-tree.md) — recursive topic tree and subtree delete. Planned.
+3. [P4-03](phase4/P4-03-markdown-notes.md) — Markdown description and notes with safe preview. Planned.
+4. [P4-04](phase4/P4-04-document-upload-review.md) — document upload, extraction, review, save. Planned.
+5. [P4-05](phase4/P4-05-document-edit-delete.md) — document edit/delete, cascades, phase close-out. Planned.
+
+Planning decisions (hard delete with cascade, no topic move, no stored originals, limits) are listed in the [Phase 4 README](phase4/README.md).
 
 ## Phase 3 proposed order
 1. [P3-01](phase3/P3-01-profile.md) — profile read and update. Done.
