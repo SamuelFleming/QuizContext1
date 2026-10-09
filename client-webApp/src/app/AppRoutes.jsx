@@ -2,6 +2,8 @@ import Placeholder from "../components/Placeholder.jsx";
 import Shell from "../components/layout/Shell.jsx";
 import { useAuth } from "../context/useAuth.js";
 import AuthPage from "../features/auth/AuthPage.jsx";
+import ContentWorkspace from "../features/content/ContentWorkspace.jsx";
+import SubjectsPage from "../features/content/SubjectsPage.jsx";
 import Dashboard from "../features/dashboard/Dashboard.jsx";
 import Diagnostics from "../features/diagnostics/Diagnostics.jsx";
 import ProfilePage from "../features/profile/ProfilePage.jsx";
@@ -36,13 +38,19 @@ export default function AppRoutes({ path, navigate }) {
     return <AuthPage navigate={navigate} path={path} />;
   }
 
+  const subjectMatch = path.match(/^\/subjects\/([^/]+)$/);
+
   let content;
-  switch (path) {
+  switch (subjectMatch ? "/subjects/:subjectId" : path) {
     case "/subjects":
+      content = <SubjectsPage navigate={navigate} />;
+      break;
+    case "/subjects/:subjectId":
       content = (
-        <Placeholder
-          title="Subjects"
-          message="Your subjects will appear here. Content management arrives in a later phase."
+        <ContentWorkspace
+          key={subjectMatch[1]}
+          subjectId={decodeURIComponent(subjectMatch[1])}
+          navigate={navigate}
         />
       );
       break;
@@ -58,11 +66,11 @@ export default function AppRoutes({ path, navigate }) {
       content = <ProfilePage />;
       break;
     default:
-      content = <Dashboard />;
+      content = <Dashboard navigate={navigate} />;
   }
 
   return (
-    <Shell path={path} navigate={navigate}>
+    <Shell path={path} navigate={navigate} wide={Boolean(subjectMatch)}>
       {content}
     </Shell>
   );

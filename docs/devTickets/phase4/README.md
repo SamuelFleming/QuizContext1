@@ -8,7 +8,7 @@
 
 **Roadmap.** [Phase 4 in the MVP plan](../00_MVP-Development-Plan.md#phase-4).
 
-**Tickets.** Planned, in order. Implement only after one is approved, or run `/implement-phase` for Phase 4. All code follows `docs/core-scope/02_high-level-solution.md` §5.1.
+**Tickets.** All done (see `devCompletion.md`). All code follows `docs/core-scope/02_high-level-solution.md` §5.1.
 
 1. [P4-01](P4-01-subjects.md) — subject CRUD, ownership pattern for content, Subjects screen and Dashboard list.
 2. [P4-02](P4-02-topic-tree.md) — recursive topics, workspace tree, subtree delete.

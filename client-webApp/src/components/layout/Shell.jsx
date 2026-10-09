@@ -7,7 +7,11 @@ const LINKS = [
   ["/profile", "Profile"],
 ];
 
-export default function Shell({ path, navigate, children }) {
+function isActive(path, to) {
+  return to === "/" ? path === "/" : path === to || path.startsWith(`${to}/`);
+}
+
+export default function Shell({ path, navigate, wide = false, children }) {
   const { user, signOut } = useAuth();
   return (
     <div className="shell">
@@ -21,8 +25,8 @@ export default function Shell({ path, navigate, children }) {
               <button
                 key={to}
                 type="button"
-                className={path === to ? "nav-link active" : "nav-link"}
-                aria-current={path === to ? "page" : undefined}
+                className={isActive(path, to) ? "nav-link active" : "nav-link"}
+                aria-current={isActive(path, to) ? "page" : undefined}
                 onClick={() => navigate(to)}
               >
                 {label}
@@ -37,7 +41,7 @@ export default function Shell({ path, navigate, children }) {
           </div>
         </div>
       </header>
-      <main className="shell-main">{children}</main>
+      <main className={wide ? "shell-main wide" : "shell-main"}>{children}</main>
     </div>
   );
 }

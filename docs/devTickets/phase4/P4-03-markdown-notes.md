@@ -1,6 +1,6 @@
 # P4-03 — Markdown descriptions and notes
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 4  
 **Depends on:** P4-02  
 **Relevant scope:** MVP plan Phase 4; F03; S03; frontend rule on safe Markdown rendering
@@ -20,11 +20,11 @@ For the selected subject or topic, the user can write and save a short descripti
 - Documents (P4-04).
 
 ## Acceptance checks
-- [ ] From the browser, a user saves Markdown notes (headings, lists, code, a table) on a subject and on a nested topic; after reload both render correctly.
-- [ ] HTML or `<script>` in notes shows as text and does not execute.
-- [ ] Over-long description or notes returns 400 and the panel shows the message.
-- [ ] Editing another user's subject or topic is still rejected (404).
-- [ ] Client build passes.
+- [x] From the browser, a user saves Markdown notes (headings, lists, code, a table) on a subject and on a nested topic; after reload both render correctly.
+- [x] HTML or `<script>` in notes shows as text and does not execute.
+- [x] Over-long description or notes returns 400 and the panel shows the message.
+- [x] Editing another user's subject or topic is still rejected (404).
+- [x] Client build passes.
 
 ## Implementation notes
 New client dependencies: `react-markdown`, `remark-gfm`. Adapt the CareerContext editor/preview idea only (`docs/reference/03_Reusable-Patterns.md`), not its styling.

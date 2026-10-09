@@ -24,7 +24,9 @@ export class ApiError extends Error {
 
 export async function request(path, { method = "GET", body, auth = false } = {}) {
   const headers = {};
-  if (body !== undefined) {
+  // FormData bodies let the browser set the multipart boundary.
+  const isForm = body instanceof FormData;
+  if (body !== undefined && !isForm) {
     headers["Content-Type"] = "application/json";
   }
   if (auth) {
@@ -39,7 +41,7 @@ export async function request(path, { method = "GET", body, auth = false } = {})
     response = await fetch(`${baseUrl}${path}`, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: isForm ? body : body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
     throw new ApiError(0, "Could not reach the server. Please try again.");
