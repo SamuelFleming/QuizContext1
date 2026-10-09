@@ -12,7 +12,7 @@ Create the three local applications and the conventions later tickets will reuse
 - Initialise `client-webApp` (React + Vite), `server-webApp` (Express), and `server-data` (Express) as separate packages.
 - Give each app its own start script. Document the three commands in the root README.
 - Add `.env.example` for each server and the client. Gitignore `.env`, `node_modules`, and build output. Do not commit secrets.
-- Local ports: client `5173`, `server-webApp` `4000`, `server-data` `4001`.
+- Local ports: client `5017`, `server-webApp` `4017`, `server-data` `4007`. Each app reads `PORT` from its `.env`.
 - On both APIs, success responses use `{ data }` and errors use `{ message }` with an HTTP status. A small error handler returns that shape for unexpected failures and does not leak stack traces or environment values.
 - `GET /health` on each API returns the service name and an ok status. Publish Swagger for the routes that exist. One Swagger UI per API is enough; do not add a second API-contract document or a fragment-merge toolchain.
 
@@ -30,4 +30,4 @@ Create the three local applications and the conventions later tickets will reuse
 - [x] Verification is a local start plus the health requests above.
 
 ## Implementation notes
-Suggested environment names, as placeholders in the examples: `PORT`, and on `server-webApp` only `CLIENT_ORIGIN` (default `http://localhost:5173`). Database and internal-key variables are added in P1-02.
+Suggested environment names, as placeholders in the examples: `PORT`, and on `server-webApp` only `CLIENT_ORIGIN` (default `http://localhost:5017`). Database and internal-key variables are added in P1-02.

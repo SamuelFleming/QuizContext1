@@ -8,7 +8,7 @@ import { openApiSpec } from "./openapi.js";
 export function createApp() {
   const app = express();
   app.disable("x-powered-by");
-  app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" }));
+  app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:5017" }));
   app.use(express.json());
 
   app.get("/health", (_req, res) => {

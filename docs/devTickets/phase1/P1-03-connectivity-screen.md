@@ -9,7 +9,7 @@
 Show the dual-API connectivity result in the browser, styled with the Light Mint & Indigo token set.
 
 ## In scope
-- One page in `client-webApp` that calls `server-webApp` `GET /diagnostics/connectivity` using `VITE_WEB_API_BASE_URL` (default `http://localhost:4000`).
+- One page in `client-webApp` that calls `server-webApp` `GET /diagnostics/connectivity` using `VITE_WEB_API_BASE_URL` (default `http://localhost:4017`).
 - Display each reported status (web API, data API, database). A successful check is visibly ok. A down database, an unreachable data API, or a failed request to `server-webApp` is visibly failed, not a blank page.
 - Add one client theme file that defines the design-concept colours as CSS variables. The page uses those token names and does not hard-code hex values.
 - Loading and error states for the check.

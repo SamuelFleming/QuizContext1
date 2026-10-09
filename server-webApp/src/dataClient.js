@@ -1,5 +1,5 @@
 export async function fetchDatabaseDiagnostic() {
-  const dataApiBaseUrl = process.env.DATA_API_BASE_URL || "http://localhost:4001";
+  const dataApiBaseUrl = process.env.DATA_API_BASE_URL || "http://localhost:4007";
   try {
     const response = await fetch(`${dataApiBaseUrl}/diagnostics/database`, {
       headers: {

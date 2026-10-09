@@ -13,10 +13,10 @@ cd client-webApp && npm install && npm start
 
 | App | URL |
 | --- | --- |
-| client-webApp | http://localhost:5173 |
-| server-webApp | http://localhost:4000 |
-| server-data | http://localhost:4001 |
+| client-webApp | http://localhost:5017 |
+| server-webApp | http://localhost:4017 |
+| server-data | http://localhost:4007 |
 
-Swagger for implemented routes: `http://localhost:4000/api/docs` and `http://localhost:4001/api/docs`.
+Swagger for implemented routes: `http://localhost:4017/api/docs` and `http://localhost:4007/api/docs`.
 
 MongoDB must be running for the connectivity check to report the database as ok. Use the same `INTERNAL_API_KEY` value in both server `.env` files.
