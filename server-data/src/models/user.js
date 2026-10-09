@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { AI_ACCESS_MODES, DISPLAY_NAME_MAX } from "../constants/user.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -10,8 +11,8 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     passwordHash: { type: String, required: true },
-    displayName: { type: String, required: true, trim: true, maxlength: 80 },
-    aiAccessMode: { type: String, enum: ["application", "user"], default: "application" },
+    displayName: { type: String, required: true, trim: true, maxlength: DISPLAY_NAME_MAX },
+    aiAccessMode: { type: String, enum: AI_ACCESS_MODES, default: "application" },
     // Encrypted by server-webApp (AES-256-GCM). server-data never sees the plaintext key.
     aiKey: {
       type: new mongoose.Schema(

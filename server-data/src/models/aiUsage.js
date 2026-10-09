@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import { AI_ACCESS_MODES } from "../constants/user.js";
 
 // One record per AI operation. Holds no prompt text, key, or key fingerprint.
 const aiUsageSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
     operation: { type: String, required: true, maxlength: 80 },
-    providerMode: { type: String, enum: ["application", "user"], required: true },
+    providerMode: { type: String, enum: AI_ACCESS_MODES, required: true },
     model: { type: String, maxlength: 120, default: null },
     inputTokens: { type: Number, min: 0, default: null },
     outputTokens: { type: Number, min: 0, default: null },

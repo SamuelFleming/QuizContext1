@@ -30,4 +30,4 @@ Persist a user in `server-data`, and define the one way a verified user id cross
 - [x] Verification is those requests. No automated suite is required.
 
 ## Implementation notes
-Reuse `requireInternalKey` in `server-data/src/internalAuth.js` and the `{ data }` / `{ message }` helpers. Later phases must copy this header pair rather than invent another user-id channel.
+Reuse `requireInternalKey` in `server-data/src/middleware/internalAuth.js` (moved in P3-06) and the `{ data }` / `{ message }` helpers. Later phases must copy this header pair rather than invent another user-id channel.
