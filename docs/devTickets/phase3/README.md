@@ -8,4 +8,9 @@
 
 **Roadmap.** [Phase 3 in the MVP plan](../00_MVP-Development-Plan.md#phase-3).
 
-**Tickets.** Not written yet. Generate them with `/plan-phase` when this phase starts. Phase scope stays in the MVP plan.
+**Tickets.** Planned, in order. Implement only after one is approved, or run `/implement-phase` for Phase 3.
+
+1. [P3-01](P3-01-profile.md) — profile read and update.
+2. [P3-02](P3-02-ai-key-settings.md) — AI access mode and AES-256-GCM encrypted user key.
+3. [P3-03](P3-03-ai-boundary-check.md) — OpenAI boundary, per-request key resolution, usage record, connectivity check.
+4. [P3-04](P3-04-usage-summary-limit.md) — usage summary and application-key monthly limit.
