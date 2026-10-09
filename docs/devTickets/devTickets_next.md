@@ -18,7 +18,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — connectivity screen. Depends on P1-02.
 
 ## Next approved ticket
-None yet. Review the three tickets, then approve P1-01 for `/implement-ticket`.
+None yet. For each phase: `/plan-phase` writes its tickets, then `/implement-phase` runs those tickets in order. Phase 1 tickets are written. `/implement-phase` Phase 1 runs P1-01, then P1-02, then P1-03.
 
 ## Active / blocked
 None. No open product decision. Local ports, the `X-Internal-Api-Key` header, and the `{ data }` / `{ message }` envelopes are set in the tickets. MongoDB must be running locally before P1-02 can pass.
