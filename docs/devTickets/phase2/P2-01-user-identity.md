@@ -1,6 +1,6 @@
 # P2-01 — User record and trusted user identity
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 2  
 **Depends on:** P1-02  
 **Relevant scope:** MVP plan Phase 2; F01
@@ -23,11 +23,11 @@ Persist a user in `server-data`, and define the one way a verified user id cross
 - `server-data` verifying the JWT itself. The JWT secret stays on `server-webApp`.
 
 ## Acceptance checks
-- [ ] A keyed create stores a user and does not return `passwordHash`.
-- [ ] The keyed email lookup used for login can return the hash. A current-user read cannot.
-- [ ] A missing or wrong internal key is 401. A current-user read does not return a different user than `X-User-Id`.
-- [ ] Swagger on `server-data` lists the new routes.
-- [ ] Verification is those requests. No automated suite is required.
+- [x] A keyed create stores a user and does not return `passwordHash`.
+- [x] The keyed email lookup used for login can return the hash. A current-user read cannot.
+- [x] A missing or wrong internal key is 401. A current-user read does not return a different user than `X-User-Id`.
+- [x] Swagger on `server-data` lists the new routes.
+- [x] Verification is those requests. No automated suite is required.
 
 ## Implementation notes
 Reuse `requireInternalKey` in `server-data/src/internalAuth.js` and the `{ data }` / `{ message }` helpers. Later phases must copy this header pair rather than invent another user-id channel.

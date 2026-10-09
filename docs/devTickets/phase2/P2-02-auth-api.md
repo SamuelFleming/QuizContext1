@@ -1,6 +1,6 @@
 # P2-02 — Registration, login, and current user
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 2  
 **Depends on:** P2-01  
 **Relevant scope:** MVP plan Phase 2; F01; S01
@@ -24,11 +24,13 @@ A caller of `server-webApp` can register, log in, and read only the signed-in us
 - Accepting `userId` from the browser body.
 
 ## Acceptance checks
-- [ ] Register then login returns a token. `GET /users/me` with that token returns the same user and no password hash.
-- [ ] A short password is rejected. A duplicate email is a conflict message. A wrong password does not say whether the email exists.
-- [ ] `GET /users/me` without a token is 401, and `server-data` is not asked to use a body-supplied user id.
-- [ ] Swagger on `server-webApp` lists the auth and current-user routes.
-- [ ] Verification is those requests.
+- [x] Register then login returns a token. `GET /users/me` with that token returns the same user and no password hash.
+- [x] A short password is rejected. A duplicate email is a conflict message. A wrong password does not say whether the email exists.
+- [x] `GET /users/me` without a token is 401, and `server-data` is not asked to use a body-supplied user id.
+- [x] Swagger on `server-webApp` lists the auth and current-user routes.
+- [x] Verification is those requests.
 
 ## Implementation notes
 Extend `server-webApp/src/dataClient.js` for the user calls. Keep using ports from each app's `.env`: client 5017, business API 4017, data API 4007.
+
+Passwords are hashed with `bcryptjs` (pure-JS bcrypt) rather than the native `bcrypt` package, to avoid native build issues on Windows; the hashing scheme is bcrypt either way. `JWT_SECRET` was added to `server-webApp/.env.example`.
