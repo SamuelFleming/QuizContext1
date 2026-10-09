@@ -31,6 +31,7 @@ If docs contradict code or each other, flag the precise conflict instead of sile
 ## Working method
 - **Plan:** write/update small tickets only; do not implement.
 - **Implement:** complete **one approved ticket**, inspect affected code, make scoped changes, perform focused checks, and update ticket/queue status.
+- **Implement phase:** `/implement-phase` runs that phase's existing tickets in order, each through `/implement-ticket`. A failed check gets one minimal in-ticket fix and a re-check. It stops only on a significant block. It does not plan the next phase or commit.
 - Prove React → business API → data API → MongoDB with one vertical slice before bulk CRUD.
 - Avoid unnecessary full-suite regression runs; perform relevant startup, build, request, or focused tests for changed behaviour.
 - Never commit, push, rebase, or create branches unless the user explicitly asks.
