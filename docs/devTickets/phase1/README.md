@@ -8,4 +8,8 @@
 
 **Roadmap.** [Phase 1 in the MVP plan](../00_MVP-Development-Plan.md#phase-1).
 
-**Tickets.** Not written yet. Generate them with `/plan-phase` when this phase starts. Phase scope stays in the MVP plan.
+**Tickets.** Planned, in order. Implement only after one is approved.
+
+1. [P1-01](P1-01-local-applications.md) — three local apps, health, response shape, Swagger.
+2. [P1-02](P1-02-internal-diagnostic-api.md) — internal key, MongoDB ping, webApp diagnostic.
+3. [P1-03](P1-03-connectivity-screen.md) — browser status page using the theme tokens.

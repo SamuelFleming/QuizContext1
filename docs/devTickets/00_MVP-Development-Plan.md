@@ -1,6 +1,6 @@
 # QuizContext.io — MVP Development Plan
 
-**Status:** Roadmap approved. Phase tickets are not written yet.  
+**Status:** Roadmap approved. Phase 1 tickets are planned. Later phases are not ticketed yet.  
 **Date:** 9 October 2026  
 **Role:** Phase sequence for `/plan-phase`. Product behaviour stays in the [Project Ideation Charter](../ProjectIdeationCharter.md) and `docs/core-scope/`. CareerContext notes in `docs/reference/` are advisory.
 
