@@ -152,6 +152,11 @@ export default function ContentWorkspace({ subjectId, navigate }) {
             hasSubtopics: selectedTopic ? countDescendants(topics, selectedTopic.id) > 0 : false,
           }}
           onOpenProfile={() => navigate("/profile")}
+          onGenerateQuiz={() => {
+            const params = new URLSearchParams({ subjectId });
+            if (selectedTopic) params.set("topicId", selectedTopic.id);
+            navigate(`/quizzes/new?${params.toString()}`);
+          }}
         >
           <DocumentsPanel
             subjectId={subjectId}

@@ -102,8 +102,20 @@ export async function assembleContext(
   const sources = orderSources(raw);
   const selectedTopic = raw.topicId ? raw.topics.find((t) => t.id === raw.topicId) : null;
   const selection = selectedTopic
-    ? { type: "topic", id: selectedTopic.id, name: selectedTopic.name }
-    : { type: "subject", id: raw.subject.id, name: raw.subject.name };
+    ? {
+        type: "topic",
+        id: selectedTopic.id,
+        name: selectedTopic.name,
+        subjectName: raw.subject.name,
+        path: [raw.subject.name, ...raw.ancestors.map((a) => a.name), selectedTopic.name].join(" > "),
+      }
+    : {
+        type: "subject",
+        id: raw.subject.id,
+        name: raw.subject.name,
+        subjectName: raw.subject.name,
+        path: raw.subject.name,
+      };
 
   let remaining = budget;
   let includedChars = 0;

@@ -1,6 +1,6 @@
 # P6-03 — Attempts and the Quiz Player
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 6  
 **Depends on:** P6-01, P6-02  
 **Relevant scope:** MVP plan Phase 6 slice 2 and §3 "Hidden marking until submit", "Separate learning records"; F06; S06
@@ -35,10 +35,10 @@ The user starts an attempt on a saved quiz, answers multiple-choice and short-an
 - Timers, shuffling question order per attempt, and partial-credit rules.
 
 ## Acceptance checks
-- [ ] Headless browser: start an attempt, answer both question types, reload mid-attempt and see the answers kept, then submit. The stored attempt has status `submitted` and the responses.
-- [ ] The raw JSON from the start, get, patch, and submit routes contains no correct index, expected answer, marking criteria, or snapshot.
-- [ ] Starting again while an attempt is in progress returns the same attempt. After submit, starting creates a new attempt, and the first attempt is unchanged.
-- [ ] Patching or submitting an already submitted attempt returns 409. An unknown question id or an out-of-range option returns 400.
-- [ ] User B gets 404 on user A's quiz attempts and attempt ids. No token gives 401.
-- [ ] Navigating away mid-attempt prompts for confirmation. The 390px layout stays usable. Lint and build pass.
-- [ ] Swagger on both APIs matches the implemented routes.
+- [x] Headless browser: start an attempt, answer both question types, reload mid-attempt and see the answers kept, then submit. The stored attempt has status `submitted` and the responses.
+- [x] The raw JSON from the start, get, patch, and submit routes contains no correct index, expected answer, marking criteria, or snapshot.
+- [x] Starting again while an attempt is in progress returns the same attempt. After submit, starting creates a new attempt, and the first attempt is unchanged.
+- [x] Patching or submitting an already submitted attempt returns 409. An unknown question id or an out-of-range option returns 400.
+- [x] User B gets 404 on user A's quiz attempts and attempt ids. No token gives 401.
+- [x] Navigating away mid-attempt prompts for confirmation. The 390px layout stays usable. Lint and build pass.
+- [x] Swagger on both APIs matches the implemented routes.

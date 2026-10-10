@@ -1,6 +1,6 @@
 # P6-05 — Quiz Results screen
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 6  
 **Depends on:** P6-04  
 **Relevant scope:** MVP plan Phase 6 slice 3; F07 step 5, F08 steps 3–4; S06 "submission or evaluation status"; S07; `docs/design/01_design-concept.md`
@@ -26,8 +26,8 @@ After submitting, the user sees the overall result and the feedback for each que
 - Charts or analytics.
 
 ## Acceptance checks
-- [ ] Headless browser with a mocked provider: complete a mixed quiz, see the results with per-question feedback, reload, and see the same results.
-- [ ] A mocked failure shows the failed state. Retry evaluation then shows the results.
-- [ ] "Try again" opens a fresh attempt. The previous attempt's results are unchanged when reopened by URL.
-- [ ] A `<script>` tag in a short answer renders as text.
-- [ ] The 390px layout stays usable. Only theme tokens are used. Lint and build pass.
+- [x] Headless browser with a mocked provider: complete a mixed quiz, see the results with per-question feedback, reload, and see the same results.
+- [x] A mocked failure shows the failed state. Retry evaluation then shows the results.
+- [x] "Try again" opens a fresh attempt. The previous attempt's results are unchanged when reopened by URL.
+- [x] A `<script>` tag in a short answer renders as text.
+- [x] The 390px layout stays usable. Only theme tokens are used. Lint and build pass.

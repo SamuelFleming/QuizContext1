@@ -25,6 +25,7 @@ export default function NodeDetails({
   onDelete,
   suggestionScope,
   onOpenProfile,
+  onGenerateQuiz,
   children,
 }) {
   const [name, setName] = useState(node.name);
@@ -98,6 +99,14 @@ export default function NodeDetails({
         suggestionScope={suggestionScope}
         onOpenProfile={onOpenProfile}
       />
+
+      {onGenerateQuiz ? (
+        <div className="button-row">
+          <button type="button" className="secondary" onClick={onGenerateQuiz}>
+            Generate quiz
+          </button>
+        </div>
+      ) : null}
 
       {children}
 

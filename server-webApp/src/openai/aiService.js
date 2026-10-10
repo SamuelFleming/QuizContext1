@@ -27,8 +27,10 @@ export async function runAiOperation({
   jsonSchema,
   validate,
   maxOutputTokens,
+  timeoutMs: timeoutOverride,
 }) {
-  const { model, timeoutMs } = getAiConfig();
+  const { model, timeoutMs: defaultTimeout } = getAiConfig();
+  const timeoutMs = timeoutOverride > 0 ? timeoutOverride : defaultTimeout;
   let providerMode = null;
 
   try {

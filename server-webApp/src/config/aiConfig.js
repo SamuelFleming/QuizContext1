@@ -14,6 +14,7 @@ export function getAiConfig() {
     applicationKey: process.env.OPENAI_API_KEY || "",
     model: process.env.AI_MODEL_DEFAULT || DEFAULT_MODEL,
     timeoutMs: Number(process.env.AI_TIMEOUT_MS) || 20000,
+    quizTimeoutMs: Number(process.env.AI_QUIZ_TIMEOUT_MS) || 60000,
     appMonthlyTokenLimit: readLimit(process.env.AI_APP_MONTHLY_TOKEN_LIMIT),
   };
 }

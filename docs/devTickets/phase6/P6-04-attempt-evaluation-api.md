@@ -1,6 +1,6 @@
 # P6-04 — Attempt evaluation: deterministic multiple choice and AI short answer
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 6  
 **Depends on:** P6-03  
 **Relevant scope:** MVP plan Phase 6 slice 3 and §3 "Context mode", "Failure isolation"; F07; core scope 02 §2.4; product theory §6
@@ -36,14 +36,14 @@ Submitting an attempt marks multiple choice by comparison with the stored correc
 - Re-reading live content at evaluation time.
 
 ## Acceptance checks
-- [ ] A multiple-choice-only quiz is evaluated on submit with no AI call and no usage record.
-- [ ] Mocked provider, mixed quiz: submit returns `evaluated` with per-question results and the overall score. The usage record shows `answer_evaluation`, `promptVersion`, and `succeeded`.
-- [ ] Mocked invalid output (a missing question id, a bad result value, an unknown `sourceRef`) leaves the status at `evaluation_failed` with the responses intact. A retry with valid output then succeeds.
-- [ ] With AI disabled, no key, or the limit reached, submit returns the typed error, the responses are saved (`evaluation_failed`), and the quiz detail still opens.
-- [ ] After the source notes are edited or deleted, evaluating a new attempt on the same quiz still works, and earlier evaluated attempts are unchanged.
-- [ ] No response, log line, or `AiUsage` record contains the key, prompt instructions, the snapshot, or learner response text.
-- [ ] User B gets 404 on user A's attempt submit and evaluate routes. No token gives 401.
-- [ ] Swagger on both APIs matches the implemented routes.
+- [x] A multiple-choice-only quiz is evaluated on submit with no AI call and no usage record.
+- [x] Mocked provider, mixed quiz: submit returns `evaluated` with per-question results and the overall score. The usage record shows `answer_evaluation`, `promptVersion`, and `succeeded`.
+- [x] Mocked invalid output (a missing question id, a bad result value, an unknown `sourceRef`) leaves the status at `evaluation_failed` with the responses intact. A retry with valid output then succeeds.
+- [x] With AI disabled, no key, or the limit reached, submit returns the typed error, the responses are saved (`evaluation_failed`), and the quiz detail still opens.
+- [x] After the source notes are edited or deleted, evaluating a new attempt on the same quiz still works, and earlier evaluated attempts are unchanged.
+- [x] No response, log line, or `AiUsage` record contains the key, prompt instructions, the snapshot, or learner response text.
+- [x] User B gets 404 on user A's attempt submit and evaluate routes. No token gives 401.
+- [x] Swagger on both APIs matches the implemented routes.
 
 ## Implementation notes
 - `runAiOperation` already records usage on failure. Pass `promptVersion` and context counts from the **quiz** (not a fresh assemble). Evaluation can use the default AI timeout unless it proves too short.

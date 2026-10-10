@@ -4,7 +4,9 @@ import { errorHandler, notFound } from "./middleware/errorHandler.js";
 import { openApiSpec } from "./openapi/index.js";
 import { aiUsageRoutes } from "./routes/aiUsageRoutes.js";
 import { diagnosticsRoutes } from "./routes/diagnosticsRoutes.js";
+import { attemptRoutes } from "./routes/attemptRoutes.js";
 import { documentRoutes } from "./routes/documentRoutes.js";
+import { quizRoutes } from "./routes/quizRoutes.js";
 import { subjectRoutes } from "./routes/subjectRoutes.js";
 import { topicRoutes } from "./routes/topicRoutes.js";
 import { userRoutes } from "./routes/userRoutes.js";
@@ -20,6 +22,8 @@ export function createApp() {
   app.use("/subjects", subjectRoutes);
   app.use("/topics", topicRoutes);
   app.use("/documents", documentRoutes);
+  app.use("/quizzes", quizRoutes);
+  app.use("/attempts", attemptRoutes);
 
   app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 

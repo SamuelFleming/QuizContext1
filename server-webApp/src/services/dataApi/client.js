@@ -25,7 +25,7 @@ export async function userScopedRequest(userId, path, { method = "GET", body } =
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
   const payload = await response.json().catch(() => ({}));
-  if (response.status === 400 || response.status === 404) {
+  if (response.status === 400 || response.status === 404 || response.status === 409) {
     throw createHttpError(response.status, payload?.message || "Request failed");
   }
   if (!response.ok) {
