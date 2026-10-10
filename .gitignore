@@ -5,5 +5,16 @@ dist/
 build/
 
 server-webApp/.env
+server-webApp/node_modules/
+server-webApp/dist/
+server-webApp/build/
+
 server-data/.env
+server-data/node_modules/
+server-data/dist/
+server-data/build/
+
 client-webApp/.env
+client-webApp/node_modules/
+client-webApp/dist/
+client-webApp/build/
