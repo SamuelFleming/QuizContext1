@@ -19,7 +19,7 @@ Test the shipped MVP and record each change wanted from that use as its own Phas
 - Quiz `AI_INVALID_OUTPUT` reliability, until a later request.
 
 ## Acceptance checks
-- [x] Changes captured so far are 7001–7005, 7010–7014, and 7026–7029. 7012 and 7026–7029 are deferred.
+- [x] Changes captured so far are 7001–7005, 7010–7016, and 7026–7029. 7012 and 7026–7029 are deferred.
 - [ ] Further testing either adds the next `7xxx` ticket or records why the item stays unscoped.
 - [ ] This ticket changes no application code.
 
