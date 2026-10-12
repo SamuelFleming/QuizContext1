@@ -11,7 +11,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 4 | Subjects, recursive topics, Markdown + document ingestion | Done |
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
-| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Discovery done; build not started |
+| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build in progress |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -19,15 +19,15 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-[7001](phase7/7001-upload-size-limit.md) — raise the raw upload limit from 5 MB to 25 MB.
+[7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Blocked on deferred 7026.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
-1. [7001](phase7/7001-upload-size-limit.md) — raw upload limit 25 MB. Planned.
-2. [7002](phase7/7002-docx-extraction.md) — Word `.docx` to reviewed text. Planned.
-3. [7003](phase7/7003-pptx-extraction.md) — PowerPoint `.pptx` to reviewed text. Planned.
-4. [7004](phase7/7004-python-upload.md) — `.py` as UTF-8 text. Planned.
-5. [7005](phase7/7005-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Planned.
+1. [7001](phase7/7001-upload-size-limit.md) — raw upload limit 25 MB. Done.
+2. [7002](phase7/7002-docx-extraction.md) — Word `.docx` to reviewed text. Done.
+3. [7003](phase7/7003-pptx-extraction.md) — PowerPoint `.pptx` to reviewed text. Done.
+4. [7004](phase7/7004-python-upload.md) — `.py` as UTF-8 text. Done.
+5. [7005](phase7/7005-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Done.
 6. [7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Planned. Depends on deferred 7026.
 7. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Planned. Depends on deferred 7026 and on 7010.
 8. [7013](phase7/7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts. Planned.
@@ -84,4 +84,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-None. The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.
+7010 and 7011 were not started. Both depend on deferred 7026, which is not done.
+
+The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.

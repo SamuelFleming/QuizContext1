@@ -11,7 +11,7 @@ import {
 
 const TITLE_MAX = 200;
 const CONTENT_MAX = 200000;
-const ACCEPT = ".md,.markdown,.txt,.pdf";
+const ACCEPT = ".md,.markdown,.txt,.pdf,.docx,.pptx,.py,.ipynb";
 
 function formatSize(bytes) {
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -238,11 +238,14 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
           type="file"
           accept={ACCEPT}
           className="visually-hidden"
-          aria-label="Choose a Markdown, text, or PDF file"
+          aria-label="Choose a Markdown, text, PDF, Word, PowerPoint, Python, or notebook file"
           onChange={handleFile}
         />
       </div>
-      <p className="usage-meta">Markdown, text, or PDFs with selectable text, up to 5 MB.</p>
+      <p className="usage-meta">
+        Markdown, text, PDFs with selectable text, Word (.docx), PowerPoint (.pptx), Python (.py), or Jupyter
+        (.ipynb), up to 25 MB.
+      </p>
       {errorLine}
       {documents === null ? (
         error ? null : <p className="status-line">Loading…</p>

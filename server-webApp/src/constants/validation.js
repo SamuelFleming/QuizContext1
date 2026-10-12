@@ -8,7 +8,7 @@ export const CONTENT_NOTES_MAX = 50000;
 
 export const DOCUMENT_TITLE_MAX = 200;
 export const DOCUMENT_CONTENT_MAX = 200000;
-export const DOCUMENT_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
+export const DOCUMENT_UPLOAD_MAX_BYTES = 25 * 1024 * 1024;
 export const DOCUMENT_FILE_NAME_MAX = 255;
 
 export const QUIZ_DIFFICULTIES = ["easy", "medium", "hard"];

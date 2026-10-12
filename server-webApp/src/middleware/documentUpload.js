@@ -15,7 +15,8 @@ export function documentUpload(req, res, next) {
       return;
     }
     if (err.code === "LIMIT_FILE_SIZE") {
-      sendMessage(res, 413, "The file is larger than the 5 MB limit");
+      const limitMb = DOCUMENT_UPLOAD_MAX_BYTES / (1024 * 1024);
+      sendMessage(res, 413, `The file is larger than the ${limitMb} MB limit`);
       return;
     }
     if (err instanceof multer.MulterError) {

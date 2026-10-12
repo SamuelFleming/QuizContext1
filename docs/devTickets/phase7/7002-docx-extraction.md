@@ -1,6 +1,6 @@
 # 7002 — Word document extraction
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 7  
 **Depends on:** 7001  
 **Relevant scope:** Phase 7 README; F03; S03; P4-04
@@ -20,12 +20,12 @@ A `.docx` file is extracted to text, reviewed by the user, and saved as a docume
 - OCR, embedded-image captions (7012), and storing the `.docx`.
 
 ## Acceptance checks
-- [ ] From the browser, a `.docx` with headings and paragraphs uploads, the review step shows that text, an edit survives reload.
-- [ ] A `.docx` with no extractable text returns 422 and saves nothing.
-- [ ] A `.doc` file returns 415 naming `.docx`.
-- [ ] Extracted text over 200,000 characters returns 422. A `.docx` over 25 MB returns 413.
-- [ ] User B cannot save the extracted text onto user A's subject (404).
-- [ ] Swagger lists `.docx` on the extract route.
+- [x] From the browser, a `.docx` with headings and paragraphs uploads, the review step shows that text, an edit survives reload.
+- [x] A `.docx` with no extractable text returns 422 and saves nothing.
+- [x] A `.doc` file returns 415 naming `.docx`.
+- [x] Extracted text over 200,000 characters returns 422. A `.docx` over 25 MB returns 413.
+- [x] User B cannot save the extracted text onto user A's subject (404).
+- [x] Swagger lists `.docx` on the extract route.
 
 ## Implementation notes
 CareerContext used `mammoth` for `.docx`. Confirm the current API. Keep extraction in `documentExtractionService.js`. `server-data` still stores reviewed `content` only.
