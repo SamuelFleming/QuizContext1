@@ -19,7 +19,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-[7014](phase7/7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions.
+[7015](phase7/7015-ai-run-diagnostics.md) — record AI scope, size, token counts, and rejection reasons.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -32,7 +32,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 7. [7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Done. Depends on 7006.
 8. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Done (browser checks pending manual UAT). Depends on 7006 and on 7010.
 9. [7013](phase7/7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts. Done.
-10. [7014](phase7/7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Planned. Depends on 7013.
+10. [7014](phase7/7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Done (browser checks pending manual UAT). Depends on 7013.
 11. [7015](phase7/7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected. Planned.
 12. [7016](phase7/7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Planned. Depends on 7015.
 13. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
@@ -84,6 +84,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-None. 7014 is next. 7011 is implemented; its browser acceptance checks await manual UAT.
+None. 7015 is next. 7011 and 7014 are implemented; their browser acceptance checks await manual UAT.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.

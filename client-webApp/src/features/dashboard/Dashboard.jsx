@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/useAuth.js";
 import { listAttempts, listQuizzes } from "../../services/quizService.js";
 import { listSubjects } from "../../services/subjectService.js";
+import StudyHistorySection from "./StudyHistorySection.jsx";
 
 export default function Dashboard({ navigate }) {
   const { user, signOut } = useAuth();
@@ -47,6 +48,7 @@ export default function Dashboard({ navigate }) {
           Generate quiz
         </button>
       </section>
+      <StudyHistorySection subjects={subjects} navigate={navigate} />
       <section className="card" aria-live="polite">
         <div className="section-head">
           <h2>Subjects</h2>
