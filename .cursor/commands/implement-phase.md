@@ -1,6 +1,6 @@
 # Implement Phase
 
-Implement the user-named QuizContext phase. **Do not plan another phase, commit, or push.**
+Implement the user-named QuizContext phase. **Do not plan another phase, commit, or push.** For ticket IDs that are not one phase, use `/implement-numerous`.
 
 Invoking this command approves that phase's already written tickets. Complete them one at a time, in queue order, by following `.cursor/commands/implement-ticket.md` for each. Do not merge them into one change.
 
