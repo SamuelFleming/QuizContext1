@@ -30,11 +30,13 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 5. [7005](phase7/7005-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Planned.
 6. [7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Planned. Depends on deferred 7026.
 7. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Planned. Depends on deferred 7026 and on 7010.
-8. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
-9. [7026](phase7/7026-content-completeness.md) — computed completeness on subject and topic reads. **Deferred.**
-10. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7026.
-11. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7026.
-12. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
+8. [7013](phase7/7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts. Planned.
+9. [7014](phase7/7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Planned. Depends on 7013.
+10. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
+11. [7026](phase7/7026-content-completeness.md) — computed completeness on subject and topic reads. **Deferred.**
+12. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7026.
+13. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7026.
+14. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
 
 Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUTPUT` reliability is not in this phase.
 

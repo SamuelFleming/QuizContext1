@@ -1,6 +1,6 @@
 # Phase 7 — Initial UAT feedback
 
-**Status:** Discovery in progress (7000). Implementation tickets 7001–7011 are planned. 7012 is deferred.
+**Status:** Discovery in progress (7000). Planned build tickets are 7001–7005, 7010, 7011, 7013, and 7014. 7012 and 7026–7029 are deferred.
 
 **Objective.** Refine the shipped MVP from first real use: more study files become reviewed text, and the user can see whether a subject, topic, or AI description is complete enough to quiz.
 
@@ -18,20 +18,22 @@
 3. [7003](7003-pptx-extraction.md) — PowerPoint `.pptx`.
 4. [7004](7004-python-upload.md) — `.py`.
 5. [7005](7005-notebook-upload.md) — `.ipynb`.
-6. [7006](7006-content-completeness.md) — completeness facts on subject and topic reads.
-7. [7007](7007-topic-completeness-indicators.md) — indicators in the workspace tree.
-8. [7008](7008-subject-completeness-bar.md) — bar on the workspace subject and the dashboard.
-9. [7009](7009-description-freshness.md) — AI description vs later notes and documents.
-10. [7010](7010-multi-topic-quiz-api.md) — generation from an explicit topic set.
-11. [7011](7011-quiz-topic-picker.md) — form for that set; incomplete topics cannot be chosen.
-12. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
+6. [7010](7010-multi-topic-quiz-api.md) — generation from an explicit topic set. Depends on deferred 7026.
+7. [7011](7011-quiz-topic-picker.md) — form for that set; incomplete topics cannot be chosen. Depends on deferred 7026 and on 7010.
+8. [7013](7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts.
+9. [7014](7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Depends on 7013.
+10. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
+11. [7026](7026-content-completeness.md) — completeness facts on subject and topic reads. Deferred.
+12. [7027](7027-topic-completeness-indicators.md) — indicators in the workspace tree. Deferred.
+13. [7028](7028-subject-completeness-bar.md) — bar on the workspace subject and the dashboard. Deferred.
+14. [7029](7029-description-freshness.md) — AI description vs later notes and documents. Deferred.
 
 **Not in this phase.** Quiz `AI_INVALID_OUTPUT` failures (output budget, strict validation, retries). Held until a later prompt. Do not fold a generation-reliability fix into these tickets.
 
 **Conflicts with current core scope (intentional; do not silently "fix" core scope while implementing).**
 
 - Product theory §4 allows an entire subject, one topic, or a topic plus descendants. 7010 adds a fourth scope: an explicit set of topics, without their unselected siblings or descendants. Core scope stays the MVP description until someone updates it on purpose.
-- S02 says the MVP does not require progress visualisations. The subject bar is a post-MVP UAT addition.
+- S02 says the MVP does not require progress visualisations. The subject bar (7028) and the study-history summary (7013, 7014) are post-MVP UAT additions.
 - S05 speaks of one subject or topic. 7011 extends the generation form.
 
 **Planning decisions (change before implementing if wrong).**
