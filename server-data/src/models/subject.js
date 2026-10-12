@@ -4,6 +4,7 @@ import {
   CONTENT_NAME_MAX,
   CONTENT_NOTES_MAX,
 } from "../constants/content.js";
+import { contentFacts } from "../utils/completeness.js";
 
 const subjectSchema = new mongoose.Schema(
   {
@@ -17,16 +18,23 @@ const subjectSchema = new mongoose.Schema(
 
 export const Subject = mongoose.models.Subject || mongoose.model("Subject", subjectSchema);
 
-export function toSubject(doc) {
+export function toSubject(doc, stats) {
   if (!doc) {
     return null;
   }
-  return {
+  const subject = {
     id: doc._id.toString(),
     name: doc.name,
     description: doc.description,
     notes: doc.notes,
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
+  };
+  if (!stats) return subject;
+  return {
+    ...subject,
+    ...contentFacts(doc, stats.documentCount),
+    topicCount: stats.topicCount,
+    contentCompleteTopicCount: stats.contentCompleteTopicCount,
   };
 }

@@ -1,6 +1,6 @@
 # Phase 7 — Initial UAT feedback
 
-**Status:** Discovery done (7000). Planned build tickets are 7001–7005, 7010, 7011, and 7013–7016. 7012 and 7026–7029 are deferred.
+**Status:** Discovery done (7000). 7001–7006 and 7010 are done. Planned build tickets are 7011 and 7013–7016. 7012 and 7027–7029 are deferred.
 
 **Objective.** Refine the shipped MVP from first real use: more study files become reviewed text, and the user can see whether a subject, topic, or AI description is complete enough to quiz.
 
@@ -18,16 +18,16 @@
 3. [7003](7003-pptx-extraction.md) — PowerPoint `.pptx`.
 4. [7004](7004-python-upload.md) — `.py`.
 5. [7005](7005-notebook-upload.md) — `.ipynb`.
-6. [7010](7010-multi-topic-quiz-api.md) — generation from an explicit topic set. Depends on deferred 7026.
-7. [7011](7011-quiz-topic-picker.md) — form for that set; incomplete topics cannot be chosen. Depends on deferred 7026 and on 7010.
-8. [7013](7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts.
-9. [7014](7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Depends on 7013.
-10. [7015](7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected.
-11. [7016](7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Depends on 7015.
-12. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
-13. [7026](7026-content-completeness.md) — completeness facts on subject and topic reads. Deferred.
-14. [7027](7027-topic-completeness-indicators.md) — indicators in the workspace tree. Deferred.
-15. [7028](7028-subject-completeness-bar.md) — bar on the workspace subject and the dashboard. Deferred.
+6. [7006](7006-content-completeness.md) — completeness facts on subject and topic reads. Done. Renamed from 7026.
+7. [7010](7010-multi-topic-quiz-api.md) — generation from an explicit topic set. Done. Depends on 7006.
+8. [7011](7011-quiz-topic-picker.md) — form for that set; incomplete topics cannot be chosen. Depends on 7006 and on 7010.
+9. [7013](7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts.
+10. [7014](7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Depends on 7013.
+11. [7015](7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected.
+12. [7016](7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Depends on 7015.
+13. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
+14. [7027](7027-topic-completeness-indicators.md) — indicators in the workspace tree. Deferred. Depends on 7006.
+15. [7028](7028-subject-completeness-bar.md) — bar on the workspace subject and the dashboard. Deferred. Depends on 7006.
 16. [7029](7029-description-freshness.md) — AI description vs later notes and documents. Deferred.
 
 **Not in this phase.** Quiz `AI_INVALID_OUTPUT` failures (output budget, strict validation, retries). Held until a later prompt. Do not fold a generation-reliability fix into these tickets.

@@ -2,7 +2,7 @@
 
 **Status:** Deferred  
 **Phase:** 7  
-**Depends on:** 7026  
+**Depends on:** 7006  
 **Relevant scope:** Phase 7 README; F03; S02; S03; `docs/design/01_design-concept.md`
 
 ## Objective

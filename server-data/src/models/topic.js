@@ -4,6 +4,7 @@ import {
   CONTENT_NAME_MAX,
   CONTENT_NOTES_MAX,
 } from "../constants/content.js";
+import { contentFacts } from "../utils/completeness.js";
 
 // One collection for every level of the tree. parentTopicId is null for top-level topics.
 const topicSchema = new mongoose.Schema(
@@ -25,11 +26,11 @@ const topicSchema = new mongoose.Schema(
 
 export const Topic = mongoose.models.Topic || mongoose.model("Topic", topicSchema);
 
-export function toTopic(doc) {
+export function toTopic(doc, documentCount) {
   if (!doc) {
     return null;
   }
-  return {
+  const topic = {
     id: doc._id.toString(),
     subjectId: doc.subjectId.toString(),
     parentTopicId: doc.parentTopicId ? doc.parentTopicId.toString() : null,
@@ -39,4 +40,6 @@ export function toTopic(doc) {
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   };
+  if (documentCount === undefined) return topic;
+  return { ...topic, ...contentFacts(doc, documentCount) };
 }

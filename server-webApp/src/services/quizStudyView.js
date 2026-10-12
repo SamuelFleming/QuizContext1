@@ -16,6 +16,7 @@ export function toStudyView(quiz) {
     title: quiz.title,
     subjectId: quiz.subjectId,
     topicId: quiz.topicId || null,
+    topicIds: Array.isArray(quiz.topicIds) ? quiz.topicIds : [],
     subjectName: quiz.subjectName,
     topicPath: quiz.topicPath || null,
     multipleChoiceCount: quiz.multipleChoiceCount,

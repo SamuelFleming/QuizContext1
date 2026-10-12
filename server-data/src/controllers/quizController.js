@@ -14,6 +14,8 @@ import {
   QUIZ_QUESTIONS_MAX,
   QUIZ_QUESTIONS_MIN,
   QUIZ_SNAPSHOT_MAX,
+  QUIZ_TOPIC_IDS_MAX,
+  QUIZ_TOPIC_PATH_MAX,
 } from "../constants/content.js";
 import { toQuiz, toQuizSummary } from "../models/quiz.js";
 import { toAttemptSummary } from "../models/attempt.js";
@@ -133,11 +135,48 @@ function readManifest(raw) {
   return { entries };
 }
 
+function readTopicIds(raw, topicId) {
+  if (raw === undefined || raw === null) {
+    return { topicIds: [] };
+  }
+  if (!Array.isArray(raw) || raw.length > QUIZ_TOPIC_IDS_MAX) {
+    return { error: `topicIds must contain at most ${QUIZ_TOPIC_IDS_MAX} topic ids` };
+  }
+  const topicIds = [];
+  const seen = new Set();
+  for (const id of raw) {
+    if (typeof id !== "string" || !id.trim()) {
+      return { error: "topicIds must be topic ids" };
+    }
+    const value = id.trim();
+    if (seen.has(value)) {
+      return { error: "topicIds must be unique" };
+    }
+    seen.add(value);
+    topicIds.push(value);
+  }
+  if (topicIds.length > 0 && topicId) {
+    return { error: "Send topicId or topicIds, not both" };
+  }
+  return { topicIds };
+}
+
+function limitTopicPath(topicPath) {
+  if (topicPath === null || topicPath === undefined || topicPath === "") {
+    return null;
+  }
+  if (typeof topicPath !== "string") {
+    return { error: "topicPath must be a string or null" };
+  }
+  return topicPath.length > QUIZ_TOPIC_PATH_MAX ? topicPath.slice(0, QUIZ_TOPIC_PATH_MAX) : topicPath;
+}
+
 function readQuizInput(body) {
   const {
     title,
     subjectId,
     topicId = null,
+    topicIds: rawTopicIds,
     subjectName,
     topicPath = null,
     multipleChoiceCount,
@@ -160,11 +199,16 @@ function readQuizInput(body) {
   if (topicId !== null && topicId !== undefined && (typeof topicId !== "string" || !topicId)) {
     return { error: "topicId must be a topic id or null" };
   }
+  const parsedTopicIds = readTopicIds(rawTopicIds, topicId || null);
+  if (parsedTopicIds.error) {
+    return { error: parsedTopicIds.error };
+  }
   if (!isNonEmptyString(subjectName, CONTENT_NAME_MAX)) {
     return { error: "subjectName is required" };
   }
-  if (topicPath !== null && topicPath !== undefined && typeof topicPath !== "string") {
-    return { error: "topicPath must be a string or null" };
+  const storedPath = limitTopicPath(topicPath);
+  if (storedPath && typeof storedPath === "object") {
+    return { error: storedPath.error };
   }
   if (!Number.isInteger(multipleChoiceCount) || multipleChoiceCount < 0) {
     return { error: "multipleChoiceCount is invalid" };
@@ -224,8 +268,9 @@ function readQuizInput(body) {
       title: title.trim(),
       subjectId,
       topicId: topicId || null,
+      topicIds: parsedTopicIds.topicIds,
       subjectName: subjectName.trim(),
-      topicPath: topicPath || null,
+      topicPath: storedPath,
       multipleChoiceCount,
       shortAnswerCount,
       difficulty,

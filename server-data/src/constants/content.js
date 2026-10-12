@@ -22,6 +22,8 @@ export const QUIZ_CRITERIA_MAX = 5;
 export const QUIZ_CONCEPTS_MAX = 5;
 export const QUIZ_CONCEPT_MAX = 80;
 export const QUIZ_SNAPSHOT_MAX = 100000;
+export const QUIZ_TOPIC_IDS_MAX = 30;
+export const QUIZ_TOPIC_PATH_MAX = 2000;
 
 export const ATTEMPT_STATUSES = ["in_progress", "submitted", "evaluated", "evaluation_failed"];
 export const ATTEMPT_RESPONSE_MAX = 2000;

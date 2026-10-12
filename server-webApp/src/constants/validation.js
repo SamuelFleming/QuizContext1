@@ -22,3 +22,5 @@ export const QUIZ_CRITERIA_MIN = 1;
 export const QUIZ_CRITERIA_MAX = 5;
 export const QUIZ_CONCEPTS_MAX = 5;
 export const QUIZ_CONCEPT_MAX = 80;
+export const QUIZ_TOPIC_IDS_MAX = 30;
+export const QUIZ_TOPIC_PATH_MAX = 2000;

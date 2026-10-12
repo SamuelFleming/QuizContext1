@@ -1,8 +1,8 @@
 # 7011 — Quiz topic picker
 
-**Status:** Planned  
+**Status:** Done (lint and build verified; browser acceptance checks pending manual UAT)  
 **Phase:** 7  
-**Depends on:** 7026 (deferred), 7010  
+**Depends on:** 7006, 7010  
 **Relevant scope:** Phase 7 README; F05; S05; P6-02
 
 ## Objective
@@ -37,7 +37,7 @@ The generation form can target the whole subject, or any set of topics and subto
 - [ ] Whole-subject mode still generates, and names any topics that will be left out.
 - [ ] A workspace link for an incomplete topic opens the form without that topic selected, and with the reason visible.
 - [ ] Submitting zero chosen topics shows a form error and does not call the API.
-- [ ] At 390px the Whole subject row, the arrows, and the indented checkboxes are usable. Lint and build pass.
+- [ ] At 390px the Whole subject row, the arrows, and the indented checkboxes are usable. Lint and build pass. *(Lint and build verified; browser checks above await manual UAT.)*
 
 ## Implementation notes
 Use `contentComplete` from the topic list. Do not infer it from empty description fields. The form expands a parent check into explicit ids. 7010 still accepts a single `topicId` with `includeDescendants` on the API. This form does not send that pair.

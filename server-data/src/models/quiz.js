@@ -7,6 +7,8 @@ import {
   QUIZ_PROMPT_MAX,
   QUIZ_QUESTION_TYPES,
   QUIZ_SNAPSHOT_MAX,
+  QUIZ_TOPIC_IDS_MAX,
+  QUIZ_TOPIC_PATH_MAX,
 } from "../constants/content.js";
 
 const manifestEntrySchema = new mongoose.Schema(
@@ -42,8 +44,18 @@ const quizSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true, maxlength: CONTENT_NAME_MAX },
     subjectId: { type: String, required: true },
     topicId: { type: String, default: null },
+    topicIds: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: (ids) =>
+          Array.isArray(ids) &&
+          ids.length <= QUIZ_TOPIC_IDS_MAX &&
+          ids.every((id) => typeof id === "string" && id.length > 0),
+      },
+    },
     subjectName: { type: String, required: true, maxlength: CONTENT_NAME_MAX },
-    topicPath: { type: String, default: null },
+    topicPath: { type: String, default: null, maxlength: QUIZ_TOPIC_PATH_MAX },
     multipleChoiceCount: { type: Number, min: 0, required: true },
     shortAnswerCount: { type: Number, min: 0, required: true },
     difficulty: { type: String, enum: QUIZ_DIFFICULTIES, required: true },
@@ -108,6 +120,7 @@ export function toQuiz(doc) {
     title: doc.title,
     subjectId: doc.subjectId,
     topicId: doc.topicId || null,
+    topicIds: Array.isArray(doc.topicIds) ? doc.topicIds : [],
     subjectName: doc.subjectName,
     topicPath: doc.topicPath || null,
     multipleChoiceCount: doc.multipleChoiceCount,
