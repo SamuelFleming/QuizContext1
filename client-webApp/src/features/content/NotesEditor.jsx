@@ -71,7 +71,7 @@ export default function NotesEditor({ node, onSave, onDirtyChange, suggestionSco
         value={notes}
         onChange={setNotes}
         maxLength={NOTES_MAX}
-        rows={12}
+        rows={3}
       />
       {message.text ? (
         <p
