@@ -1,6 +1,6 @@
 # 7000 — UAT change discovery
 
-**Status:** In progress  
+**Status:** Done  
 **Phase:** 7  
 **Depends on:** Phases 1–6 shipped  
 **Relevant scope:** Phase 7 README; first real use of the MVP
@@ -20,8 +20,8 @@ Test the shipped MVP and record each change wanted from that use as its own Phas
 
 ## Acceptance checks
 - [x] Changes captured so far are 7001–7005, 7010–7016, and 7026–7029. 7012 and 7026–7029 are deferred.
-- [ ] Further testing either adds the next `7xxx` ticket or records why the item stays unscoped.
-- [ ] This ticket changes no application code.
+- [x] Discovery closed on 2026-10-13. No further item from this pass. Quiz `AI_INVALID_OUTPUT` reliability stays unscoped, as already recorded in the phase README.
+- [x] This ticket changes no application code.
 
 ## Implementation notes
-`/implement-phase` skips a Discovery ticket. The first build ticket is 7001.
+Closed by request. The captured tickets stand. `/implement-phase` skips a Discovery ticket, and this one is done. The first build ticket is 7001.
