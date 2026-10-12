@@ -1,4 +1,4 @@
-# P7-09 — AI description freshness
+# 7009 — AI description freshness
 
 **Status:** Planned  
 **Phase:** 7  

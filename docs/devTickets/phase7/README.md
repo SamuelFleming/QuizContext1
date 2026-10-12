@@ -1,6 +1,6 @@
 # Phase 7 — Initial UAT feedback
 
-**Status:** Planned. P7-12 is deferred.
+**Status:** Discovery in progress (7000). Implementation tickets 7001–7011 are planned. 7012 is deferred.
 
 **Objective.** Refine the shipped MVP from first real use: more study files become reviewed text, and the user can see whether a subject, topic, or AI description is complete enough to quiz.
 
@@ -10,28 +10,29 @@
 
 **Roadmap.** [Phase 7 in the MVP plan](../00_MVP-Development-Plan.md#phase-7).
 
-**Tickets.**
+**Tickets.** IDs from this phase onward are `7000`, `7001`, and so on. Phases 1–6 keep `P1-01` style.
 
-1. [P7-01](P7-01-upload-size-limit.md) — raw upload limit 25 MB.
-2. [P7-02](P7-02-docx-extraction.md) — Word `.docx`.
-3. [P7-03](P7-03-pptx-extraction.md) — PowerPoint `.pptx`.
-4. [P7-04](P7-04-python-upload.md) — `.py`.
-5. [P7-05](P7-05-notebook-upload.md) — `.ipynb`.
-6. [P7-06](P7-06-content-completeness.md) — completeness facts on subject and topic reads.
-7. [P7-07](P7-07-topic-completeness-indicators.md) — indicators in the workspace tree.
-8. [P7-08](P7-08-subject-completeness-bar.md) — bar on the workspace subject and the dashboard.
-9. [P7-09](P7-09-description-freshness.md) — AI description vs later notes and documents.
-10. [P7-10](P7-10-multi-topic-quiz-api.md) — generation from an explicit topic set.
-11. [P7-11](P7-11-quiz-topic-picker.md) — form for that set; incomplete topics cannot be chosen.
-12. [P7-12](P7-12-image-source-investigation.md) — image-heavy sources. Deferred.
+0. [7000](7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Discovery, in progress. Not an implementation ticket.
+1. [7001](7001-upload-size-limit.md) — raw upload limit 25 MB.
+2. [7002](7002-docx-extraction.md) — Word `.docx`.
+3. [7003](7003-pptx-extraction.md) — PowerPoint `.pptx`.
+4. [7004](7004-python-upload.md) — `.py`.
+5. [7005](7005-notebook-upload.md) — `.ipynb`.
+6. [7006](7006-content-completeness.md) — completeness facts on subject and topic reads.
+7. [7007](7007-topic-completeness-indicators.md) — indicators in the workspace tree.
+8. [7008](7008-subject-completeness-bar.md) — bar on the workspace subject and the dashboard.
+9. [7009](7009-description-freshness.md) — AI description vs later notes and documents.
+10. [7010](7010-multi-topic-quiz-api.md) — generation from an explicit topic set.
+11. [7011](7011-quiz-topic-picker.md) — form for that set; incomplete topics cannot be chosen.
+12. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
 
 **Not in this phase.** Quiz `AI_INVALID_OUTPUT` failures (output budget, strict validation, retries). Held until a later prompt. Do not fold a generation-reliability fix into these tickets.
 
 **Conflicts with current core scope (intentional; do not silently "fix" core scope while implementing).**
 
-- Product theory §4 allows an entire subject, one topic, or a topic plus descendants. P7-10 adds a fourth scope: an explicit set of topics, without their unselected siblings or descendants. Core scope stays the MVP description until someone updates it on purpose.
+- Product theory §4 allows an entire subject, one topic, or a topic plus descendants. 7010 adds a fourth scope: an explicit set of topics, without their unselected siblings or descendants. Core scope stays the MVP description until someone updates it on purpose.
 - S02 says the MVP does not require progress visualisations. The subject bar is a post-MVP UAT addition.
-- S05 speaks of one subject or topic. P7-11 extends the generation form.
+- S05 speaks of one subject or topic. 7011 extends the generation form.
 
 **Planning decisions (change before implementing if wrong).**
 

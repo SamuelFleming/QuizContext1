@@ -1,8 +1,8 @@
-# P7-10 — Quiz a chosen set of topics
+# 7010 — Quiz a chosen set of topics
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** P7-06  
+**Depends on:** 7006  
 **Relevant scope:** Phase 7 README; F05; product theory §4; P6-01
 
 ## Objective
@@ -19,7 +19,7 @@ The user can generate one quiz from an explicit list of topics in a subject. Top
 - Whole subject: unchanged, including empty topics simply contributing no text. Single topic plus `includeDescendants`: unchanged, except an incomplete selected topic is now 400. Incomplete descendants stay skipped and do not fail the request. The manifest is the record of what was included.
 
 ## Out of scope
-- The form (P7-11).
+- The form (7011).
 - Changing question validation, output token budget, or `AI_INVALID_OUTPUT` handling.
 - Quizzing topics across two subjects. Descriptions as a completeness requirement.
 

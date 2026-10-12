@@ -1,8 +1,8 @@
-# P7-11 — Quiz topic picker
+# 7011 — Quiz topic picker
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** P7-06, P7-10  
+**Depends on:** 7006, 7010  
 **Relevant scope:** Phase 7 README; F05; S05; P6-02
 
 ## Objective
@@ -26,7 +26,7 @@ The generation form can target the whole subject, or any set of topics and subto
 - A 400 that names an incomplete topic is shown on the form. Existing generation errors stay.
 
 ## Out of scope
-- Workspace tree indicators (P7-07) and the subject bar (P7-08).
+- Workspace tree indicators (7007) and the subject bar (7008).
 - Changing question counts, difficulty, or context mode.
 - Quiz `AI_INVALID_OUTPUT` work.
 
@@ -40,4 +40,4 @@ The generation form can target the whole subject, or any set of topics and subto
 - [ ] At 390px the Whole subject row, the arrows, and the indented checkboxes are usable. Lint and build pass.
 
 ## Implementation notes
-Use `contentComplete` from the topic list. Do not infer it from empty description fields. The form expands a parent check into explicit ids. P7-10 still accepts a single `topicId` with `includeDescendants` on the API. This form does not send that pair.
+Use `contentComplete` from the topic list. Do not infer it from empty description fields. The form expands a parent check into explicit ids. 7010 still accepts a single `topicId` with `includeDescendants` on the API. This form does not send that pair.

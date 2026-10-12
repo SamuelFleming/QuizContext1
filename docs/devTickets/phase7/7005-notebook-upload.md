@@ -1,8 +1,8 @@
-# P7-05 — Jupyter notebook upload
+# 7005 — Jupyter notebook upload
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** P7-01  
+**Depends on:** 7001  
 **Relevant scope:** Phase 7 README; F03; S03; P4-04
 
 ## Objective
@@ -17,14 +17,14 @@ A `.ipynb` notebook becomes readable text the user can review and save. Cell out
 
 ## Out of scope
 - Running the notebook, or keeping outputs so they can be re-run.
-- Images in markdown cells or output display data (P7-12).
-- `.py` behaviour beyond not breaking P7-04.
+- Images in markdown cells or output display data (7012).
+- `.py` behaviour beyond not breaking 7004.
 
 ## Acceptance checks
 - [ ] From the browser, a notebook with one markdown cell and one code cell uploads, review shows both sources in order and does not show output images or stream output, and the saved edit persists after reload.
 - [ ] A non-JSON `.ipynb` and a JSON file that is not a notebook return 422 and save nothing.
 - [ ] Over 25 MB returns 413. Extracted text over 200,000 characters returns 422.
-- [ ] `.py` upload from P7-04 still works.
+- [ ] `.py` upload from 7004 still works.
 - [ ] Swagger lists `.ipynb` on the extract route.
 
 ## Implementation notes

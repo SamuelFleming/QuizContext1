@@ -44,7 +44,7 @@ Full layout and layer rules: `docs/core-scope/02_high-level-solution.md` §5.1. 
 - Keep reports short: changed files, checks run/results, deviations, remaining risks.
 
 ## Ticket convention
-- IDs: `P1-01`, `P1-02`, etc., grouped in `docs/devTickets/PhaseN/`.
+- IDs: Phases 1–6 stay `P1-01`, `P2-01`, and so on. Phase 7 onward uses `7000`, `7001`, and so on. Tickets live in `docs/devTickets/phaseN/`.
 - Queue: `docs/devTickets/devTickets_next.md`; shipped summary: `docs/devTickets/devCompletion.md`.
 - Ticket must include objective, scope, **out of scope**, dependencies, acceptance checks, and status.
 - Do not pre-generate a large ticket backlog. Plan the next phase when needed.

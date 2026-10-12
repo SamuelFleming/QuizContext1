@@ -11,7 +11,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 4 | Subjects, recursive topics, Markdown + document ingestion | Done |
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
-| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Planned |
+| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Discovery in progress |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -19,21 +19,22 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-[P7-01](phase7/P7-01-upload-size-limit.md) — raise the raw upload limit from 5 MB to 25 MB.
+[7001](phase7/7001-upload-size-limit.md) — raise the raw upload limit from 5 MB to 25 MB.
 
 ## Phase 7 proposed order
-1. [P7-01](phase7/P7-01-upload-size-limit.md) — raw upload limit 25 MB. Planned.
-2. [P7-02](phase7/P7-02-docx-extraction.md) — Word `.docx` to reviewed text. Planned.
-3. [P7-03](phase7/P7-03-pptx-extraction.md) — PowerPoint `.pptx` to reviewed text. Planned.
-4. [P7-04](phase7/P7-04-python-upload.md) — `.py` as UTF-8 text. Planned.
-5. [P7-05](phase7/P7-05-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Planned.
-6. [P7-06](phase7/P7-06-content-completeness.md) — computed completeness on subject and topic reads. Planned.
-7. [P7-07](phase7/P7-07-topic-completeness-indicators.md) — workspace indicators. Planned.
-8. [P7-08](phase7/P7-08-subject-completeness-bar.md) — per-subject completeness bar. Planned.
-9. [P7-09](phase7/P7-09-description-freshness.md) — AI description older than later notes or documents. Planned.
-10. [P7-10](phase7/P7-10-multi-topic-quiz-api.md) — generate from an explicit topic set. Planned.
-11. [P7-11](phase7/P7-11-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Planned.
-12. [P7-12](phase7/P7-12-image-source-investigation.md) — image-heavy files. **Deferred.** Do not implement until asked.
+0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. **Discovery, in progress.** `/implement-phase` skips it.
+1. [7001](phase7/7001-upload-size-limit.md) — raw upload limit 25 MB. Planned.
+2. [7002](phase7/7002-docx-extraction.md) — Word `.docx` to reviewed text. Planned.
+3. [7003](phase7/7003-pptx-extraction.md) — PowerPoint `.pptx` to reviewed text. Planned.
+4. [7004](phase7/7004-python-upload.md) — `.py` as UTF-8 text. Planned.
+5. [7005](phase7/7005-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Planned.
+6. [7006](phase7/7006-content-completeness.md) — computed completeness on subject and topic reads. Planned.
+7. [7007](phase7/7007-topic-completeness-indicators.md) — workspace indicators. Planned.
+8. [7008](phase7/7008-subject-completeness-bar.md) — per-subject completeness bar. Planned.
+9. [7009](phase7/7009-description-freshness.md) — AI description older than later notes or documents. Planned.
+10. [7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Planned.
+11. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Planned.
+12. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
 
 Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUTPUT` reliability is not in this phase.
 

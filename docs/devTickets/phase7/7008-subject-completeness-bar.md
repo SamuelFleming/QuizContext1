@@ -1,8 +1,8 @@
-# P7-08 — Subject completeness bar
+# 7008 — Subject completeness bar
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** P7-06  
+**Depends on:** 7006  
 **Relevant scope:** Phase 7 README; F03; S02; S03; `docs/design/01_design-concept.md`
 
 ## Objective

@@ -1,8 +1,8 @@
-# P7-04 — Python file upload
+# 7004 — Python file upload
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** P7-01  
+**Depends on:** 7001  
 **Relevant scope:** Phase 7 README; F03; S03; P4-04
 
 ## Objective
@@ -15,7 +15,7 @@ A `.py` file is read as UTF-8 text, reviewed, and saved as a document. It is sou
 
 ## Out of scope
 - Other code extensions (`.js`, `.ts`, `.java`, and the rest).
-- `.ipynb` (P7-05).
+- `.ipynb` (7005).
 - Syntax highlighting in the editor, syntax checks, and running the script.
 
 ## Acceptance checks

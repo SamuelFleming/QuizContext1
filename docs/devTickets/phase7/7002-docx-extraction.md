@@ -1,8 +1,8 @@
-# P7-02 — Word document extraction
+# 7002 — Word document extraction
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** P7-01  
+**Depends on:** 7001  
 **Relevant scope:** Phase 7 README; F03; S03; P4-04
 
 ## Objective
@@ -15,9 +15,9 @@ A `.docx` file is extracted to text, reviewed by the user, and saved as a docume
 - Review, edit, and save stay on the existing document screens. No new save fields.
 
 ## Out of scope
-- `.pptx` (P7-03), `.py` (P7-04), `.ipynb` (P7-05).
+- `.pptx` (7003), `.py` (7004), `.ipynb` (7005).
 - Comments, tracked changes, headers, and footers, unless the extractor includes them with no extra work. Do not add a second code path to hunt for them.
-- OCR, embedded-image captions (P7-12), and storing the `.docx`.
+- OCR, embedded-image captions (7012), and storing the `.docx`.
 
 ## Acceptance checks
 - [ ] From the browser, a `.docx` with headings and paragraphs uploads, the review step shows that text, an edit survives reload.

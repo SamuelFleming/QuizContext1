@@ -1,8 +1,8 @@
-# P7-03 — PowerPoint extraction
+# 7003 — PowerPoint extraction
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** P7-01  
+**Depends on:** 7001  
 **Relevant scope:** Phase 7 README; F03; S03; P4-04
 
 ## Objective
@@ -16,8 +16,8 @@ A `.pptx` deck is extracted to slide text, reviewed by the user, and saved as a 
 - Same review and save path as other documents.
 
 ## Out of scope
-- `.docx` (P7-02) except that both must keep working.
-- Rebuilding slide layout, images, charts, or SmartArt (P7-12).
+- `.docx` (7002) except that both must keep working.
+- Rebuilding slide layout, images, charts, or SmartArt (7012).
 - Storing the `.pptx`.
 
 ## Acceptance checks

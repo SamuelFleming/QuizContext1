@@ -1,4 +1,4 @@
-# P7-12 — Image-heavy source investigation
+# 7012 — Image-heavy source investigation
 
 **Status:** Deferred  
 **Phase:** 7  
@@ -26,4 +26,4 @@ When this ticket is taken off deferral, a short note in `docs/devTickets/phase7/
 - [ ] No application code, dependency, or OpenAPI change is part of this ticket.
 
 ## Implementation notes
-Leave this deferred until explicitly asked. P7-01 through P7-11 do not depend on it. Image-only PDFs and decks keep today's 422.
+Leave this deferred until explicitly asked. 7001 through 7011 do not depend on it. Image-only PDFs and decks keep today's 422.

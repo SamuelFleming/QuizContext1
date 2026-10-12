@@ -1,4 +1,4 @@
-# P7-01 — Raise the upload size limit
+# 7001 — Raise the upload size limit
 
 **Status:** Planned  
 **Phase:** 7  
@@ -15,10 +15,10 @@ A lecture PDF larger than 5 MB can be uploaded, extracted, reviewed, and saved, 
 - The client shows the server's 413 message (no hard-coded 5 MB copy).
 
 ## Out of scope
-- New file types (P7-02 onward).
+- New file types (7002 onward).
 - Raising the 200,000 character extracted-text cap.
 - Storing the original file, chunked upload, or an environment override.
-- OCR or image handling (P7-12).
+- OCR or image handling (7012).
 
 ## Acceptance checks
 - [ ] A text PDF between 5 MB and 25 MB extracts, can be edited in review, saves, and reloads as the edited text.
