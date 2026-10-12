@@ -7,6 +7,7 @@ import { diagnosticsRoutes } from "./routes/diagnosticsRoutes.js";
 import { attemptRoutes } from "./routes/attemptRoutes.js";
 import { documentRoutes } from "./routes/documentRoutes.js";
 import { quizRoutes } from "./routes/quizRoutes.js";
+import { studyHistoryRoutes } from "./routes/studyHistoryRoutes.js";
 import { subjectRoutes } from "./routes/subjectRoutes.js";
 import { topicRoutes } from "./routes/topicRoutes.js";
 import { userRoutes } from "./routes/userRoutes.js";
@@ -24,6 +25,7 @@ export function createApp() {
   app.use("/documents", documentRoutes);
   app.use("/quizzes", quizRoutes);
   app.use("/attempts", attemptRoutes);
+  app.use("/study-history", studyHistoryRoutes);
 
   app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 

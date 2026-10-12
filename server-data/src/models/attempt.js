@@ -44,6 +44,24 @@ export function toAttemptSummary(doc, quizTitle) {
   };
 }
 
+// Study-history source row: scores and dates only. No responses, explanations, or concepts.
+export function toAttemptHistorySource(doc) {
+  if (!doc) return null;
+  const evaluation = doc.evaluation || {};
+  return {
+    id: doc._id.toString(),
+    quizId: doc.quizId.toString(),
+    submittedAt: doc.submittedAt,
+    score: evaluation.score ?? null,
+    maxScore: evaluation.maxScore ?? null,
+    percent: evaluation.percent ?? null,
+    questionScores: (evaluation.questions || []).map((item) => ({
+      questionId: item.questionId,
+      score: item.score,
+    })),
+  };
+}
+
 export function toAttempt(doc) {
   if (!doc) return null;
   return {

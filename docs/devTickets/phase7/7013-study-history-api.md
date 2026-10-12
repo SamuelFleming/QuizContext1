@@ -1,6 +1,6 @@
 # 7013 — Study history summary
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 7  
 **Depends on:** None  
 **Relevant scope:** Phase 7 README; F08; S02; P6-04; P6-06
@@ -34,13 +34,13 @@ The caller can read one summary of quizzes saved and quizzes actually completed,
 - Counting in-progress or failed evaluations as completions.
 
 ## Acceptance checks
-- [ ] A user with two subjects sees all-scope counts equal to the sum of the per-subject counts. A topic filter does not include a whole-subject quiz or another topic's quiz.
-- [ ] Two evaluated attempts on one quiz produce `quizzesAttempted` 1 and `evaluatedAttempts` 2. `recent=1` returns that quiz once, with the later score.
-- [ ] An in-progress attempt does not change counts, activity, weakest lists, or `lastStudiedAt`.
-- [ ] `activity=7` returns 7 daily buckets including zeros. A day with two evaluated attempts has count 2.
-- [ ] The weakest question row has the prompt and scores only. The JSON has no answer key, criteria, explanation, or snapshot.
-- [ ] User B's subject id is 404. No token is 401. `topicId` without `subjectId` is 400.
-- [ ] Swagger on both APIs matches the route.
+- [x] A user with two subjects sees all-scope counts equal to the sum of the per-subject counts. A topic filter does not include a whole-subject quiz or another topic's quiz.
+- [x] Two evaluated attempts on one quiz produce `quizzesAttempted` 1 and `evaluatedAttempts` 2. `recent=1` returns that quiz once, with the later score.
+- [x] An in-progress attempt does not change counts, activity, weakest lists, or `lastStudiedAt`.
+- [x] `activity=7` returns 7 daily buckets including zeros. A day with two evaluated attempts has count 2.
+- [x] The weakest question row has the prompt and scores only. The JSON has no answer key, criteria, explanation, or snapshot.
+- [x] User B's subject id is 404. No token is 401. `topicId` without `subjectId` is 400.
+- [x] Swagger on both APIs matches the route.
 
 ## Implementation notes
 P6-06 already lists recent attempts and stores score, percent, and per-question results on the attempt. Do not copy those documents into a new collection. Aggregation belongs in `server-webApp`. `server-data` only returns owned quiz and attempt fields, still without offering the read to the browser. S02 said the MVP would not require progress visualisations. This summary is the Phase 7 exception, and 7014 is what draws it.
