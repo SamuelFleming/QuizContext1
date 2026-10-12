@@ -1,6 +1,6 @@
-# 7006 — Content completeness on subject and topic reads
+# 7026 — Content completeness on subject and topic reads
 
-**Status:** Planned  
+**Status:** Deferred  
 **Phase:** 7  
 **Depends on:** None  
 **Relevant scope:** Phase 7 README; F03; S02; S03
@@ -16,8 +16,8 @@ Subject and topic reads say whether that entity has its own study text, using on
 - Add the fields on the existing owner-scoped subject and topic list/read payloads in both APIs. The browser keeps calling `server-webApp` only.
 
 ## Out of scope
-- Indicators and the bar (7007, 7008).
-- Blocking quiz selection (7010, 7011). Description freshness (7009).
+- Indicators and the bar (7027, 7028).
+- Blocking quiz selection (7010, 7011). Description freshness (7029).
 - A separate completeness collection, or a score that includes descriptions.
 
 ## Acceptance checks

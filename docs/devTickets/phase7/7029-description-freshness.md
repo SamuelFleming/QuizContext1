@@ -1,6 +1,6 @@
-# 7009 — AI description freshness
+# 7029 — AI description freshness
 
-**Status:** Planned  
+**Status:** Deferred  
 **Phase:** 7  
 **Depends on:** None  
 **Relevant scope:** Phase 7 README; F04; S03; P5-03

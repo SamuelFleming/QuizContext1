@@ -1,8 +1,8 @@
-# 7007 — Topic completeness indicators
+# 7027 — Topic completeness indicators
 
-**Status:** Planned  
+**Status:** Deferred  
 **Phase:** 7  
-**Depends on:** 7006  
+**Depends on:** 7026  
 **Relevant scope:** Phase 7 README; F03; S03; `docs/design/01_design-concept.md`
 
 ## Objective
@@ -15,9 +15,9 @@ In the content workspace, each topic shows whether it has its own study text and
 - Use existing theme tokens. Indicators are text, not colour alone.
 
 ## Out of scope
-- The subject percentage bar (7008).
+- The subject percentage bar (7028).
 - Hiding or disabling topics in the tree. The user can still open and edit an incomplete topic.
-- Quiz picker changes (7011). Freshness (7009).
+- Quiz picker changes (7011). Freshness (7029).
 
 ## Acceptance checks
 - [ ] A topic with no notes and no documents shows "No notes or documents". After notes are saved, it shows "Has content" without a full page reload beyond the normal save refresh.

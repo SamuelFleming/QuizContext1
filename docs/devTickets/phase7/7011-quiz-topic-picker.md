@@ -2,7 +2,7 @@
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** 7006, 7010  
+**Depends on:** 7026 (deferred), 7010  
 **Relevant scope:** Phase 7 README; F05; S05; P6-02
 
 ## Objective
@@ -26,7 +26,7 @@ The generation form can target the whole subject, or any set of topics and subto
 - A 400 that names an incomplete topic is shown on the form. Existing generation errors stay.
 
 ## Out of scope
-- Workspace tree indicators (7007) and the subject bar (7008).
+- Workspace tree indicators (7027) and the subject bar (7028).
 - Changing question counts, difficulty, or context mode.
 - Quiz `AI_INVALID_OUTPUT` work.
 

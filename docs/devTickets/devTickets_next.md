@@ -28,13 +28,13 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [7003](phase7/7003-pptx-extraction.md) — PowerPoint `.pptx` to reviewed text. Planned.
 4. [7004](phase7/7004-python-upload.md) — `.py` as UTF-8 text. Planned.
 5. [7005](phase7/7005-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Planned.
-6. [7006](phase7/7006-content-completeness.md) — computed completeness on subject and topic reads. Planned.
-7. [7007](phase7/7007-topic-completeness-indicators.md) — workspace indicators. Planned.
-8. [7008](phase7/7008-subject-completeness-bar.md) — per-subject completeness bar. Planned.
-9. [7009](phase7/7009-description-freshness.md) — AI description older than later notes or documents. Planned.
-10. [7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Planned.
-11. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Planned.
-12. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
+6. [7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Planned. Depends on deferred 7026.
+7. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Planned. Depends on deferred 7026 and on 7010.
+8. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
+9. [7026](phase7/7026-content-completeness.md) — computed completeness on subject and topic reads. **Deferred.**
+10. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7026.
+11. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7026.
+12. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
 
 Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUTPUT` reliability is not in this phase.
 

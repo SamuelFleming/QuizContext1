@@ -2,7 +2,7 @@
 
 **Status:** Planned  
 **Phase:** 7  
-**Depends on:** 7006  
+**Depends on:** 7026 (deferred)  
 **Relevant scope:** Phase 7 README; F05; product theory §4; P6-01
 
 ## Objective
