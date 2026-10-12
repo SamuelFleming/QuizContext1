@@ -158,6 +158,22 @@ Later phases reuse these rules. They are not re-decided per entity.
 
 **Out of phase.** Chat, voice, spaced repetition, advanced analytics, adaptive sequencing, and shared libraries. Very Strict and Loose can wait until Targeted generation and evaluation are solid; the stored mode must already allow them.
 
+<a id="phase-7"></a>
+
+### Phase 7 — Initial UAT feedback
+
+**Objective.** Refine the shipped MVP from first real use: accept more study files as reviewed text, and show whether subjects, topics, and AI descriptions are complete enough to quiz.
+
+**Scope.** Raise the upload size limit. Add text extraction for `.docx`, `.pptx`, `.py`, and `.ipynb`, still saving only reviewed text. Show topic completeness, a per-subject completeness bar, and whether an accepted AI description is older than that entity's later notes or documents. Let a quiz target an explicit set of topics, and refuse topics that have no notes and no documents. A deferred investigation asks how image-heavy lecture files could become text later.
+
+**Depends on.** Phases 4–6 as shipped. No new architecture.
+
+**Deliverable.** A user can upload a typical lecture deck or code file under the new limit, see which topics are incomplete, and generate a quiz from a chosen set of complete topics.
+
+**Done when.** The tickets in `docs/devTickets/phase7/` are done except the deferred image investigation. Storage is still reviewed text plus light file metadata. Swagger matches any route those tickets change.
+
+**Out of phase.** Quiz `AI_INVALID_OUTPUT` reliability (held for a later prompt). OCR, vision captions, and storing original files. Legacy `.doc` and `.ppt`. Account Profile (S08) is not the completeness bar.
+
 ## 5. Flow assignment
 
 | Flow | Phase | Outcome |
@@ -167,10 +183,11 @@ Later phases reuse these rules. They are not re-decided per entity.
 | F03 Learning content | 4 | S02 subjects, S03 workspace |
 | F04 AI-assisted description | 5 | Review and save on S03 |
 | F05–F09 Quiz, attempt, evaluation, repeat, export | 6 | S04–S07, dashboard activity |
+| F03, F04, F05 refinements from first use | 7 | Upload types, completeness, multi-topic quiz |
 
 ## 6. Sequencing and risks
 
-Keep the six phases in order. The main risks sit on the boundaries, not on extra features.
+Keep Phases 1–6 in order. Phase 7 is post-MVP UAT and does not reopen them. The main risks sit on the boundaries, not on extra features.
 
 - **Identity propagation** is easy to get wrong by trusting a client-supplied user id. Settle the mechanism in the Phase 2 ticket that first calls `server-data` for a user-owned record, and reuse it unchanged.
 - **Key handling** has no CareerContext encrypt-at-rest pattern to copy, and its client cache assumes one environment key. Phase 3 specifies encryption, per-request key selection, and what a usage record may store.

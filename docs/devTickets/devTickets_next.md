@@ -11,6 +11,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 4 | Subjects, recursive topics, Markdown + document ingestion | Done |
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
+| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Planned |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -18,7 +19,23 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None. Phase 6 is implemented. A real successful OpenAI call is still unrun locally (no key).
+[P7-01](phase7/P7-01-upload-size-limit.md) — raise the raw upload limit from 5 MB to 25 MB.
+
+## Phase 7 proposed order
+1. [P7-01](phase7/P7-01-upload-size-limit.md) — raw upload limit 25 MB. Planned.
+2. [P7-02](phase7/P7-02-docx-extraction.md) — Word `.docx` to reviewed text. Planned.
+3. [P7-03](phase7/P7-03-pptx-extraction.md) — PowerPoint `.pptx` to reviewed text. Planned.
+4. [P7-04](phase7/P7-04-python-upload.md) — `.py` as UTF-8 text. Planned.
+5. [P7-05](phase7/P7-05-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Planned.
+6. [P7-06](phase7/P7-06-content-completeness.md) — computed completeness on subject and topic reads. Planned.
+7. [P7-07](phase7/P7-07-topic-completeness-indicators.md) — workspace indicators. Planned.
+8. [P7-08](phase7/P7-08-subject-completeness-bar.md) — per-subject completeness bar. Planned.
+9. [P7-09](phase7/P7-09-description-freshness.md) — AI description older than later notes or documents. Planned.
+10. [P7-10](phase7/P7-10-multi-topic-quiz-api.md) — generate from an explicit topic set. Planned.
+11. [P7-11](phase7/P7-11-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Planned.
+12. [P7-12](phase7/P7-12-image-source-investigation.md) — image-heavy files. **Deferred.** Do not implement until asked.
+
+Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUTPUT` reliability is not in this phase.
 
 ## Phase 6 proposed order
 1. [P6-01](phase6/P6-01-quiz-generation-api.md) — generation API, quiz persistence, study-view projection. Done.
