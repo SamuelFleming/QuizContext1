@@ -190,6 +190,18 @@ h2 {
   font-size: 1rem;
 }
 
+.usage-activity-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+.usage-activity-head .subheading {
+  margin: 0;
+}
+
 .usage-list {
   list-style: none;
   margin: 0;
@@ -356,22 +368,33 @@ h2 {
 
 .pagination {
   display: flex;
+  flex: none;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
+  gap: 4px;
+  margin-left: auto;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-elevated-surface);
 }
 
 .pagination p {
   margin: 0;
+  min-width: 2.75rem;
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
 .pagination button {
+  padding: 3px 8px;
+  border-radius: 999px;
   background: var(--color-surface);
   color: var(--color-primary-accent);
-  border: 1px solid var(--color-primary-accent);
+  border: 1px solid transparent;
+  font-size: 0.75rem;
+  line-height: 1.4;
 }
 
 .pagination button:disabled {
@@ -1178,11 +1201,6 @@ button.secondary {
 
   .usage-facts dd {
     text-align: left;
-  }
-
-  .pagination {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .shell-bar {

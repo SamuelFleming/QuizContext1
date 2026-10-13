@@ -192,7 +192,32 @@ export default function UsagePanel({ refreshKey }) {
         </li>
       </ul>
 
-      <h3 className="subheading">Recent activity</h3>
+      <div className="usage-activity-head">
+        <h3 className="subheading">Recent activity</h3>
+        {totalPages > 1 ? (
+          <nav className="pagination" aria-label="Recent AI activity pages">
+            <button
+              type="button"
+              aria-label="Previous page"
+              onClick={() => setPage((current) => current - 1)}
+              disabled={loading || page <= 1}
+            >
+              Prev
+            </button>
+            <p>
+              {page} / {totalPages}
+            </p>
+            <button
+              type="button"
+              aria-label="Next page"
+              onClick={() => setPage((current) => current + 1)}
+              disabled={loading || page >= totalPages}
+            >
+              Next
+            </button>
+          </nav>
+        ) : null}
+      </div>
       {loading ? <p className="status-line">Loading activity…</p> : null}
       {!loading && recent.length === 0 ? (
         <p className="detail">
@@ -205,23 +230,6 @@ export default function UsagePanel({ refreshKey }) {
             <UsageItem key={item.id} item={item} />
           ))}
         </ul>
-      ) : null}
-      {totalPages > 1 ? (
-        <nav className="pagination" aria-label="Recent AI activity pages">
-          <button type="button" onClick={() => setPage((current) => current - 1)} disabled={loading || page <= 1}>
-            Previous
-          </button>
-          <p>
-            Page {page} of {totalPages}
-          </p>
-          <button
-            type="button"
-            onClick={() => setPage((current) => current + 1)}
-            disabled={loading || page >= totalPages}
-          >
-            Next
-          </button>
-        </nav>
       ) : null}
       <p className="detail">Costs are estimates. Your own key's usage is shown but not limited.</p>
     </section>
