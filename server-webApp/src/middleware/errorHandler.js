@@ -13,7 +13,8 @@ export function errorHandler(err, _req, res, _next) {
   if (code) {
     const failures =
       Array.isArray(err.failures) && err.failures.length > 0 ? { failures: err.failures } : {};
-    res.status(status).json({ message, code, ...failures });
+    const aiRun = err.aiRun ? { aiRun: err.aiRun } : {};
+    res.status(status).json({ message, code, ...failures, ...aiRun });
     return;
   }
   sendMessage(res, status, message);

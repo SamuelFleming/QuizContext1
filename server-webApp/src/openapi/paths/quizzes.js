@@ -19,6 +19,17 @@ const studyViewResult = {
   },
 };
 
+const generationResult = {
+  content: {
+    "application/json": {
+      schema: {
+        type: "object",
+        properties: { data: { $ref: "#/components/schemas/QuizGenerationResult" } },
+      },
+    },
+  },
+};
+
 export const quizPaths = {
   "/quizzes": {
     get: {
@@ -42,44 +53,12 @@ export const quizPaths = {
         required: true,
         content: {
           "application/json": {
-            schema: {
-              type: "object",
-              required: ["subjectId", "multipleChoiceCount", "shortAnswerCount"],
-              properties: {
-                subjectId: { type: "string" },
-                topicId: {
-                  type: "string",
-                  nullable: true,
-                  description: "One topic. Do not send together with topicIds.",
-                },
-                topicIds: {
-                  type: "array",
-                  minItems: 1,
-                  maxItems: 30,
-                  items: { type: "string" },
-                  description:
-                    "Explicit topics in this subject, in the order to store. Ignored includeDescendants is stored false. Omit both topicId and topicIds to quiz the whole subject.",
-                },
-                includeDescendants: {
-                  type: "boolean",
-                  default: true,
-                  description: "Used with topicId. Ignored when topicIds is set.",
-                },
-                multipleChoiceCount: { type: "integer", minimum: 0 },
-                shortAnswerCount: { type: "integer", minimum: 0 },
-                difficulty: { type: "string", enum: ["easy", "medium", "hard"], default: "medium" },
-                contextMode: {
-                  type: "string",
-                  enum: ["very_strict", "targeted", "loose"],
-                  default: "targeted",
-                },
-              },
-            },
+            schema: { $ref: "#/components/schemas/QuizGenerateInput" },
           },
         },
       },
       responses: {
-        201: { description: "Quiz saved (study view)", ...studyViewResult },
+        201: { description: "Quiz saved (study view plus safe AI run diagnostics)", ...generationResult },
         400: { $ref: "#/components/responses/BadRequest" },
         401: { $ref: "#/components/responses/Unauthorized" },
         404: { $ref: "#/components/responses/NotFound" },
@@ -98,6 +77,10 @@ export const quizPaths = {
                     maxItems: 20,
                     items: { type: "string", maxLength: 80 },
                   },
+                  aiRun: {
+                    $ref: "#/components/schemas/AiRun",
+                    description: "Present for AI_INVALID_OUTPUT; absent when no AI call was made.",
+                  },
                 },
               },
             },
@@ -107,6 +90,52 @@ export const quizPaths = {
         502: { $ref: "#/components/responses/AiError" },
         503: { $ref: "#/components/responses/AiError" },
         504: { $ref: "#/components/responses/AiError" },
+      },
+    },
+  },
+  "/quizzes/preview": {
+    post: {
+      summary: "Preview quiz-generation input metrics",
+      description:
+        "Validates and assembles the same caller-owned context as generation without calling AI or writing a quiz or usage record. Exact provider token counts are not available until generation completes.",
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/QuizGenerateInput" },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Safe input and source-count preview",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: { data: { $ref: "#/components/schemas/QuizPreview" } },
+              },
+            },
+          },
+        },
+        400: { $ref: "#/components/responses/BadRequest" },
+        401: { $ref: "#/components/responses/Unauthorized" },
+        404: { $ref: "#/components/responses/NotFound" },
+        422: {
+          description: "CONTEXT_INSUFFICIENT; no AI call was made",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: { type: "string" },
+                  code: { type: "string", enum: ["CONTEXT_INSUFFICIENT"] },
+                },
+              },
+            },
+          },
+        },
       },
     },
   },

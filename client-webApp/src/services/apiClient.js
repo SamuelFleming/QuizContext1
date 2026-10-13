@@ -15,13 +15,14 @@ export function clearToken() {
 }
 
 export class ApiError extends Error {
-  constructor(status, message, code, failures = []) {
+  constructor(status, message, code, failures = [], aiRun = null) {
     super(message);
     this.status = status;
     this.code = code;
     this.failures = Array.isArray(failures)
       ? failures.filter((failure) => typeof failure === "string").slice(0, 20)
       : [];
+    this.aiRun = aiRun && typeof aiRun === "object" ? aiRun : null;
   }
 }
 
@@ -63,6 +64,7 @@ export async function request(path, { method = "GET", body, auth = false } = {})
       payload?.message || "Request failed",
       payload?.code,
       payload?.failures,
+      payload?.aiRun,
     );
   }
   return payload?.data;

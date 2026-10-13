@@ -8,6 +8,7 @@ export const quizRoutes = Router();
 quizRoutes.use(requireAuth);
 
 quizRoutes.post("/", quizController.create);
+quizRoutes.post("/preview", quizController.preview);
 quizRoutes.get("/", quizController.list);
 quizRoutes.post("/:quizId/attempts", attemptController.start);
 quizRoutes.get("/:quizId/attempts", quizController.listAttempts);

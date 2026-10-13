@@ -39,6 +39,10 @@ export const components = {
                 description: "Present when AI_INVALID_OUTPUT has specific rejection reasons.",
                 items: { type: "string", maxLength: 80 },
               },
+              aiRun: {
+                $ref: "#/components/schemas/AiRun",
+                description: "Present when the AI operation was attempted.",
+              },
             },
           },
         },
@@ -338,6 +342,90 @@ export const components = {
         status: { type: "string", enum: ["included", "truncated", "excluded"] },
       },
     },
+    AiRun: {
+      type: "object",
+      description:
+        "Safe diagnostics for one AI operation. Never includes prompts, source bodies, credentials, raw output, or answer material.",
+      properties: {
+        operation: { type: "string" },
+        promptVersion: { type: "string", nullable: true },
+        providerMode: { type: "string", enum: ["application", "user"] },
+        model: { type: "string", nullable: true },
+        inputTokens: { type: "integer", nullable: true },
+        outputTokens: { type: "integer", nullable: true },
+        estimatedCostUsd: { type: "number", nullable: true },
+        status: { type: "string", enum: ["succeeded", "failed"] },
+        errorCode: { type: "string", nullable: true },
+        latencyMs: { type: "integer", nullable: true },
+        context: { $ref: "#/components/schemas/AiUsageContext" },
+        inputChars: { type: "integer" },
+        maxOutputTokens: { type: "integer" },
+        scope: { $ref: "#/components/schemas/AiUsageScope" },
+        failures: {
+          type: "array",
+          maxItems: 20,
+          items: { type: "string", maxLength: 80 },
+        },
+      },
+    },
+    SourceStatusCounts: {
+      type: "object",
+      required: ["included", "truncated", "excluded"],
+      properties: {
+        included: { type: "integer", minimum: 0 },
+        truncated: { type: "integer", minimum: 0 },
+        excluded: { type: "integer", minimum: 0 },
+      },
+    },
+    QuizGenerateInput: {
+      type: "object",
+      required: ["subjectId", "multipleChoiceCount", "shortAnswerCount"],
+      properties: {
+        subjectId: { type: "string" },
+        topicId: {
+          type: "string",
+          nullable: true,
+          description: "One topic. Do not send together with topicIds.",
+        },
+        topicIds: {
+          type: "array",
+          minItems: 1,
+          maxItems: 30,
+          items: { type: "string" },
+          description:
+            "Explicit topics in this subject. Omit both topicId and topicIds for the whole subject.",
+        },
+        includeDescendants: {
+          type: "boolean",
+          default: true,
+          description: "Used with topicId. Ignored when topicIds is set.",
+        },
+        multipleChoiceCount: { type: "integer", minimum: 0 },
+        shortAnswerCount: { type: "integer", minimum: 0 },
+        difficulty: { type: "string", enum: ["easy", "medium", "hard"], default: "medium" },
+        contextMode: {
+          type: "string",
+          enum: ["very_strict", "targeted", "loose"],
+          default: "targeted",
+        },
+      },
+    },
+    QuizPreview: {
+      type: "object",
+      properties: {
+        selectionName: { type: "string" },
+        inputChars: { type: "integer", minimum: 0 },
+        maxOutputTokens: { type: "integer", minimum: 1 },
+        context: { $ref: "#/components/schemas/AiUsageContext" },
+        sources: {
+          type: "object",
+          properties: {
+            topics: { $ref: "#/components/schemas/SourceStatusCounts" },
+            documents: { $ref: "#/components/schemas/SourceStatusCounts" },
+          },
+        },
+      },
+    },
     ResultsPayload: {
       type: "object",
       description:
@@ -437,6 +525,16 @@ export const components = {
         },
         questions: { type: "array", items: { $ref: "#/components/schemas/QuizStudyQuestion" } },
       },
+    },
+    QuizGenerationResult: {
+      allOf: [
+        { $ref: "#/components/schemas/QuizStudyView" },
+        {
+          type: "object",
+          required: ["aiRun"],
+          properties: { aiRun: { $ref: "#/components/schemas/AiRun" } },
+        },
+      ],
     },
     AuthResult: {
       type: "object",

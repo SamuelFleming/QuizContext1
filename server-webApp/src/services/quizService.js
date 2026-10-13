@@ -21,6 +21,15 @@ function countStatus(manifest, status) {
   return manifest.filter((entry) => entry.status === status).length;
 }
 
+function sourceCounts(manifest, type) {
+  const entries = manifest.filter((entry) => entry.type === type);
+  return {
+    included: countStatus(entries, "included"),
+    truncated: countStatus(entries, "truncated"),
+    excluded: countStatus(entries, "excluded"),
+  };
+}
+
 function readCount(value, name) {
   if (!Number.isInteger(value) || value < 0) {
     throw createHttpError(400, `${name} must be a non-negative integer`);
@@ -163,7 +172,7 @@ function finaliseQuestions(questions) {
   });
 }
 
-export async function generateQuiz(userId, body) {
+async function prepareGeneration(userId, body) {
   const settings = readGenerateInput(body);
   if (settings.topicIds) {
     await assertTopicsComplete(userId, settings.subjectId, settings.topicIds);
@@ -185,47 +194,70 @@ export async function generateQuiz(userId, body) {
     );
   }
 
+  const input = prompt.buildInput({
+    selectionType: context.selection.type,
+    selectionName: context.selection.name,
+    multipleChoiceCount: settings.multipleChoiceCount,
+    shortAnswerCount: settings.shortAnswerCount,
+    difficulty: settings.difficulty,
+    contextMode: context.contextMode,
+    contextText: context.text,
+  });
   const allowedSourceIds = new Set(
     context.manifest
       .filter((entry) => entry.status === "included" || entry.status === "truncated")
       .map((entry) => entry.id),
   );
+  const runContext = {
+    contextMode: context.contextMode,
+    includedChars: context.totals.includedChars,
+    sourcesIncluded: countStatus(context.manifest, "included"),
+    sourcesTruncated: countStatus(context.manifest, "truncated"),
+    sourcesExcluded: countStatus(context.manifest, "excluded"),
+  };
+  const runScope = {
+    subjectId: settings.subjectId,
+    ...(settings.topicId ? { topicId: settings.topicId } : {}),
+    selectionName: context.selection.name,
+    manifest: context.manifest.map(({ type, id, title, path, chars, status }) => ({
+      type,
+      id,
+      title,
+      path,
+      chars,
+      status,
+    })),
+  };
+  return { settings, context, input, allowedSourceIds, runContext, runScope };
+}
+
+export async function previewQuiz(userId, body) {
+  const prepared = await prepareGeneration(userId, body);
+  return {
+    selectionName: prepared.context.selection.name,
+    inputChars: prepared.input.length,
+    maxOutputTokens: prompt.MAX_OUTPUT_TOKENS,
+    context: prepared.runContext,
+    sources: {
+      topics: sourceCounts(prepared.context.manifest, "topic"),
+      documents: sourceCounts(prepared.context.manifest, "document"),
+    },
+  };
+}
+
+export async function generateQuiz(userId, body) {
+  const { settings, context, input, allowedSourceIds, runContext, runScope } =
+    await prepareGeneration(userId, body);
   const { quizTimeoutMs } = getAiConfig();
 
   const result = await runAiOperation({
     userId,
     operation: prompt.OPERATION,
     promptVersion: prompt.PROMPT_VERSION,
-    context: {
-      contextMode: context.contextMode,
-      includedChars: context.totals.includedChars,
-      sourcesIncluded: countStatus(context.manifest, "included"),
-      sourcesTruncated: countStatus(context.manifest, "truncated"),
-      sourcesExcluded: countStatus(context.manifest, "excluded"),
-    },
-    scope: {
-      subjectId: settings.subjectId,
-      ...(settings.topicId ? { topicId: settings.topicId } : {}),
-      selectionName: context.selection.name,
-      manifest: context.manifest.map(({ type, id, title, path, chars, status }) => ({
-        type,
-        id,
-        title,
-        path,
-        chars,
-        status,
-      })),
-    },
+    context: runContext,
+    scope: runScope,
     instructions: prompt.INSTRUCTIONS,
-    input: prompt.buildInput({
-      selectionType: context.selection.type,
-      selectionName: context.selection.name,
-      multipleChoiceCount: settings.multipleChoiceCount,
-      shortAnswerCount: settings.shortAnswerCount,
-      difficulty: settings.difficulty,
-      contextMode: context.contextMode,
-      contextText: context.text,
-    }),
+    input,
     jsonSchema: prompt.JSON_SCHEMA,
     validate: (data) =>
       prompt.validate(data, {
@@ -259,7 +291,7 @@ export async function generateQuiz(userId, body) {
     sourceManifest: context.manifest,
     sourceSnapshot: context.text,
   });
-  return toStudyView(stored);
+  return { ...toStudyView(stored), aiRun: result.aiRun };
 }
 
 export async function getQuiz(userId, quizId) {

@@ -9,6 +9,14 @@ export async function create(req, res, next) {
   }
 }
 
+export async function preview(req, res, next) {
+  try {
+    sendData(res, await quizService.previewQuiz(req.userId, req.body));
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function get(req, res, next) {
   try {
     sendData(res, await quizService.getQuiz(req.userId, req.params.quizId));

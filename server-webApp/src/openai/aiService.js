@@ -15,6 +15,26 @@ async function recordUsage(userId, record) {
   }
 }
 
+function publicRun(record) {
+  return {
+    operation: record.operation,
+    promptVersion: record.promptVersion,
+    providerMode: record.providerMode,
+    model: record.model,
+    inputTokens: record.inputTokens,
+    outputTokens: record.outputTokens,
+    estimatedCostUsd: record.estimatedCostUsd,
+    status: record.status,
+    errorCode: record.errorCode,
+    latencyMs: record.latencyMs,
+    context: record.context,
+    inputChars: record.inputChars,
+    maxOutputTokens: record.maxOutputTokens,
+    scope: record.scope,
+    failures: record.failures,
+  };
+}
+
 function boundedFailures(value) {
   if (!Array.isArray(value)) return [];
   return [...new Set(value.filter((item) => typeof item === "string" && item.length > 0))].slice(0, 20);
@@ -95,7 +115,7 @@ export async function runAiOperation({
       }
     }
 
-    await recordUsage(userId, {
+    const usageRecord = {
       operation,
       promptVersion,
       context,
@@ -111,9 +131,10 @@ export async function runAiOperation({
       status: "succeeded",
       errorCode: null,
       latencyMs: result.latencyMs,
-    });
+    };
+    await recordUsage(userId, usageRecord);
 
-    return { ...result, providerMode };
+    return { ...result, providerMode, aiRun: publicRun(usageRecord) };
   } catch (err) {
     if (!err.aiErrorCode) {
       throw err;
@@ -122,7 +143,7 @@ export async function runAiOperation({
     const usedModel = err.model || model;
     const failures = boundedFailures(err.failures);
     err.failures = failures;
-    await recordUsage(userId, {
+    const usageRecord = {
       operation,
       promptVersion,
       context,
@@ -138,7 +159,9 @@ export async function runAiOperation({
       status: "failed",
       errorCode: err.aiErrorCode,
       latencyMs: err.latencyMs ?? null,
-    });
+    };
+    await recordUsage(userId, usageRecord);
+    err.aiRun = publicRun(usageRecord);
     throw err;
   }
 }

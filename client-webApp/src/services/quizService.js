@@ -2,6 +2,9 @@ import { request } from "./apiClient.js";
 
 export const generateQuiz = (body) => request("/quizzes", { method: "POST", body, auth: true });
 
+export const previewQuiz = (body) =>
+  request("/quizzes/preview", { method: "POST", body, auth: true });
+
 export const getQuiz = (quizId) => request(`/quizzes/${encodeURIComponent(quizId)}`, { auth: true });
 
 export const listQuizzes = (limit) => {
