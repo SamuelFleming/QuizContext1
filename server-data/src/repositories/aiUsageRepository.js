@@ -34,8 +34,8 @@ function emptyTotals() {
   return { calls: 0, inputTokens: 0, outputTokens: 0, estimatedCostUsd: 0 };
 }
 
-// Current calendar month (UTC) totals per providerMode, plus the five most recent records.
-export async function summarizeAiUsage(userId) {
+// Current calendar month (UTC) totals per providerMode, plus one page of recent records.
+export async function summarizeAiUsage(userId, { page = 1, limit = 5 } = {}) {
   const now = new Date();
   const periodStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
   const owner = new mongoose.Types.ObjectId(userId);
@@ -60,6 +60,20 @@ export async function summarizeAiUsage(userId) {
     }
   }
 
-  const recent = await AiUsage.find({ userId: owner }).sort({ createdAt: -1 }).limit(5);
-  return { periodStart, totals, recent };
+  const totalItems = await AiUsage.countDocuments({ userId: owner });
+  const recent = await AiUsage.find({ userId: owner })
+    .sort({ createdAt: -1, _id: -1 })
+    .skip((page - 1) * limit)
+    .limit(limit);
+  return {
+    periodStart,
+    totals,
+    recent,
+    pagination: {
+      page,
+      limit,
+      totalItems,
+      totalPages: totalItems === 0 ? 0 : Math.ceil(totalItems / limit),
+    },
+  };
 }

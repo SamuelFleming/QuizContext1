@@ -123,15 +123,26 @@ function UsageItem({ item }) {
 
 export default function UsagePanel({ refreshKey }) {
   const { signOut: onUnauthorized } = useAuth();
+  const [page, setPage] = useState(1);
+  const [seenRefreshKey, setSeenRefreshKey] = useState(refreshKey);
   const [usage, setUsage] = useState(null);
+  const [loadedPage, setLoadedPage] = useState(0);
+  const [loadedRefreshKey, setLoadedRefreshKey] = useState(refreshKey);
   const [error, setError] = useState("");
+  if (refreshKey !== seenRefreshKey) {
+    setSeenRefreshKey(refreshKey);
+    setPage(1);
+  }
+  const loading = loadedPage !== page || loadedRefreshKey !== refreshKey;
 
   useEffect(() => {
     let cancelled = false;
-    getAiUsage()
+    getAiUsage(page)
       .then((next) => {
         if (cancelled) return;
         setUsage(next);
+        setLoadedPage(page);
+        setLoadedRefreshKey(refreshKey);
         setError("");
       })
       .catch((err) => {
@@ -142,7 +153,7 @@ export default function UsagePanel({ refreshKey }) {
     return () => {
       cancelled = true;
     };
-  }, [refreshKey, onUnauthorized]);
+  }, [page, refreshKey, onUnauthorized]);
 
   if (error) {
     return (
@@ -153,7 +164,7 @@ export default function UsagePanel({ refreshKey }) {
     );
   }
 
-  if (!usage) {
+  if (!usage && loading) {
     return (
       <section className="card">
         <p className="eyebrow">Usage this month</p>
@@ -163,6 +174,8 @@ export default function UsagePanel({ refreshKey }) {
   }
 
   const { totals, applicationLimit, recent } = usage;
+  const pagination = usage.pagination || { page, limit: 5, totalItems: recent.length, totalPages: recent.length ? 1 : 0 };
+  const totalPages = pagination.totalPages || 0;
 
   return (
     <section className="card" aria-live="polite">
@@ -180,15 +193,36 @@ export default function UsagePanel({ refreshKey }) {
       </ul>
 
       <h3 className="subheading">Recent activity</h3>
-      {recent.length === 0 ? (
-        <p className="detail">No AI activity yet. Run a connection test to try it.</p>
-      ) : (
+      {loading ? <p className="status-line">Loading activity…</p> : null}
+      {!loading && recent.length === 0 ? (
+        <p className="detail">
+          {page === 1 ? "No AI activity yet. Run a connection test to try it." : "No AI activity on this page."}
+        </p>
+      ) : null}
+      {recent.length > 0 ? (
         <ul className="usage-list">
           {recent.map((item) => (
             <UsageItem key={item.id} item={item} />
           ))}
         </ul>
-      )}
+      ) : null}
+      {totalPages > 1 ? (
+        <nav className="pagination" aria-label="Recent AI activity pages">
+          <button type="button" onClick={() => setPage((current) => current - 1)} disabled={loading || page <= 1}>
+            Previous
+          </button>
+          <p>
+            Page {page} of {totalPages}
+          </p>
+          <button
+            type="button"
+            onClick={() => setPage((current) => current + 1)}
+            disabled={loading || page >= totalPages}
+          >
+            Next
+          </button>
+        </nav>
+      ) : null}
       <p className="detail">Costs are estimates. Your own key's usage is shown but not limited.</p>
     </section>
   );

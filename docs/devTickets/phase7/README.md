@@ -1,6 +1,6 @@
 # Phase 7 — Initial UAT feedback
 
-**Status:** Discovery done (7000). 7001–7006 and 7010 are done. Planned build tickets are 7011 and 7013–7016. 7012 and 7027–7029 are deferred.
+**Status:** Discovery done (7000). 7001–7006 and 7010 are done. Planned build tickets are 7011, 7013–7017. 7012 and 7027–7029 are deferred.
 
 **Objective.** Refine the shipped MVP from first real use: more study files become reviewed text, and the user can see whether a subject, topic, or AI description is complete enough to quiz.
 
@@ -25,10 +25,11 @@
 10. [7014](7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Depends on 7013.
 11. [7015](7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected.
 12. [7016](7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Depends on 7015.
-13. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
-14. [7027](7027-topic-completeness-indicators.md) — indicators in the workspace tree. Deferred. Depends on 7006.
-15. [7028](7028-subject-completeness-bar.md) — bar on the workspace subject and the dashboard. Deferred. Depends on 7006.
-16. [7029](7029-description-freshness.md) — AI description vs later notes and documents. Deferred.
+13. [7017](7017-ai-usage-pagination.md) — paginate AI usage history. Depends on 7015 and 7016.
+14. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
+15. [7027](7027-topic-completeness-indicators.md) — indicators in the workspace tree. Deferred. Depends on 7006.
+16. [7028](7028-subject-completeness-bar.md) — bar on the workspace subject and the dashboard. Deferred. Depends on 7006.
+17. [7029](7029-description-freshness.md) — AI description vs later notes and documents. Deferred.
 
 **Not in this phase.** Quiz `AI_INVALID_OUTPUT` failures (output budget, strict validation, retries). Held until a later prompt. Do not fold a generation-reliability fix into these tickets.
 

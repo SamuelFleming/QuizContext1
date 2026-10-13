@@ -254,6 +254,15 @@ export const components = {
         remainingTokens: { type: "integer" },
       },
     },
+    Pagination: {
+      type: "object",
+      properties: {
+        page: { type: "integer", minimum: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 25 },
+        totalItems: { type: "integer", minimum: 0 },
+        totalPages: { type: "integer", minimum: 0 },
+      },
+    },
     AiUsageTotals: {
       type: "object",
       properties: {

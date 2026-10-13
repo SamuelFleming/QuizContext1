@@ -73,8 +73,24 @@ export const settingsPaths = {
   },
   "/settings/ai/usage": {
     get: {
-      summary: "This month's AI usage and remaining application allowance",
+      summary: "This month's AI usage, one page of recent runs, and remaining application allowance",
+      description:
+        "Monthly totals stay unchanged between pages. Recent is an all-time page, newest first. Defaults are page 1 and limit 5.",
       security: [{ bearerAuth: [] }],
+      parameters: [
+        {
+          in: "query",
+          name: "page",
+          schema: { type: "integer", minimum: 1 },
+          description: "Positive page number. Defaults to 1.",
+        },
+        {
+          in: "query",
+          name: "limit",
+          schema: { type: "integer", minimum: 1, maximum: 25 },
+          description: "Records per page. Defaults to 5.",
+        },
+      ],
       responses: {
         200: {
           description: "Usage summary",
@@ -95,6 +111,7 @@ export const settingsPaths = {
                         },
                       },
                       recent: { type: "array", items: { $ref: "#/components/schemas/AiUsage" } },
+                      pagination: { $ref: "#/components/schemas/Pagination" },
                       applicationLimit: { $ref: "#/components/schemas/ApplicationLimit" },
                     },
                   },
@@ -103,6 +120,7 @@ export const settingsPaths = {
             },
           },
         },
+        400: { $ref: "#/components/responses/BadRequest" },
         401: { $ref: "#/components/responses/Unauthorized" },
       },
     },

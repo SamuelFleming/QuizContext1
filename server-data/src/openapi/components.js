@@ -405,6 +405,16 @@ export const components = {
           },
         },
         recent: { type: "array", items: { $ref: "#/components/schemas/AiUsage" } },
+        pagination: { $ref: "#/components/schemas/Pagination" },
+      },
+    },
+    Pagination: {
+      type: "object",
+      properties: {
+        page: { type: "integer", minimum: 1 },
+        limit: { type: "integer", minimum: 1 },
+        totalItems: { type: "integer", minimum: 0 },
+        totalPages: { type: "integer", minimum: 0 },
       },
     },
     EncryptedKeyBlob: {
