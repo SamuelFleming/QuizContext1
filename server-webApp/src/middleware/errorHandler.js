@@ -11,7 +11,9 @@ export function errorHandler(err, _req, res, _next) {
     status >= 500 && !err.expose ? "Internal server error" : err.message || "Request failed";
   const code = err.aiErrorCode || err.errorCode;
   if (code) {
-    res.status(status).json({ message, code });
+    const failures =
+      Array.isArray(err.failures) && err.failures.length > 0 ? { failures: err.failures } : {};
+    res.status(status).json({ message, code, ...failures });
     return;
   }
   sendMessage(res, status, message);

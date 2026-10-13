@@ -13,6 +13,10 @@ const FIELDS = [
   "errorCode",
   "latencyMs",
   "context",
+  "inputChars",
+  "maxOutputTokens",
+  "scope",
+  "failures",
 ];
 
 // The owner always comes from the trusted X-User-Id, never from the record body.

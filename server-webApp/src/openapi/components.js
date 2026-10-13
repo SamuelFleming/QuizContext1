@@ -33,6 +33,12 @@ export const components = {
                   "AI_INVALID_OUTPUT",
                 ],
               },
+              failures: {
+                type: "array",
+                maxItems: 20,
+                description: "Present when AI_INVALID_OUTPUT has specific rejection reasons.",
+                items: { type: "string", maxLength: 80 },
+              },
             },
           },
         },
@@ -272,6 +278,14 @@ export const components = {
         errorCode: { type: "string", nullable: true },
         latencyMs: { type: "integer", nullable: true },
         context: { $ref: "#/components/schemas/AiUsageContext" },
+        inputChars: { type: "integer", nullable: true },
+        maxOutputTokens: { type: "integer", nullable: true },
+        scope: { $ref: "#/components/schemas/AiUsageScope" },
+        failures: {
+          type: "array",
+          maxItems: 20,
+          items: { type: "string", maxLength: 80 },
+        },
         createdAt: { type: "string", format: "date-time" },
       },
     },
@@ -285,6 +299,23 @@ export const components = {
         sourcesIncluded: { type: "integer" },
         sourcesTruncated: { type: "integer" },
         sourcesExcluded: { type: "integer" },
+      },
+    },
+    AiUsageScope: {
+      type: "object",
+      nullable: true,
+      description:
+        "Operation identifiers and manifest metadata only. Never holds prompt instructions, source bodies, or answer material.",
+      properties: {
+        subjectId: { type: "string" },
+        topicId: { type: "string" },
+        selectionName: { type: "string" },
+        manifest: {
+          type: "array",
+          items: { $ref: "#/components/schemas/ContextManifestEntry" },
+        },
+        quizId: { type: "string" },
+        attemptId: { type: "string" },
       },
     },
     ContextManifestEntry: {

@@ -203,6 +203,19 @@ export async function generateQuiz(userId, body) {
       sourcesTruncated: countStatus(context.manifest, "truncated"),
       sourcesExcluded: countStatus(context.manifest, "excluded"),
     },
+    scope: {
+      subjectId: settings.subjectId,
+      ...(settings.topicId ? { topicId: settings.topicId } : {}),
+      selectionName: context.selection.name,
+      manifest: context.manifest.map(({ type, id, title, path, chars, status }) => ({
+        type,
+        id,
+        title,
+        path,
+        chars,
+        status,
+      })),
+    },
     instructions: prompt.INSTRUCTIONS,
     input: prompt.buildInput({
       selectionType: context.selection.type,

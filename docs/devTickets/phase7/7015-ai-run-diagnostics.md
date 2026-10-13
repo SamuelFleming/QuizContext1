@@ -1,6 +1,6 @@
 # 7015 — AI run diagnostics
 
-**Status:** Planned  
+**Status:** Done
 **Phase:** 7  
 **Depends on:** None  
 **Relevant scope:** Phase 7 README; P3-03; P5-02; P6-01
@@ -35,13 +35,13 @@ Each AI call, especially quiz generation, records the scope and size of what was
 - Changing which quizzes are accepted. A reply that fails still discards the quiz.
 
 ## Acceptance checks
-- [ ] A mocked quiz reply with the wrong question count stores `failures` containing `question_count`, plus `inputChars`, `maxOutputTokens`, and a manifest whose entries have titles and no body text. The quiz is not stored.
-- [ ] A mocked incomplete reply stores `output_truncated` and the token counts from that response. It does not store `question_count`.
-- [ ] A successful mocked generation stores the same metrics, an empty `failures` list, and the scope manifest.
-- [ ] A description suggestion with an over-long suggestion stores a failure code and no source text.
-- [ ] No usage document contains the key, the prompt instructions, or a `<<<SOURCE` body.
-- [ ] User B cannot read user A's usage summary. The business error JSON for a validation failure is `{ message, code, failures }` and has no answer key.
-- [ ] Swagger on both APIs matches the changed usage and error shapes.
+- [x] A mocked quiz reply with the wrong question count stores `failures` containing `question_count`, plus `inputChars`, `maxOutputTokens`, and a manifest whose entries have titles and no body text. The quiz is not stored.
+- [x] A mocked incomplete reply stores `output_truncated` and the token counts from that response. It does not store `question_count`.
+- [x] A successful mocked generation stores the same metrics, an empty `failures` list, and the scope manifest.
+- [x] A description suggestion with an over-long suggestion stores a failure code and no source text.
+- [x] No usage document contains the key, the prompt instructions, or a `<<<SOURCE` body.
+- [x] User B cannot read user A's usage summary. The business error JSON for a validation failure is `{ message, code, failures }` and has no answer key.
+- [x] Swagger on both APIs matches the changed usage and error shapes.
 
 ## Implementation notes
 `validate` in `quizGeneration.js` currently returns true or false, so every structure failure becomes `AI_INVALID_OUTPUT` with no detail. `parseOutput` in `aiClient.js` uses that same code for an incomplete reply, a refusal, and invalid JSON. Return the reason from those checks and pass it into `recordUsage`. The manifest is already built in `quizService.js` before the call; pass the titles and counts, not `context.text`.

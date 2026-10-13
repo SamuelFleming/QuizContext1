@@ -77,6 +77,11 @@ export const aiPaths = {
                 properties: {
                   message: { type: "string" },
                   code: { type: "string", enum: ["CONTEXT_INSUFFICIENT", "AI_INVALID_OUTPUT"] },
+                  failures: {
+                    type: "array",
+                    maxItems: 20,
+                    items: { type: "string", maxLength: 80 },
+                  },
                 },
               },
             },
