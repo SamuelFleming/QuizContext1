@@ -198,17 +198,160 @@ h2 {
   gap: var(--space-2);
 }
 
-.usage-list li {
-  display: grid;
-  gap: 2px;
-  padding: var(--space-2) var(--space-3);
+.usage-list > li {
+  min-width: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
+  overflow: hidden;
 }
 
 .usage-meta {
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.usage-disclosure summary {
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+.usage-disclosure summary::marker {
+  color: var(--color-primary-accent);
+}
+
+.usage-disclosure summary:focus-visible {
+  outline: 2px solid var(--color-primary-accent);
+  outline-offset: -2px;
+}
+
+.usage-disclosure[open] summary {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-elevated-surface);
+}
+
+.usage-summary {
+  display: inline-grid;
+  width: calc(100% - var(--space-3));
+  min-width: 0;
+  gap: 4px;
+  vertical-align: top;
+}
+
+.usage-title,
+.manifest-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: var(--space-2);
+}
+
+.usage-title > span:first-child,
+.manifest-head strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.usage-title .pill,
+.manifest-status {
+  flex: none;
+}
+
+.usage-details {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  min-width: 0;
+}
+
+.usage-details section {
+  min-width: 0;
+}
+
+.usage-details h4 {
+  margin: 0 0 var(--space-2);
+  font-size: 0.875rem;
+}
+
+.usage-detail-text,
+.generation-error p {
+  margin: 0;
+}
+
+.failure-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.usage-facts {
+  margin: 0;
+}
+
+.usage-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.usage-facts dt {
+  color: var(--color-text-secondary);
+}
+
+.usage-facts dd {
+  margin: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.manifest-list {
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+}
+
+.manifest-list li {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.manifest-status {
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text);
+  font-size: 0.75rem;
+}
+
+.manifest-status.included {
+  border-color: var(--color-success);
+}
+
+.manifest-status.truncated {
+  border-color: var(--color-warning);
+}
+
+.manifest-status.excluded {
+  border-color: var(--color-error);
+}
+
+.manifest-path {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.generation-error {
+  display: grid;
+  gap: var(--space-2);
 }
 
 .check-row {
@@ -992,6 +1135,17 @@ button.secondary {
 
   h1 {
     font-size: 1.5rem;
+  }
+
+  .usage-title,
+  .manifest-head,
+  .usage-facts > div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .usage-facts dd {
+    text-align: left;
   }
 
   .shell-bar {

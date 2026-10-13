@@ -11,7 +11,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 4 | Subjects, recursive topics, Markdown + document ingestion | Done |
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
-| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build in progress |
+| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -19,7 +19,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-[7016](phase7/7016-ai-run-visibility.md) — show AI run diagnostics on Profile and failed quiz generation.
+None. The remaining Phase 7 tickets are deferred.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -34,7 +34,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 9. [7013](phase7/7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts. Done.
 10. [7014](phase7/7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Done (browser checks pending manual UAT). Depends on 7013.
 11. [7015](phase7/7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected. Done.
-12. [7016](phase7/7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Planned. Depends on 7015.
+12. [7016](phase7/7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Done (browser checks pending manual UAT). Depends on 7015.
 13. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
 14. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7006.
 15. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7006.
@@ -84,6 +84,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-None. 7016 is next. 7011 and 7014 are implemented; their browser acceptance checks await manual UAT.
+None. 7011, 7014, and 7016 are implemented; their browser acceptance checks await manual UAT.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.

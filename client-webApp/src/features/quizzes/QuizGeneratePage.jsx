@@ -3,6 +3,7 @@ import { useAuth } from "../../context/useAuth.js";
 import { listSubjects } from "../../services/subjectService.js";
 import { listTopics } from "../../services/topicService.js";
 import { generateQuiz } from "../../services/quizService.js";
+import { aiFailureLabel } from "../../utils/aiFailures.js";
 import { subtreeTopicIds } from "../content/topicTree.js";
 import { CONTEXT_MODES, PROFILE_CODES, generationErrorText } from "./contextNotice.js";
 import TopicPicker from "./TopicPicker.jsx";
@@ -250,14 +251,23 @@ export default function QuizGeneratePage({ navigate }) {
           </p>
         ) : null}
         {error ? (
-          <p className="error-text" role="alert">
-            {generationErrorText(error)}{" "}
-            {PROFILE_CODES.has(error.code) ? (
-              <button type="button" className="link" onClick={() => navigate("/profile")}>
-                Open Profile
-              </button>
+          <div className="generation-error error-text" role="alert">
+            <p>
+              {generationErrorText(error)}{" "}
+              {PROFILE_CODES.has(error.code) ? (
+                <button type="button" className="link" onClick={() => navigate("/profile")}>
+                  Open Profile
+                </button>
+              ) : null}
+            </p>
+            {error.code === "AI_INVALID_OUTPUT" && error.failures?.length > 0 ? (
+              <ul className="failure-list">
+                {error.failures.map((failure) => (
+                  <li key={failure}>{aiFailureLabel(failure)}</li>
+                ))}
+              </ul>
             ) : null}
-          </p>
+          </div>
         ) : null}
         <div className="button-row">
           <button type="submit" disabled={loading}>

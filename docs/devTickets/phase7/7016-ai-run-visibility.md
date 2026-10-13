@@ -1,6 +1,6 @@
 # 7016 — AI run visibility
 
-**Status:** Planned  
+**Status:** Done (lint and build verified; browser acceptance checks pending manual UAT)
 **Phase:** 7  
 **Depends on:** 7015  
 **Relevant scope:** Phase 7 README; S08; P3-04
@@ -26,7 +26,7 @@ On Profile, each recent AI call shows the scope, the size of the input, the toke
 - [ ] A truncated failure shows the cut-off label, not only `AI_INVALID_OUTPUT`.
 - [ ] A successful generation row shows the metrics and an empty failure list. The expanded scope lists source titles and does not show source text.
 - [ ] The usage list and the generation error contain no answer key and no API key.
-- [ ] At 390px the Profile list and an expanded row fit. Lint and build pass.
+- [ ] At 390px the Profile list and an expanded row fit. Lint and build pass. *(Lint and build verified; browser checks above await manual UAT.)*
 
 ## Implementation notes
 Profile already loads `GET /settings/ai/usage`. This ticket displays the fields 7015 adds. The generation form reads `failures` from the error JSON in `generationErrorText`.

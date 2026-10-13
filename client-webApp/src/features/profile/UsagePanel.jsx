@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/useAuth.js";
 import { getAiUsage } from "../../services/settingsService.js";
+import { aiFailureLabel } from "../../utils/aiFailures.js";
 
 const formatCost = (value) => `$${(value ?? 0).toFixed(4)}`;
 const formatNumber = (value) => (value ?? 0).toLocaleString();
+const formatMetric = (value) => (value == null ? "—" : value.toLocaleString());
+
+function formatTime(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Time unavailable" : date.toLocaleString();
+}
 
 function TotalsRow({ label, totals }) {
   return (
@@ -14,6 +21,102 @@ function TotalsRow({ label, totals }) {
         {formatNumber(totals.inputTokens + totals.outputTokens)} tokens ·{" "}
         {formatCost(totals.estimatedCostUsd)}
       </span>
+    </li>
+  );
+}
+
+function ValidationDetails({ item }) {
+  const failures = Array.isArray(item.failures) ? item.failures : [];
+  if (failures.length > 0) {
+    return (
+      <ul className="failure-list">
+        {failures.map((failure) => (
+          <li key={failure}>{aiFailureLabel(failure)}</li>
+        ))}
+      </ul>
+    );
+  }
+  return item.status === "succeeded" ? (
+    <p className="usage-detail-text">The call passed validation.</p>
+  ) : (
+    <p className="usage-detail-text">No validation failure code was recorded.</p>
+  );
+}
+
+function ScopeDetails({ scope }) {
+  const manifest = Array.isArray(scope?.manifest) ? scope.manifest : [];
+  return (
+    <>
+      <dl className="usage-facts">
+        <div>
+          <dt>Selection</dt>
+          <dd>{scope?.selectionName || "—"}</dd>
+        </div>
+      </dl>
+      {manifest.length > 0 ? (
+        <ul className="manifest-list">
+          {manifest.map((entry, index) => (
+            <li key={`${entry.type || "source"}-${entry.id || index}`}>
+              <div className="manifest-head">
+                <strong>{entry.title || "Untitled source"}</strong>
+                <span className={`manifest-status ${entry.status || ""}`}>
+                  {entry.status || "unknown"}
+                </span>
+              </div>
+              <span className="manifest-path">{entry.path || "Path unavailable"}</span>
+              <span className="usage-meta">{formatMetric(entry.chars)} characters</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="usage-detail-text">No source manifest recorded for this operation.</p>
+      )}
+    </>
+  );
+}
+
+function UsageItem({ item }) {
+  const statusText = item.status === "succeeded" ? "OK" : item.errorCode || "Failed";
+  return (
+    <li>
+      <details className="usage-disclosure">
+        <summary>
+          <span className="usage-summary">
+            <span className="usage-title">
+              <span>{item.operation}</span>
+              <span className={`pill ${item.status === "succeeded" ? "ok" : "failed"}`}>
+                {statusText}
+              </span>
+            </span>
+            <span className="usage-meta">
+              {item.model || "Model unavailable"} · Input {formatMetric(item.inputTokens)} tokens · Output{" "}
+              {formatMetric(item.outputTokens)} tokens
+              {item.inputChars == null ? "" : ` · ${formatMetric(item.inputChars)} input characters`} · Cost{" "}
+              {item.estimatedCostUsd == null ? "—" : formatCost(item.estimatedCostUsd)} ·{" "}
+              {formatTime(item.createdAt)}
+            </span>
+          </span>
+        </summary>
+        <div className="usage-details">
+          <section>
+            <h4>Validation</h4>
+            <ValidationDetails item={item} />
+          </section>
+          <section>
+            <h4>Limits</h4>
+            <dl className="usage-facts">
+              <div>
+                <dt>Maximum output tokens</dt>
+                <dd>{formatMetric(item.maxOutputTokens)}</dd>
+              </div>
+            </dl>
+          </section>
+          <section>
+            <h4>Scope</h4>
+            <ScopeDetails scope={item.scope} />
+          </section>
+        </div>
+      </details>
     </li>
   );
 }
@@ -82,16 +185,7 @@ export default function UsagePanel({ refreshKey }) {
       ) : (
         <ul className="usage-list">
           {recent.map((item) => (
-            <li key={item.id}>
-              <span>
-                {item.operation} · {item.status === "succeeded" ? "OK" : item.errorCode || "Failed"}
-              </span>
-              <span className="usage-meta">
-                {item.model || "—"} · {formatNumber((item.inputTokens ?? 0) + (item.outputTokens ?? 0))} tokens ·{" "}
-                {item.estimatedCostUsd == null ? "—" : formatCost(item.estimatedCostUsd)} ·{" "}
-                {new Date(item.createdAt).toLocaleString()}
-              </span>
-            </li>
+            <UsageItem key={item.id} item={item} />
           ))}
         </ul>
       )}
