@@ -377,7 +377,7 @@ export const components = {
         excluded: { type: "integer", minimum: 0 },
       },
     },
-    QuizGenerateInput: {
+    QuizPreviewInput: {
       type: "object",
       required: ["subjectId", "multipleChoiceCount", "shortAnswerCount"],
       properties: {
@@ -408,6 +408,53 @@ export const components = {
           enum: ["very_strict", "targeted", "loose"],
           default: "targeted",
         },
+      },
+    },
+    QuizGenerateInput: {
+      allOf: [
+        { $ref: "#/components/schemas/QuizPreviewInput" },
+        {
+          type: "object",
+          properties: {
+            title: {
+              type: "string",
+              nullable: true,
+              maxLength: 120,
+              description:
+                "Optional saved label. Blank or null uses the scope-derived title and the value is never sent to the AI.",
+            },
+          },
+        },
+      ],
+    },
+    QuizSummary: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        title: { type: "string" },
+        subjectName: { type: "string" },
+        topicPath: { type: "string", nullable: true },
+        contextMode: { type: "string", enum: ["very_strict", "targeted", "loose"] },
+        difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
+        questionCount: { type: "integer", minimum: 1, maximum: 20 },
+        createdAt: { type: "string", format: "date-time" },
+        attemptCount: { type: "integer", minimum: 0 },
+        latestResult: {
+          type: "object",
+          nullable: true,
+          properties: {
+            score: { type: "number" },
+            maxScore: { type: "number" },
+            percent: { type: "number" },
+          },
+        },
+      },
+    },
+    QuizListResult: {
+      type: "object",
+      properties: {
+        items: { type: "array", items: { $ref: "#/components/schemas/QuizSummary" } },
+        pagination: { $ref: "#/components/schemas/Pagination" },
       },
     },
     QuizPreview: {

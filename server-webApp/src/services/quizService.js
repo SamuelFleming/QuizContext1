@@ -37,6 +37,109 @@ function readCount(value, name) {
   return value;
 }
 
+const QUIZ_SORTS = ["newest", "oldest", "question_count_asc", "question_count_desc"];
+
+function readOptionalTitle(raw) {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== "string") {
+    throw createHttpError(400, "title must be a string");
+  }
+  const title = raw.trim();
+  if (!title) return null;
+  if (title.length > CONTENT_NAME_MAX) {
+    throw createHttpError(400, `title must be at most ${CONTENT_NAME_MAX} characters`);
+  }
+  return title;
+}
+
+function readQueryInteger(raw, name, min, max, fallback) {
+  if (raw === undefined) return fallback;
+  if (typeof raw !== "string" || !/^\d+$/.test(raw)) {
+    throw createHttpError(400, `${name} must be an integer from ${min} to ${max}`);
+  }
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value < min || value > max) {
+    throw createHttpError(400, `${name} must be an integer from ${min} to ${max}`);
+  }
+  return value;
+}
+
+function readListTopicIds(raw) {
+  if (raw === undefined) return [];
+  const values = Array.isArray(raw) ? raw : [raw];
+  if (values.length < 1 || values.length > QUIZ_TOPIC_IDS_MAX) {
+    throw createHttpError(400, `topicIds must contain 1 to ${QUIZ_TOPIC_IDS_MAX} unique topic ids`);
+  }
+  const topicIds = [];
+  const seen = new Set();
+  for (const id of values) {
+    if (typeof id !== "string" || !/^[a-f\d]{24}$/i.test(id.trim())) {
+      throw createHttpError(400, "topicIds must contain valid topic ids");
+    }
+    const value = id.trim().toLowerCase();
+    if (seen.has(value)) throw createHttpError(400, "topicIds must be unique");
+    seen.add(value);
+    topicIds.push(value);
+  }
+  return topicIds;
+}
+
+function readListQuery(query = {}) {
+  const page = readQueryInteger(query.page, "page", 1, Number.MAX_SAFE_INTEGER, 1);
+  const limit = readQueryInteger(query.limit, "limit", 1, 25, 25);
+  const sort = query.sort ?? "newest";
+  if (typeof sort !== "string" || !QUIZ_SORTS.includes(sort)) {
+    throw createHttpError(400, `sort must be one of ${QUIZ_SORTS.join(", ")}`);
+  }
+  const topicIds = readListTopicIds(query.topicIds);
+  const questionCount = readQueryInteger(
+    query.questionCount,
+    "questionCount",
+    QUIZ_QUESTIONS_MIN,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  const multipleChoiceCount = readQueryInteger(
+    query.multipleChoiceCount,
+    "multipleChoiceCount",
+    0,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  const shortAnswerCount = readQueryInteger(
+    query.shortAnswerCount,
+    "shortAnswerCount",
+    0,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  if (
+    (questionCount !== undefined &&
+      multipleChoiceCount !== undefined &&
+      multipleChoiceCount > questionCount) ||
+    (questionCount !== undefined &&
+      shortAnswerCount !== undefined &&
+      shortAnswerCount > questionCount) ||
+    (multipleChoiceCount !== undefined &&
+      shortAnswerCount !== undefined &&
+      (multipleChoiceCount + shortAnswerCount < QUIZ_QUESTIONS_MIN ||
+        multipleChoiceCount + shortAnswerCount > QUIZ_QUESTIONS_MAX ||
+        (questionCount !== undefined &&
+          multipleChoiceCount + shortAnswerCount !== questionCount)))
+  ) {
+    throw createHttpError(400, "question count filters describe an impossible quiz");
+  }
+  return {
+    page,
+    limit,
+    sort,
+    topicIds,
+    questionCount,
+    multipleChoiceCount,
+    shortAnswerCount,
+  };
+}
+
 function readTopicIds(raw) {
   if (raw == null) return null;
   if (!Array.isArray(raw) || raw.length < 1 || raw.length > QUIZ_TOPIC_IDS_MAX) {
@@ -246,6 +349,7 @@ export async function previewQuiz(userId, body) {
 }
 
 export async function generateQuiz(userId, body) {
+  const requestedTitle = readOptionalTitle(body?.title);
   const { settings, context, input, allowedSourceIds, runContext, runScope } =
     await prepareGeneration(userId, body);
   const { quizTimeoutMs } = getAiConfig();
@@ -269,7 +373,7 @@ export async function generateQuiz(userId, body) {
     timeoutMs: quizTimeoutMs,
   });
 
-  const title = context.selection.name.slice(0, CONTENT_NAME_MAX);
+  const title = requestedTitle || context.selection.name.slice(0, CONTENT_NAME_MAX);
   const stored = await quizzesApi.createQuiz(userId, {
     title,
     subjectId: settings.subjectId,
@@ -298,8 +402,8 @@ export async function getQuiz(userId, quizId) {
   return toStudyView(await quizzesApi.getQuiz(userId, quizId));
 }
 
-export function listQuizzes(userId, limit) {
-  return quizzesApi.listQuizzes(userId, limit);
+export function listQuizzes(userId, query) {
+  return quizzesApi.listQuizzes(userId, readListQuery(query));
 }
 
 export function listQuizAttempts(userId, quizId) {

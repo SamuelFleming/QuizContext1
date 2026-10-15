@@ -123,6 +123,7 @@ export default function QuizGeneratePage({ navigate }) {
   const [wholeSubject, setWholeSubject] = useState(!prefill.topicId);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const prefillTopicRef = useRef(prefill.topicId);
+  const [title, setTitle] = useState("");
   const [multipleChoiceCount, setMultipleChoiceCount] = useState("6");
   const [shortAnswerCount, setShortAnswerCount] = useState("4");
   const [difficulty, setDifficulty] = useState("medium");
@@ -229,7 +230,7 @@ export default function QuizGeneratePage({ navigate }) {
       const nextPreview = await previewQuiz(body);
       setPreview(nextPreview);
       setPhase("generating");
-      const quiz = await generateQuiz(body);
+      const quiz = await generateQuiz({ ...body, ...(title.trim() ? { title } : {}) });
       setResult(quiz);
       setPhase("success");
     } catch (err) {
@@ -315,6 +316,19 @@ export default function QuizGeneratePage({ navigate }) {
       <h1>Generate a quiz</h1>
       <p className="lede">Choose what to study. Targeted is the default context mode.</p>
       <form className="stack" onSubmit={handleSubmit} noValidate>
+        <label className="field">
+          <span>Quiz title (optional)</span>
+          <input
+            type="text"
+            value={title}
+            maxLength={120}
+            onChange={(event) => setTitle(event.target.value)}
+            disabled={loading}
+          />
+          <span className="usage-meta">
+            Leave blank to use a label based on the selected subject or topics.
+          </span>
+        </label>
         <label className="field">
           <span>Subject</span>
           <select

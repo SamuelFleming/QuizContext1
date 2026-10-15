@@ -1,6 +1,6 @@
 # 7031 — Quiz title and scalable library UI
 
-**Status:** Approved
+**Status:** Complete
 **Phase:** 7
 **Depends on:** 7030
 **Relevant scope:** F05; S04; S05; `04_flows-to-screens.md` §7.3; `01_design-concept.md`
@@ -51,19 +51,19 @@ Let a user optionally name a generated quiz and browse a large quiz library with
 - `client-webApp/src/styles/app.css`
 
 ## Acceptance checks
-- [ ] A non-blank title is trimmed and sent only with the generation request. Blank input generates successfully with the current scope-derived title.
-- [ ] The optional field enforces 120 characters, has an associated label and fallback help, and retains its value through preview, generation, success, and failure states.
-- [ ] A custom or default title appears through the existing library, detail, player/results, Dashboard, delete confirmation, and export flows without additional client-side title derivation.
-- [ ] The library initially requests page 1, limit 25, newest first and renders the returned pagination metadata. Dashboard still shows at most the five newest quizzes.
-- [ ] Selecting one or more topics sends repeated topic IDs and returns quizzes involving any selected topic. Choosing a subject without topics does not change quiz results, and changing subject clears prior topic selections.
-- [ ] Total, multiple-choice, and short-response exact-count filters work separately and in valid combinations. The UI prevents or explains impossible combinations before sending a request.
-- [ ] All four sort choices return to page 1 and display the server order. Filter and sort changes do not allow stale responses to replace the latest results.
-- [ ] Previous and Next navigate without overlapping rows, have correct disabled states, and are hidden for zero or one page.
-- [ ] Clear filters restores the unfiltered newest list and page 1.
-- [ ] No saved quizzes and no matching filtered quizzes show distinct guidance. Loading, API failure, and 401 states remain explicit.
-- [ ] Open, Export, and Delete work from a filtered page. Deleting the final item on a later page moves to the preceding valid page rather than leaving a stale empty page.
-- [ ] Controls, result rows, actions, and pagination fit and remain keyboard usable at 390px.
-- [ ] Client lint and production build pass with no new warnings or errors.
+- [x] A non-blank title is trimmed and sent only with the generation request. Blank input generates successfully with the current scope-derived title.
+- [x] The optional field enforces 120 characters, has an associated label and fallback help, and retains its value through preview, generation, success, and failure states.
+- [x] A custom or default title appears through the existing library, detail, player/results, Dashboard, delete confirmation, and export flows without additional client-side title derivation.
+- [x] The library initially requests page 1, limit 25, newest first and renders the returned pagination metadata. Dashboard still shows at most the five newest quizzes.
+- [x] Selecting one or more topics sends repeated topic IDs and returns quizzes involving any selected topic. Choosing a subject without topics does not change quiz results, and changing subject clears prior topic selections.
+- [x] Total, multiple-choice, and short-response exact-count filters work separately and in valid combinations. The UI prevents or explains impossible combinations before sending a request.
+- [x] All four sort choices return to page 1 and display the server order. Filter and sort changes do not allow stale responses to replace the latest results.
+- [x] Previous and Next navigate without overlapping rows, have correct disabled states, and are hidden for zero or one page.
+- [x] Clear filters restores the unfiltered newest list and page 1.
+- [x] No saved quizzes and no matching filtered quizzes show distinct guidance. Loading, API failure, and 401 states remain explicit.
+- [x] Open, Export, and Delete work from a filtered page. Deleting the final item on a later page moves to the preceding valid page rather than leaving a stale empty page.
+- [x] Controls, result rows, actions, and pagination fit and remain keyboard usable at 390px.
+- [x] Client lint and production build pass with no new warnings or errors.
 
 ## Implementation notes
 `QuizzesHome` currently loads one unbounded array. `UsagePanel` provides the existing Previous/Next pattern, and `StudyHistorySection` provides the existing subject/topic filter layout. A dedicated library-filter component is optional if it keeps `QuizzesHome` readable; do not introduce a general UI framework.

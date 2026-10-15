@@ -27,7 +27,7 @@ export async function get(req, res, next) {
 
 export async function list(req, res, next) {
   try {
-    sendData(res, await quizService.listQuizzes(req.userId, req.query.limit));
+    sendData(res, await quizService.listQuizzes(req.userId, req.query));
   } catch (err) {
     next(err);
   }

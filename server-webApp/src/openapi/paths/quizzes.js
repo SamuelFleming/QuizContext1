@@ -1,4 +1,28 @@
 const quizId = { in: "path", name: "quizId", required: true, schema: { type: "string" } };
+const listParameters = [
+  { in: "query", name: "page", schema: { type: "integer", minimum: 1, default: 1 } },
+  { in: "query", name: "limit", schema: { type: "integer", minimum: 1, maximum: 25, default: 25 } },
+  {
+    in: "query",
+    name: "sort",
+    schema: {
+      type: "string",
+      enum: ["newest", "oldest", "question_count_asc", "question_count_desc"],
+      default: "newest",
+    },
+  },
+  {
+    in: "query",
+    name: "topicIds",
+    description: "Repeat 1-30 unique topic IDs. Matches any stored topicId or topicIds value.",
+    schema: { type: "array", maxItems: 30, uniqueItems: true, items: { type: "string" } },
+    style: "form",
+    explode: true,
+  },
+  { in: "query", name: "questionCount", schema: { type: "integer", minimum: 1, maximum: 20 } },
+  { in: "query", name: "multipleChoiceCount", schema: { type: "integer", minimum: 0, maximum: 20 } },
+  { in: "query", name: "shortAnswerCount", schema: { type: "integer", minimum: 0, maximum: 20 } },
+];
 
 const playerResult = {
   content: {
@@ -33,13 +57,23 @@ const generationResult = {
 export const quizPaths = {
   "/quizzes": {
     get: {
-      summary: "List the caller's quizzes, newest first",
+      summary: "List the caller's quizzes",
       description:
-        "Each item has the title, scope names, mode, difficulty, question count, created date, attempt count, and the latest evaluated result. No questions or snapshot.",
+        "Returns a stable owner-scoped page. Topic filters use OR semantics and exclude whole-subject quizzes. Each item has safe summary fields and no questions or snapshot.",
       security: [{ bearerAuth: [] }],
-      parameters: [{ in: "query", name: "limit", schema: { type: "integer", minimum: 1, maximum: 100 } }],
+      parameters: listParameters,
       responses: {
-        200: { description: "Quiz summaries" },
+        200: {
+          description: "Paginated quiz summaries",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: { data: { $ref: "#/components/schemas/QuizListResult" } },
+              },
+            },
+          },
+        },
         400: { $ref: "#/components/responses/BadRequest" },
         401: { $ref: "#/components/responses/Unauthorized" },
       },
@@ -103,7 +137,7 @@ export const quizPaths = {
         required: true,
         content: {
           "application/json": {
-            schema: { $ref: "#/components/schemas/QuizGenerateInput" },
+            schema: { $ref: "#/components/schemas/QuizPreviewInput" },
           },
         },
       },

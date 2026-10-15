@@ -242,6 +242,45 @@ export const components = {
         },
       ],
     },
+    QuizSummary: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        title: { type: "string" },
+        subjectName: { type: "string" },
+        topicPath: { type: "string", nullable: true },
+        contextMode: { type: "string", enum: ["very_strict", "targeted", "loose"] },
+        difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
+        questionCount: { type: "integer", minimum: 1, maximum: 20 },
+        createdAt: { type: "string", format: "date-time" },
+        attemptCount: { type: "integer", minimum: 0 },
+        latestResult: {
+          type: "object",
+          nullable: true,
+          properties: {
+            score: { type: "number" },
+            maxScore: { type: "number" },
+            percent: { type: "number" },
+          },
+        },
+      },
+    },
+    QuizListResult: {
+      type: "object",
+      properties: {
+        items: { type: "array", items: { $ref: "#/components/schemas/QuizSummary" } },
+        pagination: { $ref: "#/components/schemas/QuizPagination" },
+      },
+    },
+    QuizPagination: {
+      type: "object",
+      properties: {
+        page: { type: "integer", minimum: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100 },
+        totalItems: { type: "integer", minimum: 0 },
+        totalPages: { type: "integer", minimum: 0 },
+      },
+    },
     Attempt: {
       type: "object",
       properties: {

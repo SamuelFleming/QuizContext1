@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import {
   CONTENT_NAME_MAX,
   CONTEXT_MODES,
@@ -19,7 +20,11 @@ import {
 } from "../constants/content.js";
 import { toQuiz, toQuizSummary } from "../models/quiz.js";
 import { toAttemptSummary } from "../models/attempt.js";
-import { deleteAttemptsForQuiz, listAttemptsForQuiz } from "../repositories/attemptRepository.js";
+import {
+  deleteAttemptsForQuiz,
+  listAttemptsForQuiz,
+  listAttemptsForQuizzes,
+} from "../repositories/attemptRepository.js";
 import { createQuiz, deleteQuiz, findQuiz, listQuizzes } from "../repositories/quizRepository.js";
 import { sendData, sendMessage } from "../utils/responses.js";
 
@@ -148,7 +153,7 @@ function readTopicIds(raw, topicId) {
     if (typeof id !== "string" || !id.trim()) {
       return { error: "topicIds must be topic ids" };
     }
-    const value = id.trim();
+    const value = id.trim().toLowerCase();
     if (seen.has(value)) {
       return { error: "topicIds must be unique" };
     }
@@ -297,13 +302,101 @@ export async function create(req, res, next) {
   }
 }
 
-function readLimit(raw) {
-  if (raw === undefined) return {};
-  const limit = Number(raw);
-  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
-    return { error: "limit must be an integer from 1 to 100" };
+const QUIZ_SORTS = ["newest", "oldest", "question_count_asc", "question_count_desc"];
+
+function readQueryInteger(raw, name, min, max, fallback) {
+  if (raw === undefined) return { value: fallback };
+  if (typeof raw !== "string" || !/^\d+$/.test(raw)) {
+    return { error: `${name} must be an integer from ${min} to ${max}` };
   }
-  return { limit };
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value < min || value > max) {
+    return { error: `${name} must be an integer from ${min} to ${max}` };
+  }
+  return { value };
+}
+
+function readListTopicIds(raw) {
+  if (raw === undefined) return { value: [] };
+  const values = Array.isArray(raw) ? raw : [raw];
+  if (values.length < 1 || values.length > QUIZ_TOPIC_IDS_MAX) {
+    return { error: `topicIds must contain 1 to ${QUIZ_TOPIC_IDS_MAX} unique topic ids` };
+  }
+  const topicIds = [];
+  const seen = new Set();
+  for (const id of values) {
+    if (typeof id !== "string" || !id.trim() || !mongoose.isValidObjectId(id.trim())) {
+      return { error: "topicIds must contain valid topic ids" };
+    }
+    const value = id.trim();
+    if (seen.has(value)) return { error: "topicIds must be unique" };
+    seen.add(value);
+    topicIds.push(value);
+  }
+  return { value: topicIds };
+}
+
+function readListQuery(query) {
+  const page = readQueryInteger(query.page, "page", 1, Number.MAX_SAFE_INTEGER, 1);
+  if (page.error) return page;
+  const limit = readQueryInteger(query.limit, "limit", 1, 100, 25);
+  if (limit.error) return limit;
+  const sort = query.sort ?? "newest";
+  if (typeof sort !== "string" || !QUIZ_SORTS.includes(sort)) {
+    return { error: `sort must be one of ${QUIZ_SORTS.join(", ")}` };
+  }
+  const topicIds = readListTopicIds(query.topicIds);
+  if (topicIds.error) return topicIds;
+  const questionCount = readQueryInteger(
+    query.questionCount,
+    "questionCount",
+    QUIZ_QUESTIONS_MIN,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  if (questionCount.error) return questionCount;
+  const multipleChoiceCount = readQueryInteger(
+    query.multipleChoiceCount,
+    "multipleChoiceCount",
+    0,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  if (multipleChoiceCount.error) return multipleChoiceCount;
+  const shortAnswerCount = readQueryInteger(
+    query.shortAnswerCount,
+    "shortAnswerCount",
+    0,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  if (shortAnswerCount.error) return shortAnswerCount;
+
+  const total = questionCount.value;
+  const mc = multipleChoiceCount.value;
+  const sa = shortAnswerCount.value;
+  if (
+    (total !== undefined && mc !== undefined && mc > total) ||
+    (total !== undefined && sa !== undefined && sa > total) ||
+    (mc !== undefined &&
+      sa !== undefined &&
+      (mc + sa < QUIZ_QUESTIONS_MIN ||
+        mc + sa > QUIZ_QUESTIONS_MAX ||
+        (total !== undefined && mc + sa !== total)))
+  ) {
+    return { error: "question count filters describe an impossible quiz" };
+  }
+  return {
+    values: {
+      page: page.value,
+      limit: limit.value,
+      sort,
+      topicIds: topicIds.value,
+      questionCount: total,
+      multipleChoiceCount: mc,
+      shortAnswerCount: sa,
+    },
+  };
 }
 
 function latestResult(attempt) {
@@ -317,24 +410,39 @@ function latestResult(attempt) {
 
 export async function list(req, res, next) {
   try {
-    const parsed = readLimit(req.query.limit);
-    if (parsed.error) {
-      sendMessage(res, 400, parsed.error);
+    const { error, values } = readListQuery(req.query);
+    if (error) {
+      sendMessage(res, 400, error);
       return;
     }
-    const quizzes = await listQuizzes(req.userId, parsed.limit);
-    const summaries = [];
-    for (const quiz of quizzes) {
-      const attempts = await listAttemptsForQuiz(req.userId, quiz._id);
-      const evaluated = attempts.find((attempt) => attempt.status === "evaluated");
-      summaries.push(
-        toQuizSummary(quiz, {
-          attemptCount: attempts.length,
-          latestResult: latestResult(evaluated),
-        }),
-      );
+    const { items: quizzes, totalItems } = await listQuizzes(req.userId, values);
+    const attempts = await listAttemptsForQuizzes(
+      req.userId,
+      quizzes.map((quiz) => quiz._id),
+    );
+    const attemptsByQuiz = new Map();
+    for (const attempt of attempts) {
+      const quizId = attempt.quizId.toString();
+      if (!attemptsByQuiz.has(quizId)) attemptsByQuiz.set(quizId, []);
+      attemptsByQuiz.get(quizId).push(attempt);
     }
-    sendData(res, summaries);
+    const summaries = quizzes.map((quiz) => {
+      const quizAttempts = attemptsByQuiz.get(quiz._id.toString()) || [];
+      const evaluated = quizAttempts.find((attempt) => attempt.status === "evaluated");
+      return toQuizSummary(quiz, {
+          attemptCount: quizAttempts.length,
+          latestResult: latestResult(evaluated),
+        });
+    });
+    sendData(res, {
+      items: summaries,
+      pagination: {
+        page: values.page,
+        limit: values.limit,
+        totalItems,
+        totalPages: Math.ceil(totalItems / values.limit),
+      },
+    });
   } catch (err) {
     next(err);
   }

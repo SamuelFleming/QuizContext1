@@ -1056,6 +1056,28 @@ button.secondary {
   margin: var(--space-3) 0;
 }
 
+.quiz-library-filters {
+  margin-bottom: var(--space-3);
+}
+
+.library-topic-filter {
+  margin-bottom: var(--space-3);
+}
+
+.quiz-filter-actions {
+  margin-bottom: var(--space-3);
+}
+
+.quiz-library-pagination {
+  width: max-content;
+  max-width: 100%;
+  margin-top: var(--space-4);
+}
+
+.quiz-library-pagination p {
+  min-width: 5.5rem;
+}
+
 .history-counts {
   list-style: none;
   margin: var(--space-4) 0;

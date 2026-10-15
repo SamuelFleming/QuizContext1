@@ -1,15 +1,37 @@
 import { request } from "./apiClient.js";
 
-export const generateQuiz = (body) => request("/quizzes", { method: "POST", body, auth: true });
+export const generateQuiz = (body) => {
+  const title = typeof body.title === "string" ? body.title.trim() : "";
+  const input = { ...body };
+  if (title) input.title = title;
+  else delete input.title;
+  return request("/quizzes", { method: "POST", body: input, auth: true });
+};
 
 export const previewQuiz = (body) =>
   request("/quizzes/preview", { method: "POST", body, auth: true });
 
 export const getQuiz = (quizId) => request(`/quizzes/${encodeURIComponent(quizId)}`, { auth: true });
 
-export const listQuizzes = (limit) => {
-  const query = limit ? `?limit=${encodeURIComponent(limit)}` : "";
-  return request(`/quizzes${query}`, { auth: true });
+export const listQuizzes = ({
+  page = 1,
+  limit = 25,
+  sort = "newest",
+  topicIds = [],
+  questionCount,
+  multipleChoiceCount,
+  shortAnswerCount,
+} = {}) => {
+  const query = new URLSearchParams({ page: String(page), limit: String(limit), sort });
+  for (const topicId of topicIds) query.append("topicIds", topicId);
+  for (const [name, value] of Object.entries({
+    questionCount,
+    multipleChoiceCount,
+    shortAnswerCount,
+  })) {
+    if (value !== undefined && value !== null && value !== "") query.set(name, String(value));
+  }
+  return request(`/quizzes?${query.toString()}`, { auth: true });
 };
 
 export const deleteQuiz = (quizId) =>

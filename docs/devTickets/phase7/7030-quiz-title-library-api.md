@@ -1,6 +1,6 @@
 # 7030 — Quiz titles and scalable library API
 
-**Status:** Approved
+**Status:** Complete
 **Phase:** 7
 **Depends on:** 7010
 **Relevant scope:** F05; S04; S05; P6-01; P6-06; 7017
@@ -47,18 +47,18 @@ Let a user give each generated quiz its own title and query a large owner-scoped
 - `server-data/src/openapi/paths/quizzes.js`
 
 ## Acceptance checks
-- [ ] A supplied title is trimmed, stored, and returned consistently by generate, list, detail, study view, and export. A title over 120 characters returns 400 before the AI call.
-- [ ] Missing, null, empty, and whitespace-only titles retain the current scope-derived title. Title text is not added to the AI input.
-- [ ] At least two quizzes can be generated for the same whole subject, single topic, and explicit topic set without replacement or a uniqueness error.
-- [ ] Default list requests return the first 25 owner-scoped quizzes newest first with correct pagination metadata. Stable adjacent pages do not overlap.
-- [ ] Public limit 26, internal limit 101, invalid pages, unknown sort values, malformed topic IDs, duplicate topic IDs, and invalid or impossible count combinations return 400.
-- [ ] Oldest and both question-count sort directions return the expected stable order.
-- [ ] Each exact count filter works alone and in valid combinations.
-- [ ] A multi-topic filter uses OR semantics across requested IDs, matches both `topicId` and `topicIds`, and excludes whole-subject quizzes.
-- [ ] Another user's quizzes never appear in items or totals. Missing authentication remains 401, and the data API still requires its internal key and trusted owner header.
-- [ ] Attempt summaries are loaded only for the returned page. The list and study responses contain no answer keys, marking criteria, source snapshot, or API credentials.
-- [ ] Both live OpenAPI documents match the implemented request bounds and paginated response.
-- [ ] Focused request checks cover custom/default titles, pagination, every filter and sort, validation failures, and cross-user isolation.
+- [x] A supplied title is trimmed, stored, and returned consistently by generate, list, detail, study view, and export. A title over 120 characters returns 400 before the AI call.
+- [x] Missing, null, empty, and whitespace-only titles retain the current scope-derived title. Title text is not added to the AI input.
+- [x] At least two quizzes can be generated for the same whole subject, single topic, and explicit topic set without replacement or a uniqueness error.
+- [x] Default list requests return the first 25 owner-scoped quizzes newest first with correct pagination metadata. Stable adjacent pages do not overlap.
+- [x] Public limit 26, internal limit 101, invalid pages, unknown sort values, malformed topic IDs, duplicate topic IDs, and invalid or impossible count combinations return 400.
+- [x] Oldest and both question-count sort directions return the expected stable order.
+- [x] Each exact count filter works alone and in valid combinations.
+- [x] A multi-topic filter uses OR semantics across requested IDs, matches both `topicId` and `topicIds`, and excludes whole-subject quizzes.
+- [x] Another user's quizzes never appear in items or totals. Missing authentication remains 401, and the data API still requires its internal key and trusted owner header.
+- [x] Attempt summaries are loaded only for the returned page. The list and study responses contain no answer keys, marking criteria, source snapshot, or API credentials.
+- [x] Both live OpenAPI documents match the implemented request bounds and paginated response.
+- [x] Focused request checks cover custom/default titles, pagination, every filter and sort, validation failures, and cross-user isolation.
 
 ## Implementation notes
 The quiz schema already stores a required title, `multipleChoiceCount`, `shortAnswerCount`, `topicId`, and `topicIds`, and it has no scope uniqueness constraint. This ticket changes generation input and library querying; it does not require a migration. Preserve the existing dashboard use case by allowing `limit=5` with the default first page.

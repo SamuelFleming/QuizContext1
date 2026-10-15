@@ -3,6 +3,30 @@ const keyed = [
   { $ref: "#/components/parameters/UserId" },
 ];
 const quizId = { in: "path", name: "quizId", required: true, schema: { type: "string" } };
+const listParameters = [
+  { in: "query", name: "page", schema: { type: "integer", minimum: 1, default: 1 } },
+  { in: "query", name: "limit", schema: { type: "integer", minimum: 1, maximum: 100, default: 25 } },
+  {
+    in: "query",
+    name: "sort",
+    schema: {
+      type: "string",
+      enum: ["newest", "oldest", "question_count_asc", "question_count_desc"],
+      default: "newest",
+    },
+  },
+  {
+    in: "query",
+    name: "topicIds",
+    description: "Repeat 1-30 unique topic IDs. Uses OR semantics across topicId and topicIds.",
+    schema: { type: "array", maxItems: 30, uniqueItems: true, items: { type: "string" } },
+    style: "form",
+    explode: true,
+  },
+  { in: "query", name: "questionCount", schema: { type: "integer", minimum: 1, maximum: 20 } },
+  { in: "query", name: "multipleChoiceCount", schema: { type: "integer", minimum: 0, maximum: 20 } },
+  { in: "query", name: "shortAnswerCount", schema: { type: "integer", minimum: 0, maximum: 20 } },
+];
 
 const quizResult = {
   content: {
@@ -30,14 +54,22 @@ export const quizPaths = {
       },
     },
     get: {
-      summary: "List the caller's quizzes, newest first (keyed, internal only)",
-      description: "Omits questions and the source snapshot. Includes attempt count and the latest evaluated score.",
-      parameters: [
-        ...keyed,
-        { in: "query", name: "limit", schema: { type: "integer", minimum: 1, maximum: 100 } },
-      ],
+      summary: "List the caller's quizzes (keyed, internal only)",
+      description:
+        "Filters, sorts, counts, and pages owner-scoped quizzes before loading attempt summaries. Omits questions and source snapshots.",
+      parameters: [...keyed, ...listParameters],
       responses: {
-        200: { description: "Quiz summaries" },
+        200: {
+          description: "Paginated quiz summaries",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: { data: { $ref: "#/components/schemas/QuizListResult" } },
+              },
+            },
+          },
+        },
         400: { $ref: "#/components/responses/BadRequest" },
         401: { $ref: "#/components/responses/Unauthorized" },
       },

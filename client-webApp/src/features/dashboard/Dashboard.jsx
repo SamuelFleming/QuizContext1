@@ -23,8 +23,8 @@ export default function Dashboard({ navigate }) {
         }
         setLoadError(err.message || "Could not load subjects.");
       });
-    listQuizzes(5)
-      .then((data) => active && setQuizzes(data))
+    listQuizzes({ page: 1, limit: 5, sort: "newest" })
+      .then((data) => active && setQuizzes(data.items))
       .catch((err) => {
         if (active && err.status === 401) signOut();
       });
