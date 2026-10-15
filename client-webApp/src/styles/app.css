@@ -1057,21 +1057,59 @@ button.secondary {
 }
 
 .quiz-library-filters {
+  grid-template-columns: 1.25fr repeat(3, minmax(5rem, 0.7fr)) 1.25fr;
+  gap: var(--space-2);
+  margin: var(--space-2) 0;
+}
+
+.quiz-filter-panel {
   margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-elevated-surface);
+}
+
+.quiz-filter-panel > summary {
+  width: max-content;
+  color: var(--color-primary-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.quiz-library-filters .field {
+  gap: 3px;
+  min-width: 0;
+}
+
+.quiz-library-filters .field span {
+  font-size: 0.7rem;
+}
+
+.quiz-library-filters .field input,
+.quiz-library-filters .field select {
+  min-width: 0;
+  padding: 5px 7px;
+  font-size: 0.75rem;
 }
 
 .library-topic-filter {
-  margin-bottom: var(--space-3);
+  max-height: 14rem;
+  margin-bottom: var(--space-2);
+  background: var(--color-surface);
+  font-size: 0.8rem;
 }
 
 .quiz-filter-actions {
+  justify-content: space-between;
   margin-bottom: var(--space-3);
 }
 
 .quiz-library-pagination {
   width: max-content;
   max-width: 100%;
-  margin-top: var(--space-4);
+  margin-top: 0;
 }
 
 .quiz-library-pagination p {

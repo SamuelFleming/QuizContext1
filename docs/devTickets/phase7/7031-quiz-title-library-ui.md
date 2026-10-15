@@ -24,9 +24,10 @@ Let a user optionally name a generated quiz and browse a large quiz library with
   - Exact short-response question count.
   - Sort: Newest (default), Oldest, Question count low to high, and Question count high to low.
 - Provide an explicit **Clear filters** action. Clear topic and count filters, restore Newest, and return to page 1.
-- Request filtered and sorted pages from the API; do not fetch all quizzes for client-side filtering or sorting. Use a fixed page size of 25 in the library.
+- Request filtered and sorted pages from the API; do not fetch all quizzes for client-side filtering or sorting. Use a fixed page size of 5 in the library.
 - Reset to page 1 whenever a filter or sort changes. Avoid stale responses replacing newer selections when requests overlap.
-- Show Previous and Next below the list with “Page X of Y”; hide pagination controls when there is at most one page and disable unavailable directions.
+- Put the library filters in a native accordion that is closed by default. The subject, exact-count, and sort controls use compact type and sit on one row when the width allows. The topic choices stay inside the same panel.
+- Show Previous and Next with “Page X of Y” on the same row as **Clear filters**, aligned to the right. Hide pagination controls when there is at most one page and disable unavailable directions.
 - Distinguish the existing never-created-a-quiz state from “No quizzes match these filters.” Keep loading, request error, and 401/sign-out behavior explicit.
 - Keep Open, Export, and Delete working on every page. After deletion, refresh the active query and move to the preceding page when the deleted item was the last item on a now-empty later page.
 - Reuse current form, `history-filters`, item-list, and pagination styling patterns. Controls and rows must remain labelled, keyboard usable, and free of horizontal overflow at 390px.
@@ -54,11 +55,12 @@ Let a user optionally name a generated quiz and browse a large quiz library with
 - [x] A non-blank title is trimmed and sent only with the generation request. Blank input generates successfully with the current scope-derived title.
 - [x] The optional field enforces 120 characters, has an associated label and fallback help, and retains its value through preview, generation, success, and failure states.
 - [x] A custom or default title appears through the existing library, detail, player/results, Dashboard, delete confirmation, and export flows without additional client-side title derivation.
-- [x] The library initially requests page 1, limit 25, newest first and renders the returned pagination metadata. Dashboard still shows at most the five newest quizzes.
+- [x] The library initially requests page 1, limit 5, newest first and renders the returned pagination metadata. Dashboard still shows at most the five newest quizzes.
 - [x] Selecting one or more topics sends repeated topic IDs and returns quizzes involving any selected topic. Choosing a subject without topics does not change quiz results, and changing subject clears prior topic selections.
 - [x] Total, multiple-choice, and short-response exact-count filters work separately and in valid combinations. The UI prevents or explains impossible combinations before sending a request.
 - [x] All four sort choices return to page 1 and display the server order. Filter and sort changes do not allow stale responses to replace the latest results.
 - [x] Previous and Next navigate without overlapping rows, have correct disabled states, and are hidden for zero or one page.
+- [x] Filters start collapsed. When opened, the compact filter controls share one row where the width allows, and pagination sits on the Clear filters row, aligned right.
 - [x] Clear filters restores the unfiltered newest list and page 1.
 - [x] No saved quizzes and no matching filtered quizzes show distinct guidance. Loading, API failure, and 401 states remain explicit.
 - [x] Open, Export, and Delete work from a filtered page. Deleting the final item on a later page moves to the preceding valid page rather than leaving a stale empty page.

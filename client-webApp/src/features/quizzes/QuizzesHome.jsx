@@ -45,7 +45,7 @@ function buildListQuery({ page, sort, selectedTopicIds, questionCount, multipleC
   return {
     query: {
       page,
-      limit: 25,
+      limit: 5,
       sort,
       topicIds: [...selectedTopicIds].sort(),
       questionCount: total.value,
@@ -208,85 +208,109 @@ export default function QuizzesHome({ navigate }) {
           Generate quiz
         </button>
       </div>
-      <div className="history-filters quiz-library-filters">
-        <label className="field">
-          <span>Subject for topics</span>
-          <select
-            value={subjectId}
-            onChange={(event) => {
-              setSubjectId(event.target.value);
-              setTopics(event.target.value ? null : []);
-              setSelectedTopicIds(new Set());
-              setTopicError("");
-              setPage(1);
-            }}
-            disabled={subjects === null}
-          >
-            <option value="">{subjects ? "Choose a subject" : "Loading…"}</option>
-            {(subjects || []).map((subject) => (
-              <option key={subject.id} value={subject.id}>
-                {subject.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field">
-          <span>Exact total questions</span>
-          <input
-            type="number"
-            min="1"
-            max="20"
-            value={questionCount}
-            onChange={(event) => changeFilter(setQuestionCount, event.target.value)}
-            placeholder="Any"
+      <details className="quiz-filter-panel">
+        <summary>Filters{hasFilters ? " (active)" : ""}</summary>
+        <div className="history-filters quiz-library-filters">
+          <label className="field">
+            <span>Subject for topics</span>
+            <select
+              value={subjectId}
+              onChange={(event) => {
+                setSubjectId(event.target.value);
+                setTopics(event.target.value ? null : []);
+                setSelectedTopicIds(new Set());
+                setTopicError("");
+                setPage(1);
+              }}
+              disabled={subjects === null}
+            >
+              <option value="">{subjects ? "Choose a subject" : "Loading…"}</option>
+              {(subjects || []).map((subject) => (
+                <option key={subject.id} value={subject.id}>
+                  {subject.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            <span>Exact total</span>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              value={questionCount}
+              onChange={(event) => changeFilter(setQuestionCount, event.target.value)}
+              placeholder="Any"
+            />
+          </label>
+          <label className="field">
+            <span>Multiple choice</span>
+            <input
+              type="number"
+              min="0"
+              max="20"
+              value={multipleChoiceCount}
+              onChange={(event) => changeFilter(setMultipleChoiceCount, event.target.value)}
+              placeholder="Any"
+            />
+          </label>
+          <label className="field">
+            <span>Short response</span>
+            <input
+              type="number"
+              min="0"
+              max="20"
+              value={shortAnswerCount}
+              onChange={(event) => changeFilter(setShortAnswerCount, event.target.value)}
+              placeholder="Any"
+            />
+          </label>
+          <label className="field">
+            <span>Sort</span>
+            <select value={sort} onChange={(event) => changeFilter(setSort, event.target.value)}>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="question_count_asc">Count: low to high</option>
+              <option value="question_count_desc">Count: high to low</option>
+            </select>
+          </label>
+        </div>
+        {subjectId ? (
+          <QuizLibraryTopicFilter
+            topics={topics}
+            selectedIds={selectedTopicIds}
+            disabled={topics === null}
+            onChange={(next) => changeFilter(setSelectedTopicIds, next)}
           />
-        </label>
-        <label className="field">
-          <span>Exact multiple choice</span>
-          <input
-            type="number"
-            min="0"
-            max="20"
-            value={multipleChoiceCount}
-            onChange={(event) => changeFilter(setMultipleChoiceCount, event.target.value)}
-            placeholder="Any"
-          />
-        </label>
-        <label className="field">
-          <span>Exact short response</span>
-          <input
-            type="number"
-            min="0"
-            max="20"
-            value={shortAnswerCount}
-            onChange={(event) => changeFilter(setShortAnswerCount, event.target.value)}
-            placeholder="Any"
-          />
-        </label>
-        <label className="field">
-          <span>Sort</span>
-          <select value={sort} onChange={(event) => changeFilter(setSort, event.target.value)}>
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="question_count_asc">Question count low to high</option>
-            <option value="question_count_desc">Question count high to low</option>
-          </select>
-        </label>
-      </div>
-      {subjectId ? (
-        <QuizLibraryTopicFilter
-          topics={topics}
-          selectedIds={selectedTopicIds}
-          disabled={topics === null}
-          onChange={(next) => changeFilter(setSelectedTopicIds, next)}
-        />
-      ) : (
-        <p className="usage-meta">Choose a subject only to load topic choices; it does not filter quizzes by itself.</p>
-      )}
+        ) : (
+          <p className="usage-meta">Choose a subject only to load topic choices; it does not filter quizzes by itself.</p>
+        )}
+      </details>
       <div className="button-row quiz-filter-actions">
         <button type="button" className="secondary" onClick={clearFilters} disabled={!hasChanges}>
           Clear filters
         </button>
+        {!displayLoading && !parsed.error && !error && result?.pagination.totalPages > 1 ? (
+          <nav className="pagination quiz-library-pagination" aria-label="Quiz library pages">
+            <button
+              type="button"
+              onClick={() => setPage((current) => current - 1)}
+              disabled={page <= 1}
+            >
+              Previous
+            </button>
+            <p>
+              Page {result.pagination.page} of {result.pagination.totalPages}
+            </p>
+            <button
+              type="button"
+              onClick={() => setPage((current) => current + 1)}
+              disabled={page >= result.pagination.totalPages}
+            >
+              Next
+            </button>
+          </nav>
+        ) : null}
       </div>
       {topicError ? (
         <p className="error-text" role="alert">
@@ -334,27 +358,6 @@ export default function QuizzesHome({ navigate }) {
           ))}
         </ul>
       )}
-      {!displayLoading && !parsed.error && !error && result?.pagination.totalPages > 1 ? (
-        <nav className="pagination quiz-library-pagination" aria-label="Quiz library pages">
-          <button
-            type="button"
-            onClick={() => setPage((current) => current - 1)}
-            disabled={page <= 1}
-          >
-            Previous
-          </button>
-          <p>
-            Page {result.pagination.page} of {result.pagination.totalPages}
-          </p>
-          <button
-            type="button"
-            onClick={() => setPage((current) => current + 1)}
-            disabled={page >= result.pagination.totalPages}
-          >
-            Next
-          </button>
-        </nav>
-      ) : null}
     </section>
   );
 }
