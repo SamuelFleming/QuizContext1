@@ -19,7 +19,9 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None. The remaining Phase 7 tickets are deferred.
+[7030](phase7/7030-quiz-title-library-api.md) — optional quiz titles plus filtered, sorted, paginated library APIs.
+
+Then [7031](phase7/7031-quiz-title-library-ui.md) — title entry and scalable Quiz library controls. Depends on 7030.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -38,10 +40,12 @@ None. The remaining Phase 7 tickets are deferred.
 13. [7017](phase7/7017-ai-usage-pagination.md) — paginate AI usage history. Done (browser checks pending manual UAT). Depends on 7015 and 7016.
 14. [7018](phase7/7018-quiz-generation-diagnostics-api.md) — preview quiz input metrics and return safe AI run diagnostics. Done (provider-mocked UAT pending). Depends on 7015.
 15. [7019](phase7/7019-quiz-generation-progress-ui.md) — loading, result, error, and details UX. Done (browser UAT pending). Depends on 7016 and 7018.
-16. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
-17. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7006.
-18. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7006.
-19. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
+16. [7030](phase7/7030-quiz-title-library-api.md) — optional quiz titles plus filtered, sorted, paginated library APIs. Approved.
+17. [7031](phase7/7031-quiz-title-library-ui.md) — title entry and scalable Quiz library controls. Approved. Depends on 7030.
+18. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
+19. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7006.
+20. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7006.
+21. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
 
 Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUTPUT` reliability is not in this phase.
 
@@ -87,6 +91,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-None. 7011, 7014, 7016, 7017, 7018, and 7019 are implemented; their noted browser or provider-mocked acceptance checks await manual UAT.
+7030 and 7031 are approved and not started. 7011, 7014, 7016, 7017, 7018, and 7019 are implemented; their noted browser or provider-mocked acceptance checks await manual UAT.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.
