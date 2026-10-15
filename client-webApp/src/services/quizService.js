@@ -34,6 +34,13 @@ export const listQuizzes = ({
   return request(`/quizzes?${query.toString()}`, { auth: true });
 };
 
+export const renameQuiz = (quizId, title) =>
+  request(`/quizzes/${encodeURIComponent(quizId)}`, {
+    method: "PATCH",
+    body: { title },
+    auth: true,
+  });
+
 export const deleteQuiz = (quizId) =>
   request(`/quizzes/${encodeURIComponent(quizId)}`, { method: "DELETE", auth: true });
 

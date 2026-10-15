@@ -64,6 +64,15 @@ export async function findQuizTitles(userId, quizIds) {
   return new Map(quizzes.map((quiz) => [quiz._id.toString(), quiz.title]));
 }
 
+export async function updateQuizTitle(userId, quizId, title) {
+  if (!mongoose.isValidObjectId(quizId)) return null;
+  return Quiz.findOneAndUpdate(
+    { _id: quizId, userId },
+    { title },
+    { returnDocument: "after", runValidators: true },
+  );
+}
+
 export async function deleteQuiz(userId, quizId) {
   if (!mongoose.isValidObjectId(quizId)) return null;
   return Quiz.findOneAndDelete({ _id: quizId, userId });

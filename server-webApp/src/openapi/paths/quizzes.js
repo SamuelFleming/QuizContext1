@@ -225,6 +225,31 @@ export const quizPaths = {
         404: { $ref: "#/components/responses/NotFound" },
       },
     },
+    patch: {
+      summary: "Rename a saved quiz",
+      description:
+        "Changes only the saved title. Returns the study view. Questions, attempts, scope, answer keys, and the source snapshot are unchanged.",
+      security: [{ bearerAuth: [] }],
+      parameters: [quizId],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["title"],
+              properties: { title: { type: "string", minLength: 1, maxLength: 120 } },
+            },
+          },
+        },
+      },
+      responses: {
+        200: { description: "Renamed quiz (study view)", ...studyViewResult },
+        400: { $ref: "#/components/responses/BadRequest" },
+        401: { $ref: "#/components/responses/Unauthorized" },
+        404: { $ref: "#/components/responses/NotFound" },
+      },
+    },
     delete: {
       summary: "Delete a quiz and its attempts",
       description: "Subject, topic, and document content is left in place.",

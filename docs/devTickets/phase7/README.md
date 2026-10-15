@@ -1,6 +1,6 @@
 # Phase 7 — Initial UAT feedback
 
-**Status:** Discovery done (7000). The initial build through 7019 and the titled, scalable quiz library work in 7030–7031 are complete, with noted manual UAT still pending. 7012 and 7027–7029 are deferred.
+**Status:** Discovery done (7000). The initial build through 7019, the titled quiz library in 7030–7031, and saved-quiz rename in 7032 are complete, with noted manual UAT still pending. 7012 and 7027–7029 are deferred.
 
 **Objective.** Refine the shipped MVP from first real use: more study files become reviewed text, and the user can see whether a subject, topic, or AI description is complete enough to quiz.
 
@@ -30,10 +30,11 @@
 15. [7019](7019-quiz-generation-progress-ui.md) — loading, result, error, and details UX. Depends on 7016 and 7018.
 16. [7030](7030-quiz-title-library-api.md) — optional quiz titles plus filtered, sorted, paginated library APIs. Done.
 17. [7031](7031-quiz-title-library-ui.md) — title entry and scalable Quiz library controls. Done. Depends on 7030.
-18. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
-19. [7027](7027-topic-completeness-indicators.md) — indicators in the workspace tree. Deferred. Depends on 7006.
-20. [7028](7028-subject-completeness-bar.md) — bar on the workspace subject and the dashboard. Deferred. Depends on 7006.
-21. [7029](7029-description-freshness.md) — AI description vs later notes and documents. Deferred.
+18. [7032](7032-quiz-title-rename.md) — rename a saved quiz title. Done. Depends on 7030.
+19. [7012](7012-image-source-investigation.md) — image-heavy sources. Deferred.
+20. [7027](7027-topic-completeness-indicators.md) — indicators in the workspace tree. Deferred. Depends on 7006.
+21. [7028](7028-subject-completeness-bar.md) — bar on the workspace subject and the dashboard. Deferred. Depends on 7006.
+22. [7029](7029-description-freshness.md) — AI description vs later notes and documents. Deferred.
 
 **Not in this phase.** Quiz `AI_INVALID_OUTPUT` failures (output budget, strict validation, retries). Held until a later prompt. Do not fold a generation-reliability fix into these tickets.
 

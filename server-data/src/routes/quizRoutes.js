@@ -10,4 +10,5 @@ quizRoutes.post("/", quizController.create);
 quizRoutes.get("/", quizController.list);
 quizRoutes.get("/:quizId/attempts", quizController.listAttempts);
 quizRoutes.get("/:quizId", quizController.get);
+quizRoutes.patch("/:quizId", quizController.update);
 quizRoutes.delete("/:quizId", quizController.remove);

@@ -97,6 +97,29 @@ export const quizPaths = {
         404: { $ref: "#/components/responses/NotFound" },
       },
     },
+    patch: {
+      summary: "Rename one of the caller's quizzes (keyed, internal only)",
+      description: "Changes only the saved title. Questions, attempts, scope, and answer keys stay unchanged.",
+      parameters: [...keyed, quizId],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["title"],
+              properties: { title: { type: "string", minLength: 1, maxLength: 120 } },
+            },
+          },
+        },
+      },
+      responses: {
+        200: { description: "Renamed quiz", ...quizResult },
+        400: { $ref: "#/components/responses/BadRequest" },
+        401: { $ref: "#/components/responses/Unauthorized" },
+        404: { $ref: "#/components/responses/NotFound" },
+      },
+    },
     delete: {
       summary: "Delete one of the caller's quizzes and its attempts (keyed, internal only)",
       description: "Does not delete the subject, topics, or documents.",

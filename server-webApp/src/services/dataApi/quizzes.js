@@ -21,5 +21,11 @@ export const listQuizzes = (userId, filters) => {
 export const listQuizAttempts = (userId, quizId) =>
   userScopedRequest(userId, `/quizzes/${encodeURIComponent(quizId)}/attempts`);
 
+export const updateQuizTitle = (userId, quizId, title) =>
+  userScopedRequest(userId, `/quizzes/${encodeURIComponent(quizId)}`, {
+    method: "PATCH",
+    body: { title },
+  });
+
 export const deleteQuiz = (userId, quizId) =>
   userScopedRequest(userId, `/quizzes/${encodeURIComponent(quizId)}`, { method: "DELETE" });

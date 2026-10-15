@@ -402,6 +402,17 @@ export async function getQuiz(userId, quizId) {
   return toStudyView(await quizzesApi.getQuiz(userId, quizId));
 }
 
+export async function renameQuiz(userId, quizId, body) {
+  if (typeof body?.title !== "string") {
+    throw createHttpError(400, "title must be a string");
+  }
+  const title = body.title.trim();
+  if (!title || title.length > CONTENT_NAME_MAX) {
+    throw createHttpError(400, `title must be 1-${CONTENT_NAME_MAX} characters`);
+  }
+  return toStudyView(await quizzesApi.updateQuizTitle(userId, quizId, title));
+}
+
 export function listQuizzes(userId, query) {
   return quizzesApi.listQuizzes(userId, readListQuery(query));
 }

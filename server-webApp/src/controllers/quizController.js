@@ -41,6 +41,14 @@ export async function listAttempts(req, res, next) {
   }
 }
 
+export async function rename(req, res, next) {
+  try {
+    sendData(res, await quizService.renameQuiz(req.userId, req.params.quizId, req.body));
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function remove(req, res, next) {
   try {
     sendData(res, await quizService.deleteQuiz(req.userId, req.params.quizId));

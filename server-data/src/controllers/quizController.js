@@ -25,7 +25,13 @@ import {
   listAttemptsForQuiz,
   listAttemptsForQuizzes,
 } from "../repositories/attemptRepository.js";
-import { createQuiz, deleteQuiz, findQuiz, listQuizzes } from "../repositories/quizRepository.js";
+import {
+  createQuiz,
+  deleteQuiz,
+  findQuiz,
+  listQuizzes,
+  updateQuizTitle,
+} from "../repositories/quizRepository.js";
 import { sendData, sendMessage } from "../utils/responses.js";
 
 const NOT_FOUND = "Quiz not found";
@@ -471,6 +477,32 @@ export async function remove(req, res, next) {
     }
     await deleteAttemptsForQuiz(req.userId, quiz._id);
     sendData(res, { id: quiz._id.toString() });
+  } catch (err) {
+    next(err);
+  }
+}
+
+function readStoredTitle(body) {
+  const title = body?.title;
+  if (typeof title !== "string" || !title.trim() || title.trim().length > CONTENT_NAME_MAX) {
+    return { error: `title must be 1-${CONTENT_NAME_MAX} characters` };
+  }
+  return { title: title.trim() };
+}
+
+export async function update(req, res, next) {
+  try {
+    const parsed = readStoredTitle(req.body);
+    if (parsed.error) {
+      sendMessage(res, 400, parsed.error);
+      return;
+    }
+    const quiz = await updateQuizTitle(req.userId, req.params.quizId, parsed.title);
+    if (!quiz) {
+      sendMessage(res, 404, NOT_FOUND);
+      return;
+    }
+    sendData(res, toQuiz(quiz));
   } catch (err) {
     next(err);
   }
