@@ -5,6 +5,4 @@ export const run = {
   quizMaxOutputTokens: 64000,
   quizTimeoutMs: 180000,
   reasoningEffort: null,
-  priceInputPer1M: 0.1,
-  priceOutputPer1M: 0.5,
 };
