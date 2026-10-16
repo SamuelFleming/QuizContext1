@@ -5,6 +5,7 @@ alwaysApply: false
 ---
 # Backend conventions
 - Follow `CLAUDE.md` and the approved ticket; inspect nearby code before adding patterns.
+- Place code by layer per `docs/core-scope/02_high-level-solution.md` §5.1: `routes/` (wiring only) → `controllers/` → `services/` (business API) or `repositories/` (data API). Never add a flat file to `src/`.
 - Keep controllers focused on HTTP translation; keep application workflows in `server-webApp` services.
 - `server-data` owns Mongoose repositories, persistence validation, and user-scoped operations; it never calls OpenAI.
 - Pass trusted user identity from authenticated `server-webApp` through the protected internal channel; enforce ownership for every data access. Do not trust `userId` supplied by a browser.

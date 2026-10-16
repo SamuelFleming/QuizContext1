@@ -1,6 +1,6 @@
 # P3-03 — OpenAI boundary, key resolution, usage record, and connectivity check
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 3  
 **Depends on:** P3-02  
 **Relevant scope:** MVP plan Phase 3 and §3; F02; S08; `docs/reference/01_AI-Integration.md` (advisory)
@@ -25,13 +25,17 @@ One service in `server-webApp` runs a controlled OpenAI call with the per-reques
 - Multiple providers, billing.
 
 ## Acceptance checks
-- [ ] With a valid key (application or user), the check succeeds and one `AiUsage` record holds model, tokens, cost, and `providerMode`.
-- [ ] `user` mode with no key returns `AI_KEY_MISSING`. `application` mode with `AI_ENABLED` off returns `AI_DISABLED`. An invalid user key returns `AI_AUTH_FAILED`. Each failure writes a `failed` usage record with no key material.
-- [ ] Switching mode between calls uses the correct key on the next call, with no stale cached client.
-- [ ] With AI disabled or the provider failing, login, `GET /users/me`, and profile edit still work.
-- [ ] Logs and responses contain no plaintext key, ciphertext, or fingerprint. Usage records contain no prompt text.
-- [ ] Swagger lists `POST /settings/ai/check` and the `server-data` usage create route.
-- [ ] If no real OpenAI key is available locally, verify the error paths and document the success path as unrun.
+- [x] With a valid key (application or user), the check succeeds and one `AiUsage` record holds model, tokens, cost, and `providerMode`. (Verified against a local mock of the Responses endpoint; see notes.)
+- [x] `user` mode with no key returns `AI_KEY_MISSING`. `application` mode with `AI_ENABLED` off returns `AI_DISABLED`. An invalid user key returns `AI_AUTH_FAILED`. Each failure writes a `failed` usage record with no key material.
+- [x] Switching mode between calls uses the correct key on the next call, with no stale cached client.
+- [x] With AI disabled or the provider failing, login, `GET /users/me`, and profile edit still work.
+- [x] Logs and responses contain no plaintext key, ciphertext, or fingerprint. Usage records contain no prompt text.
+- [x] Swagger lists `POST /settings/ai/check` and the `server-data` usage create route.
+- [x] If no real OpenAI key is available locally, verify the error paths and document the success path as unrun.
 
 ## Implementation notes
 Keep resolution, execution, and usage writing as three small functions under one `server-webApp` AI folder. Phase 5 will call this boundary, so do not build a prompt registry now.
+
+Implemented in `server-webApp/src/ai/`: `keyResolver.js`, `aiClient.js` (new SDK client per call, `store: false`, SDK retries off), `aiService.js` (`runAiOperation`, the single entry point, records usage best-effort), `aiErrors.js`, `aiConfig.js` (model and price table are placeholders to verify). Refusals and incomplete responses map to `AI_INVALID_OUTPUT`. AI error bodies are `{ message, code }`.
+
+No OpenAI key was configured locally, so a real successful call is unrun. The invalid-key path was checked against the real provider. The success path, cost estimate, and per-mode key selection were checked with a test-only instance whose `OPENAI_BASE_URL` pointed at a local mock.

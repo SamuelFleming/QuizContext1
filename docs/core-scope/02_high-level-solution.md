@@ -251,6 +251,60 @@ The two APIs run as separate local Node processes during MVP development.
 
 QuizContext's backend interfaces should remain independent of the React client so that future applications, including Recall Radio, may consume relevant learning and assessment functionality.
 
+### 5.1 Code Organisation
+
+Each application organises `src/` by layer. A request flows through the layers in one direction, and each layer has one job. Optional folders exist only when they hold something; no empty folders.
+
+**`server-data/src`** (Route → Controller → Repository → Model):
+
+```text
+index.js, app.js   process start; app wiring and mounting only
+routes/            paths + middleware + controller binding; no logic
+middleware/        internal API key, trusted X-User-Id, error handling
+controllers/       read the request, validate input, call repositories, shape the response
+repositories/      Mongoose queries, always scoped to the trusted user id
+models/            Mongoose schemas and response transforms (e.g. toPublicUser)
+constants/         shared limits and enums          (if it applies)
+config/            database connection              (if it applies)
+utils/             response helpers                 (if it applies)
+openapi/           spec split into paths/ fragments and shared components
+```
+
+**`server-webApp/src`** (Route → Controller → Service → Data API client / OpenAI boundary):
+
+```text
+index.js, app.js   process start; app wiring and mounting only
+routes/            paths + middleware + controller binding; no logic
+middleware/        JWT authentication, error handling
+controllers/       HTTP translation only: read the request, call a service, send the envelope
+services/          application workflows and business rules
+services/dataApi/  internal client for server-data, one file per resource
+openai/            the single OpenAI boundary: client, runAiOperation, key resolution, limits, errors
+constants/         validation rules and enums       (if it applies)
+config/            environment-derived configuration (if it applies)
+utils/             response helpers, error factory, key encryption (if it applies)
+openapi/           spec split into paths/ fragments and shared components
+```
+
+**`client-webApp/src`**:
+
+```text
+main.jsx           Vite entry
+app/               App root, route switch, navigation
+components/        shared, feature-agnostic UI (layout/, primitives)
+context/           app-wide React state (e.g. AuthContext)
+features/<domain>/ screens and components used by one feature only
+services/          apiClient.js (fetch, ApiError, token) + one service file per domain
+styles/            theme tokens and global styles
+utils/             pure helpers                     (if it applies)
+```
+
+Rules that follow from the layout:
+
+* Routes never contain handler logic. Controllers never call OpenAI, `fetch`, or Mongoose directly; they go through services (business API) or repositories (data API).
+* Only `server-webApp/src/services/dataApi/` talks to `server-data`; only `server-webApp/src/openai/` talks to OpenAI.
+* React components never call `fetch`; they use `services/`. A component used by one feature lives in that feature's folder and moves to `components/` only when a second feature needs it.
+
 ## 6. Implementation Boundaries
 
 The MVP will deliberately avoid:

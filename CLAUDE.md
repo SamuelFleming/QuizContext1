@@ -19,6 +19,12 @@ If docs contradict code or each other, flag the precise conflict instead of sile
 - `server-webApp` calls `server-data` using an environment-held internal API key. The internal API must not be browser-accessible or depend on the caller-provided user ID without trusted user context.
 - Run both Express servers locally as distinct processes. Maintain **implemented endpoints** in Swagger/OpenAPI for each service.
 
+## Code organisation (required)
+Full layout and layer rules: `docs/core-scope/02_high-level-solution.md` §5.1. New code goes in the matching folder; never add a flat file to `src/`.
+- `server-data/src`: `routes/`, `middleware/`, `controllers/`, `repositories/`, `models/`, plus `constants/`, `config/`, `utils/`, `openapi/` where applicable.
+- `server-webApp/src`: `routes/`, `middleware/`, `controllers/`, `services/` (with `services/dataApi/`), `openai/`, plus `constants/`, `config/`, `utils/`, `openapi/` where applicable.
+- `client-webApp/src`: `app/`, `components/`, `context/`, `features/<domain>/`, `services/`, `styles/`, plus `utils/` where applicable.
+
 ## Engineering invariants
 - Every user-owned read/write must be scoped to authenticated identity; reject cross-user access at the data boundary.
 - Never send answer keys/marking criteria to the Quiz Player before submission.

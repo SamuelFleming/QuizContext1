@@ -1,6 +1,6 @@
 # P3-01 — Profile read and update
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 3  
 **Depends on:** P2-03  
 **Relevant scope:** MVP plan Phase 3; F02; S08
@@ -21,11 +21,11 @@ The signed-in user can view and edit their basic profile on the Profile screen.
 - Account deletion.
 
 ## Acceptance checks
-- [ ] From the browser, a user changes their display name; Dashboard and header show the new name after reload.
-- [ ] An empty or over-long display name returns 400 and the form shows the message.
-- [ ] A body containing `email`, `passwordHash`, or another user's id does not change those values or another user's record.
-- [ ] No token returns 401. `server-data` without the internal key or `X-User-Id` returns 401.
-- [ ] Swagger on both APIs lists `PATCH /users/me`.
+- [x] From the browser, a user changes their display name; Dashboard and header show the new name after reload.
+- [x] An empty or over-long display name returns 400 and the form shows the message. (The input caps at 80 characters, so over-long was checked by request.)
+- [x] A body containing `email`, `passwordHash`, or another user's id does not change those values or another user's record.
+- [x] No token returns 401. `server-data` without the internal key or `X-User-Id` returns 401.
+- [x] Swagger on both APIs lists `PATCH /users/me`.
 
 ## Implementation notes
 Follow `server-data/src/userRoutes.js` and `server-webApp/src/userRoutes.js`. Use an explicit allow-list for updatable fields.

@@ -1,11 +1,12 @@
 import cors from "cors";
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import { authRoutes } from "./authRoutes.js";
-import { fetchDatabaseDiagnostic } from "./dataClient.js";
-import { errorHandler, notFound, sendData } from "./http.js";
-import { openApiSpec } from "./openapi.js";
-import { userRoutes } from "./userRoutes.js";
+import { errorHandler, notFound } from "./middleware/errorHandler.js";
+import { openApiSpec } from "./openapi/index.js";
+import { authRoutes } from "./routes/authRoutes.js";
+import { diagnosticsRoutes } from "./routes/diagnosticsRoutes.js";
+import { settingsRoutes } from "./routes/settingsRoutes.js";
+import { userRoutes } from "./routes/userRoutes.js";
 
 export function createApp() {
   const app = express();
@@ -13,21 +14,10 @@ export function createApp() {
   app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:5017" }));
   app.use(express.json());
 
-  app.get("/health", (_req, res) => {
-    sendData(res, { service: "server-webApp", status: "ok" });
-  });
-
-  app.get("/diagnostics/connectivity", async (_req, res, next) => {
-    try {
-      const downstream = await fetchDatabaseDiagnostic();
-      sendData(res, { webApp: "ok", ...downstream });
-    } catch (err) {
-      next(err);
-    }
-  });
-
+  app.use("/", diagnosticsRoutes);
   app.use("/auth", authRoutes);
   app.use("/users", userRoutes);
+  app.use("/settings", settingsRoutes);
 
   app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 

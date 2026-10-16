@@ -6,6 +6,7 @@ alwaysApply: false
 # Frontend conventions
 - Use `docs/core-scope/04_flows-to-screens.md` for screen responsibilities. Use `docs/design/01_design-concept.md` for visual styling. The current palette is Light Mint & Indigo.
 - Keep presentation separate from API calls: shared API client plus feature-specific services.
+- Place code per `docs/core-scope/02_high-level-solution.md` §5.1: `app/`, `components/` (shared), `context/`, `features/<domain>/` (feature-only screens and components), `services/`, `styles/`.
 - Put colours in one shared token set (CSS variables). Components use token names, not hard-coded hex, so the palette can change without restyling each screen. The MVP ships that one palette; it does not include a theme picker.
 - Use a simple, responsive layout with header navigation. Do not inherit CareerContext styling.
 - Reuse a straightforward Markdown editor/preview pattern where relevant; sanitise/render user content safely.

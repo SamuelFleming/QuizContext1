@@ -7,8 +7,8 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 |---|---|---|
 | 1 | Local foundations + one dual-API vertical slice | Done |
 | 2 | Authentication, ownership + foundational persistence | Done |
-| 3 | User profile, secure AI key configuration + usage | Tickets planned |
-| 4 | Subjects, recursive topics, Markdown + document ingestion | Roadmapped |
+| 3 | User profile, secure AI key configuration + usage; code organisation refactor | Done |
+| 4 | Subjects, recursive topics, Markdown + document ingestion | Ticketed |
 | 5 | OpenAI integration + AI-assisted descriptions | Roadmapped |
 | 6 | Quiz generation, completion, evaluation, history + export | Roadmapped |
 
@@ -18,15 +18,28 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None yet. Phase 3 tickets are written. `/implement-phase` Phase 3 runs P3-01, P3-02, P3-03, then P3-04.
+None yet. Phase 4 is planned; approve [P4-01](phase4/P4-01-subjects.md) to start, or run `/implement-phase` for Phase 4.
+
+## Phase 4 proposed order
+1. [P4-01](phase4/P4-01-subjects.md) — subject CRUD, Subjects screen, Dashboard list. Planned.
+2. [P4-02](phase4/P4-02-topic-tree.md) — recursive topic tree and subtree delete. Planned.
+3. [P4-03](phase4/P4-03-markdown-notes.md) — Markdown description and notes with safe preview. Planned.
+4. [P4-04](phase4/P4-04-document-upload-review.md) — document upload, extraction, review, save. Planned.
+5. [P4-05](phase4/P4-05-document-edit-delete.md) — document edit/delete, cascades, phase close-out. Planned.
+
+Planning decisions (hard delete with cascade, no topic move, no stored originals, limits) are listed in the [Phase 4 README](phase4/README.md).
 
 ## Phase 3 proposed order
-1. [P3-01](phase3/P3-01-profile.md) — profile read and update. Depends on P2-03.
-2. [P3-02](phase3/P3-02-ai-key-settings.md) — AI access mode and encrypted user key (AES-256-GCM in `server-webApp`). Depends on P3-01.
-3. [P3-03](phase3/P3-03-ai-boundary-check.md) — OpenAI boundary, key resolution, `AiUsage` record, connectivity check. Depends on P3-02.
-4. [P3-04](phase3/P3-04-usage-summary-limit.md) — usage summary and application-key monthly token limit. Depends on P3-03.
+1. [P3-01](phase3/P3-01-profile.md) — profile read and update. Done.
+2. [P3-02](phase3/P3-02-ai-key-settings.md) — AI access mode and encrypted user key (AES-256-GCM in `server-webApp`). Done.
+3. [P3-03](phase3/P3-03-ai-boundary-check.md) — OpenAI boundary, key resolution, `AiUsage` record, connectivity check. Done.
+4. [P3-04](phase3/P3-04-usage-summary-limit.md) — usage summary and application-key monthly token limit. Done.
+5. [P3-05](phase3/P3-05-code-organisation-convention.md) — folder and layer convention in core scope. Done.
+6. [P3-06](phase3/P3-06-server-data-structure.md) — server-data layered structure. Done.
+7. [P3-07](phase3/P3-07-server-webapp-structure.md) — server-webApp layered structure. Done.
+8. [P3-08](phase3/P3-08-client-structure.md) — client-webApp feature structure. Done.
 
-Decisions to confirm before implementing: the encryption method in P3-02, the limit unit (monthly application-key tokens) in P3-04, and that profile editing covers display name only in P3-01. Running P3-03/P3-04 success paths needs a real OpenAI key locally.
+Open follow-up: a real successful OpenAI call has not been run locally (no key). Set `OPENAI_API_KEY` and `AI_ENABLED=true`, or save a personal key, then use Test connection on Profile. The default model and price table in `server-webApp/src/config/aiConfig.js` are placeholders to verify.
 
 ## Phase 2 proposed order
 1. [P2-01](phase2/P2-01-user-identity.md) — user record and trusted `X-User-Id`. Done.
