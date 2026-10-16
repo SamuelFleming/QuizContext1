@@ -1,6 +1,6 @@
 # P2-03 — Auth screens and protected shell
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 2  
 **Depends on:** P2-02  
 **Relevant scope:** MVP plan Phase 2; F01; S01; S02; `docs/design/01_design-concept.md`
@@ -25,11 +25,11 @@ A person can register, log in, and see their own account inside the protected sh
 - Calling `server-data` from the browser.
 
 ## Acceptance checks
-- [ ] From the browser, a new user can register, land on the dashboard, and see their own name and email.
-- [ ] After logout, the shell is not available until login. A second user's login shows that second user, not the first.
-- [ ] A failed login or a too-short password shows an error and stays on the auth screen.
-- [ ] Colours come from the theme file. The page is usable on a narrow viewport.
-- [ ] No OpenAPI change is expected unless the client needs a response-shape fix, in which case update the business API spec in the same change.
+- [x] From the browser, a new user can register, land on the dashboard, and see their own name and email.
+- [x] After logout, the shell is not available until login. A second user's login shows that second user, not the first.
+- [x] A failed login or a too-short password shows an error and stays on the auth screen.
+- [x] Colours come from the theme file. The page is usable on a narrow viewport.
+- [x] No OpenAPI change is expected unless the client needs a response-shape fix, in which case update the business API spec in the same change. (No OpenAPI change needed.)
 
 ## Implementation notes
 Replace the current home in `client-webApp/src/App.jsx` with the auth flow. The shell is the first real navigation; do not build the content workspace yet.

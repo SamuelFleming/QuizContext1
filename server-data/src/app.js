@@ -4,6 +4,7 @@ import { pingDatabase } from "./db.js";
 import { errorHandler, notFound, sendData } from "./http.js";
 import { requireInternalKey } from "./internalAuth.js";
 import { openApiSpec } from "./openapi.js";
+import { userRoutes } from "./userRoutes.js";
 
 export function createApp() {
   const app = express();
@@ -22,6 +23,8 @@ export function createApp() {
       next(err);
     }
   });
+
+  app.use("/users", userRoutes);
 
   app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
