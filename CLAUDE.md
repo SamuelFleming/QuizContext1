@@ -5,9 +5,10 @@ QuizContext is a MERN study app: user-managed Subjects → recursive Topics → 
 
 ## Sources of truth (read selectively)
 1. `docs/core-scope/` — QuizContext product decisions and user flows (00 charter; 01–04 scope).
-2. Current approved ticket in `docs/devTickets/` — task boundaries and acceptance.
-3. Existing QuizContext code and live OpenAPI — implemented behaviour.
-4. `docs/reference/` — CareerContext examples, **advisory only**, never requirements.
+2. `docs/design/01_design-concept.md` — visual source of truth (current palette: Light Mint & Indigo, via one token set).
+3. Current approved ticket in `docs/devTickets/` — task boundaries and acceptance.
+4. Existing QuizContext code and live OpenAPI — implemented behaviour.
+5. `docs/reference/` — CareerContext examples, **advisory only**, never requirements.
 
 If docs contradict code or each other, flag the precise conflict instead of silently inventing a resolution. Do not load every reference file by default.
 
@@ -30,6 +31,7 @@ If docs contradict code or each other, flag the precise conflict instead of sile
 ## Working method
 - **Plan:** write/update small tickets only; do not implement.
 - **Implement:** complete **one approved ticket**, inspect affected code, make scoped changes, perform focused checks, and update ticket/queue status.
+- **Implement phase:** `/implement-phase` runs that phase's existing tickets in order, each through `/implement-ticket`. A failed check gets one minimal in-ticket fix and a re-check. It stops only on a significant block. It does not plan the next phase or commit.
 - Prove React → business API → data API → MongoDB with one vertical slice before bulk CRUD.
 - Avoid unnecessary full-suite regression runs; perform relevant startup, build, request, or focused tests for changed behaviour.
 - Never commit, push, rebase, or create branches unless the user explicitly asks.

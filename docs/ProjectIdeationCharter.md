@@ -98,7 +98,7 @@ AI usage records will capture operations, model information, token consumption, 
 * Multiple-choice and short-answer quiz completion.
 * Quiz attempt persistence and answer evaluation.
 * Basic quiz export and review.
-* Minimalist, dark-themed, responsive web interface.
+* Minimalist, responsive web interface. Visual design, including the current Light Mint & Indigo palette, is defined in `docs/design/01_design-concept.md`.
 
 **Deferred:** AI chatbot, voice interaction, embeddings/RAG, OCR, spaced repetition, advanced analytics, collaborative learning, payment systems, and native mobile applications.
 

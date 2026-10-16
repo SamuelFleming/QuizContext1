@@ -1,0 +1,14 @@
+{
+  "name": "server-data",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "mongoose": "^9.11.1",
+    "swagger-ui-express": "^5.0.1"
+  }
+}

@@ -41,7 +41,7 @@ CareerContext’s **raw vs polished** fields (`overviewRaw` / `overviewPolished`
 - `client/src/features/<domain>/` for screens; `components/ui/` for primitives; `services/apiClient.js` + one domain service file. No `fetch` in presentational components.
 - `ApiError` preserves HTTP `status` and machine `code` (needed for `AI_DISABLED` and JWT expiry). `setUnauthorizedHandler` on `apiClient.js` re-prompts login on 401 rather than showing a generic failure. Token key is namespaced (`careercontext_auth_token`) — QuizContext should use its own. Protected routes wrap an `AppShell`; public auth stays outside.
 - Folder hygiene per domain: `index/` / `detail/` / `shared/` (tickets **322**/**323**) once a second screen appears; not required on day one.
-- Design-system fidelity (Interactive CV, entity accent tokens) is CareerContext-specific. QuizContext charter asks for a **minimalist dark responsive UI** — reuse the *token + `cn()`* habit, not the career visual language.
+- Design-system fidelity (Interactive CV, entity accent tokens) is CareerContext-specific. QuizContext's visual source is `docs/design/01_design-concept.md` (Light Mint & Indigo). Reuse the token habit, not the career visual language.
 
 ## What transfers conceptually vs what to avoid
 

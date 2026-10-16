@@ -29,7 +29,7 @@ These represent logical screens rather than mandatory individual React component
 
 ## 3. Navigation & Application Shell
 
-QuizContext uses a minimalist, responsive, dark-themed interface with a persistent header navigation bar.
+QuizContext uses a minimalist, responsive interface with a persistent header navigation bar. Colour, spacing, and component styling follow `docs/design/01_design-concept.md`. The current palette is Light Mint & Indigo, applied through one shared token set so a later palette change does not restyle each screen.
 
 ### Primary Navigation
 
@@ -270,7 +270,7 @@ Users should be able to understand what material informed a generated question o
 
 The frontend may adapt established CareerContext concepts, particularly Markdown editing, document review, authenticated layouts, and API service conventions.
 
-However, QuizContext should retain its own visual identity and avoid importing unnecessary CareerContext-specific components.
+QuizContext's visual identity is the design concept, not CareerContext's. Avoid importing CareerContext-specific components.
 
 ## 8. MVP Screen Completion Criteria
 
