@@ -317,6 +317,9 @@ async function prepareGeneration(userId, body) {
     sourcesIncluded: countStatus(context.manifest, "included"),
     sourcesTruncated: countStatus(context.manifest, "truncated"),
     sourcesExcluded: countStatus(context.manifest, "excluded"),
+    multipleChoiceCount: settings.multipleChoiceCount,
+    shortAnswerCount: settings.shortAnswerCount,
+    shortAnswerAiCount: null,
   };
   const runScope = {
     subjectId: settings.subjectId,

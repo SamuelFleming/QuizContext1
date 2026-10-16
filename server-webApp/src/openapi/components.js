@@ -312,6 +312,27 @@ export const components = {
         sourcesIncluded: { type: "integer" },
         sourcesTruncated: { type: "integer" },
         sourcesExcluded: { type: "integer" },
+        multipleChoiceCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "Quiz multiple-choice total for quiz_generation (requested) or answer_evaluation (stored on the quiz). Null when unknown or not applicable.",
+        },
+        shortAnswerCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "Quiz short-answer total for quiz_generation (requested) or answer_evaluation (stored on the quiz). Null when unknown or not applicable.",
+        },
+        shortAnswerAiCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "On answer_evaluation only: number of non-blank short answers sent to the model. Null on other operations and on pre-8001 rows. Distinct from shortAnswerCount.",
+        },
       },
     },
     AiUsageScope: {
