@@ -1,4 +1,5 @@
 import { aiFailureLabel } from "../../utils/aiFailures.js";
+import { formatQuestionTypeCounts } from "../../utils/questionTypeCounts.js";
 
 const formatAiMetric = (value) => (value == null ? "—" : value.toLocaleString());
 const formatCost = (value) => (value == null ? "—" : `$${value.toFixed(4)}`);
@@ -55,6 +56,7 @@ function ScopeDetails({ scope }) {
 
 export default function AiRunDetails({ run }) {
   if (!run) return null;
+  const questionCounts = formatQuestionTypeCounts(run);
   return (
     <div className="usage-details">
       <section>
@@ -88,6 +90,12 @@ export default function AiRunDetails({ run }) {
             <dt>Input characters</dt>
             <dd>{formatAiMetric(run.inputChars)}</dd>
           </div>
+          {questionCounts ? (
+            <div>
+              <dt>Questions</dt>
+              <dd>{questionCounts}</dd>
+            </div>
+          ) : null}
           <div>
             <dt>Latency</dt>
             <dd>{run.latencyMs == null ? "—" : `${formatAiMetric(run.latencyMs)} ms`}</dd>

@@ -12,7 +12,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
-| 8 | AI quiz generation experiment: configurable budgets and a manual comparison protocol | Ticket 8000 done |
+| 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue | 8000–8001 and 8003 done; 8002 planned |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -20,7 +20,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-No approved implementation ticket is queued.
+[8002](phase8/8002-model-catalogue.md) — model catalogue for pricing and default selection.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -51,8 +51,11 @@ Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUT
 
 ## Phase 8 proposed order
 1. [8000](phase8/8000-ai-quiz-generation-experiment.md) — configurable quiz output and reasoning controls, plus the manual experiment guide. Done.
+2. [8001](phase8/8001-question-type-counts-ai-usage.md) — persist nullable question-type counts on AI usage. Done. Depends on 7015.
+3. [8003](phase8/8003-question-type-counts-ui.md) — show those counts on Profile and shared AiRunDetails. Done (browser UAT pending). Depends on 8001 and 7016.
+4. [8002](phase8/8002-model-catalogue.md) — central model catalogue for pricing and default selection. Planned. Depends on 8000; independent of 8001/8003.
 
-Shared rules are in the [Phase 8 README](phase8/README.md). This phase has no second ticket. Retries, a higher question limit, batching, prompt changes, and raw-output capture stay out until a later decision.
+Shared rules are in the [Phase 8 README](phase8/README.md). Retries, a higher question limit, batching, prompt changes, and raw-output capture stay out until a later decision.
 
 ## Phase 6 proposed order
 1. [P6-01](phase6/P6-01-quiz-generation-api.md) — generation API, quiz persistence, study-view projection. Done.

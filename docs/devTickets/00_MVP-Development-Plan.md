@@ -178,17 +178,17 @@ Later phases reuse these rules. They are not re-decided per entity.
 
 ### Phase 8 — AI quiz generation experiment
 
-**Objective.** Make quiz-generation model, context, output, and reasoning settings easy to vary, then compare reliability and quality through a controlled manual protocol.
+**Objective.** Make quiz-generation model, context, output, and reasoning settings easy to vary, then compare reliability and quality through a controlled manual protocol. Follow-on tickets improve AI usage visibility for those runs and centralise model pricing metadata.
 
-**Scope.** One ticket. Expose the quiz output-token cap and an optional quiz-only reasoning effort, document the controls that already exist, and write the operator guide. Do not change the prompt, schema, question limit, diagnostics shape, or retry behaviour.
+**Scope.** Ticket 8000 selects the experiment model, context size, output cap, reasoning effort, and prices from constants files, and writes the operator guide. Tickets 8001 and 8003 persist and display question-type counts on AI usage. Ticket 8002 centralises model catalogue pricing. Do not change the prompt, schema, question limit, or retry behaviour in these tickets.
 
 **Depends on.** Phases 5–7 as shipped, including the AI-run diagnostics in 7015–7019.
 
-**Deliverable.** A developer can restart `server-webApp` with named environment values, see the selected output cap in quiz preview, and follow one written protocol to compare models and budgets. The developer runs any live model calls manually.
+**Deliverable.** A developer selects one constants run, restarts `server-webApp`, sees that run's output cap in quiz preview, and follows one written protocol to compare models and budgets. Profile Recent Activity can show question-type counts for new generation and evaluation runs. The developer runs any live model calls manually.
 
-**Done when.** Ticket 8000 is done. Further reliability work, including retries, a 40-question limit, batching, prompt changes, or raw-output capture, needs its own later ticket.
+**Done when.** Tickets 8000–8003 planned for this phase are done. Further reliability work, including retries, a 40-question limit, batching, prompt changes, or raw-output capture, needs its own later ticket.
 
-**Out of phase.** Automatic retries, raising the 20-question limit, batch generation, prompt or schema changes, and storing raw model output.
+**Out of phase.** Automatic retries, raising the 20-question limit, batch generation, prompt or schema changes, storing raw model output, and evaluation results-screen AI-run details.
 
 ## 5. Flow assignment
 
