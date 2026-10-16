@@ -13,7 +13,7 @@ export const components = {
     },
     AiError: {
       description:
-        "Typed AI failure: AI_KEY_MISSING 400, AI_INVALID_OUTPUT 422, AI_RATE_LIMITED or AI_LIMIT_REACHED 429, AI_AUTH_FAILED or AI_PROVIDER_ERROR 502, AI_DISABLED 503, AI_TIMEOUT 504",
+        "Typed AI failure: AI_KEY_MISSING or AI_UNKNOWN_MODEL 400, AI_INVALID_OUTPUT 422, AI_RATE_LIMITED or AI_LIMIT_REACHED 429, AI_AUTH_FAILED or AI_PROVIDER_ERROR 502, AI_DISABLED 503, AI_TIMEOUT 504",
       content: {
         "application/json": {
           schema: {
@@ -25,6 +25,7 @@ export const components = {
                 enum: [
                   "AI_DISABLED",
                   "AI_KEY_MISSING",
+                  "AI_UNKNOWN_MODEL",
                   "AI_AUTH_FAILED",
                   "AI_TIMEOUT",
                   "AI_RATE_LIMITED",

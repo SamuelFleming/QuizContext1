@@ -3,6 +3,7 @@
 const AI_ERRORS = {
   AI_DISABLED: [503, "AI is not enabled for application access on this server. Everything else still works."],
   AI_KEY_MISSING: [400, "Add your OpenAI API key in Profile, or switch to the application key."],
+  AI_UNKNOWN_MODEL: [400, "That AI model is not supported."],
   AI_AUTH_FAILED: [502, "OpenAI rejected the API key. Check or replace the key."],
   AI_TIMEOUT: [504, "The AI request took too long. Please try again."],
   AI_RATE_LIMITED: [429, "The AI provider is rate limiting requests. Please try again shortly."],

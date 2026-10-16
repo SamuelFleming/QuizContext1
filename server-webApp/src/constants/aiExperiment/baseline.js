@@ -39,8 +39,6 @@ export function mergeExperimentConfig(selected) {
     quizMaxOutputTokens: readOutputTokens(selected.quizMaxOutputTokens),
     quizTimeoutMs: selected.quizTimeoutMs,
     reasoningEffort: readReasoningEffort(selected.reasoningEffort),
-    priceInputPer1M: selected.priceInputPer1M,
-    priceOutputPer1M: selected.priceOutputPer1M,
     contextMinChars: CONTEXT_MIN_CHARS,
     appMonthlyTokenLimit: APP_MONTHLY_TOKEN_LIMIT,
   };
