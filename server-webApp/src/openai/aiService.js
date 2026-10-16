@@ -75,6 +75,7 @@ export async function runAiOperation({
   validate,
   maxOutputTokens,
   timeoutMs: timeoutOverride,
+  reasoningEffort = null,
 }) {
   const { model, timeoutMs: defaultTimeout } = getAiConfig();
   const timeoutMs = timeoutOverride > 0 ? timeoutOverride : defaultTimeout;
@@ -100,6 +101,7 @@ export async function runAiOperation({
       input,
       jsonSchema,
       maxOutputTokens,
+      reasoningEffort,
     });
 
     if (validate) {

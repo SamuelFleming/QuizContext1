@@ -339,7 +339,7 @@ export async function previewQuiz(userId, body) {
   return {
     selectionName: prepared.context.selection.name,
     inputChars: prepared.input.length,
-    maxOutputTokens: prompt.MAX_OUTPUT_TOKENS,
+    maxOutputTokens: getAiConfig().quizMaxOutputTokens,
     context: prepared.runContext,
     sources: {
       topics: sourceCounts(prepared.context.manifest, "topic"),
@@ -352,7 +352,7 @@ export async function generateQuiz(userId, body) {
   const requestedTitle = readOptionalTitle(body?.title);
   const { settings, context, input, allowedSourceIds, runContext, runScope } =
     await prepareGeneration(userId, body);
-  const { quizTimeoutMs } = getAiConfig();
+  const { quizTimeoutMs, quizMaxOutputTokens, reasoningEffort } = getAiConfig();
 
   const result = await runAiOperation({
     userId,
@@ -369,8 +369,9 @@ export async function generateQuiz(userId, body) {
         shortAnswerCount: settings.shortAnswerCount,
         allowedSourceIds,
       }),
-    maxOutputTokens: prompt.MAX_OUTPUT_TOKENS,
+    maxOutputTokens: quizMaxOutputTokens,
     timeoutMs: quizTimeoutMs,
+    reasoningEffort,
   });
 
   const title = requestedTitle || context.selection.name.slice(0, CONTENT_NAME_MAX);

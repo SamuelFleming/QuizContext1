@@ -1,41 +1,40 @@
-// Placeholder default; verify against OpenAI's live model catalogue before relying on it.
-const DEFAULT_MODEL = "gpt-4o-mini";
+import { getExperimentConfig } from "../constants/aiExperiment/baseline.js";
 
 // USD per 1M tokens. Placeholder figures to verify against current OpenAI pricing.
-// AI_PRICE_INPUT_PER_1M / AI_PRICE_OUTPUT_PER_1M override the entry for AI_MODEL_DEFAULT.
+// During the experiment, the selected run file supplies prices for its own model.
 const PRICES_PER_1M = {
   "gpt-4o-mini": { input: 0.15, output: 0.6 },
   "gpt-4.1-mini": { input: 0.4, output: 1.6 },
 };
 
 export function getAiConfig() {
+  const experiment = getExperimentConfig();
   return {
     enabled: process.env.AI_ENABLED === "true",
     applicationKey: process.env.OPENAI_API_KEY || "",
-    model: process.env.AI_MODEL_DEFAULT || DEFAULT_MODEL,
+    model: experiment.model,
     timeoutMs: Number(process.env.AI_TIMEOUT_MS) || 20000,
-    quizTimeoutMs: Number(process.env.AI_QUIZ_TIMEOUT_MS) || 60000,
-    appMonthlyTokenLimit: readLimit(process.env.AI_APP_MONTHLY_TOKEN_LIMIT),
+    quizTimeoutMs: experiment.quizTimeoutMs,
+    quizMaxOutputTokens: experiment.quizMaxOutputTokens,
+    reasoningEffort: experiment.reasoningEffort,
+    appMonthlyTokenLimit: experiment.appMonthlyTokenLimit,
   };
 }
 
-const DEFAULT_APP_MONTHLY_TOKEN_LIMIT = 100000;
-
-function readLimit(raw) {
-  const value = Number(raw);
-  return raw !== undefined && raw !== "" && Number.isFinite(value) && value >= 0
-    ? value
-    : DEFAULT_APP_MONTHLY_TOKEN_LIMIT;
+function matchesModel(model, selected) {
+  return model === selected || (selected && model?.startsWith(`${selected}-`));
 }
 
 function priceFor(model) {
-  const { model: defaultModel } = getAiConfig();
-  const input = Number(process.env.AI_PRICE_INPUT_PER_1M);
-  const output = Number(process.env.AI_PRICE_OUTPUT_PER_1M);
-  if (model === defaultModel && input > 0 && output > 0) {
-    return { input, output };
+  const experiment = getExperimentConfig();
+  if (matchesModel(model, experiment.model)) {
+    const input = experiment.priceInputPer1M;
+    const output = experiment.priceOutputPer1M;
+    if (input > 0 && output > 0) {
+      return { input, output };
+    }
+    return null;
   }
-  // Provider responses can name a dated snapshot, e.g. gpt-4o-mini-2024-07-18.
   const known = Object.keys(PRICES_PER_1M).find((name) => model === name || model?.startsWith(`${name}-`));
   return known ? PRICES_PER_1M[known] : null;
 }

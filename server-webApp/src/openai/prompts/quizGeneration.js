@@ -11,7 +11,6 @@ import {
 
 export const PROMPT_VERSION = "quiz-generation@1";
 export const OPERATION = "quiz_generation";
-export const MAX_OUTPUT_TOKENS = 8000;
 
 export const MODE_GUIDANCE = {
   very_strict:
