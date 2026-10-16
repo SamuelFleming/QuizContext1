@@ -172,7 +172,23 @@ Later phases reuse these rules. They are not re-decided per entity.
 
 **Done when.** The planned implementation tickets in `docs/devTickets/phase7/` are done. 7000 is closed. Further UAT changes need a new ticket. 7012 and 7027–7029 stay deferred until asked. 7006 (formerly 7026) is the completeness read. Storage is still reviewed text plus light file metadata. Swagger matches any route those tickets change.
 
-**Out of phase.** Quiz `AI_INVALID_OUTPUT` reliability (held for a later prompt). OCR, vision captions, and storing original files. Legacy `.doc` and `.ppt`. Account Profile (S08) is not the completeness bar.
+**Out of phase.** Quiz `AI_INVALID_OUTPUT` reliability. Phase 8 ticket 8000 is the configuration experiment and does not reopen Phase 7. OCR, vision captions, and storing original files. Legacy `.doc` and `.ppt`. Account Profile (S08) is not the completeness bar.
+
+<a id="phase-8"></a>
+
+### Phase 8 — AI quiz generation experiment
+
+**Objective.** Make quiz-generation model, context, output, and reasoning settings easy to vary, then compare reliability and quality through a controlled manual protocol.
+
+**Scope.** One ticket. Expose the quiz output-token cap and an optional quiz-only reasoning effort, document the controls that already exist, and write the operator guide. Do not change the prompt, schema, question limit, diagnostics shape, or retry behaviour.
+
+**Depends on.** Phases 5–7 as shipped, including the AI-run diagnostics in 7015–7019.
+
+**Deliverable.** A developer can restart `server-webApp` with named environment values, see the selected output cap in quiz preview, and follow one written protocol to compare models and budgets. The developer runs any live model calls manually.
+
+**Done when.** Ticket 8000 is done. Further reliability work, including retries, a 40-question limit, batching, prompt changes, or raw-output capture, needs its own later ticket.
+
+**Out of phase.** Automatic retries, raising the 20-question limit, batch generation, prompt or schema changes, and storing raw model output.
 
 ## 5. Flow assignment
 
@@ -184,6 +200,7 @@ Later phases reuse these rules. They are not re-decided per entity.
 | F04 AI-assisted description | 5 | Review and save on S03 |
 | F05–F09 Quiz, attempt, evaluation, repeat, export | 6 | S04–S07, dashboard activity |
 | F03, F04, F05 refinements from first use | 7 | Upload types, completeness, multi-topic quiz |
+| F05 quiz-generation investigation | 8 | Configurable budgets and a manual comparison protocol |
 
 ## 6. Sequencing and risks
 
@@ -200,7 +217,7 @@ Phase 4 stays after Phase 3 even though content does not need a model key. That 
 
 ## 7. How tickets are produced
 
-Tickets for phase N live in `docs/devTickets/phaseN/` next to that phase's README, using `_TICKET_TEMPLATE.md`. Phases 1–6 use IDs `P1-01`, `P2-01`, and so on. Phase 7 onward uses `7000`, `7001`, and so on. One implementation ticket is one shippable slice. A discovery ticket, such as 7000, records wanted changes and does not ship code.
+Tickets for phase N live in `docs/devTickets/phaseN/` next to that phase's README, using `_TICKET_TEMPLATE.md`. Phases 1–6 use IDs `P1-01`, `P2-01`, and so on. Phase 7 uses `7000`, `7001`, and so on. Phase 8 starts at `8000`. One implementation ticket is one shippable slice. A discovery ticket, such as 7000, records wanted changes and does not ship code.
 
 `/plan-phase` reads this plan's section for that phase, writes a small ticket set, and updates `devTickets_next.md`. It does not implement. Implementation then takes one approved ticket, updates OpenAPI for routes that ticket adds, and checks the slice. Agents do not create Git commits unless the user asks.
 

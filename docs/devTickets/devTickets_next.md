@@ -12,6 +12,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
+| 8 | AI quiz generation experiment: configurable budgets and a manual comparison protocol | Ticket 8000 approved |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -19,7 +20,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-No approved implementation ticket is queued.
+[8000](phase8/8000-ai-quiz-generation-experiment.md) — configurable quiz output and reasoning controls, plus the manual experiment guide.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -47,6 +48,11 @@ No approved implementation ticket is queued.
 22. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
 
 Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUTPUT` reliability is not in this phase.
+
+## Phase 8 proposed order
+1. [8000](phase8/8000-ai-quiz-generation-experiment.md) — configurable quiz output and reasoning controls, plus the manual experiment guide. Approved.
+
+Shared rules are in the [Phase 8 README](phase8/README.md). This phase has no second ticket. Retries, a higher question limit, batching, prompt changes, and raw-output capture stay out until a later decision.
 
 ## Phase 6 proposed order
 1. [P6-01](phase6/P6-01-quiz-generation-api.md) — generation API, quiz persistence, study-view projection. Done.

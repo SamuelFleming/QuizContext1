@@ -36,7 +36,7 @@
 21. [7028](7028-subject-completeness-bar.md) — bar on the workspace subject and the dashboard. Deferred. Depends on 7006.
 22. [7029](7029-description-freshness.md) — AI description vs later notes and documents. Deferred.
 
-**Not in this phase.** Quiz `AI_INVALID_OUTPUT` failures (output budget, strict validation, retries). Held until a later prompt. Do not fold a generation-reliability fix into these tickets.
+**Not in this phase.** Quiz `AI_INVALID_OUTPUT` reliability stays out of Phase 7. [Phase 8 ticket 8000](../phase8/8000-ai-quiz-generation-experiment.md) is the configuration experiment; it does not change these tickets.
 
 **Conflicts with current core scope (intentional; do not silently "fix" core scope while implementing).**
 
