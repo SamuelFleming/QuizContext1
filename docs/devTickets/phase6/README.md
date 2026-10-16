@@ -1,5 +1,7 @@
 # Phase 6 — Quizzing MVP
 
+**Status:** Implemented. A real successful OpenAI call is still unrun locally (no key); generation and evaluation were checked with a mocked provider.
+
 **Objective.** Close the active-recall loop: generate a Targeted quiz from the user's material, complete it, receive source-informed feedback, review, repeat, and export.
 
 **Deliverable.** Quiz generation and persistence, a player that hides marking until submit, deterministic multiple-choice marking, AI short-answer feedback, attempt history, and a basic Markdown export.

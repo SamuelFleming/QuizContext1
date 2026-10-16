@@ -1,6 +1,6 @@
 # P6-02 — Quiz generation form and saved quiz detail
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 6  
 **Depends on:** P6-01  
 **Relevant scope:** MVP plan Phase 6 slice 1; F05; S03 "initiate quiz generation"; S05 generation and saved-quiz functions; `docs/design/01_design-concept.md`
@@ -30,10 +30,10 @@ The user starts quiz generation from the Content Workspace (or from Quizzes), co
 - Showing the answer key on the detail view. It appears in results and in the export.
 
 ## Acceptance checks
-- [ ] Headless browser with a mocked provider: from a nested topic in the workspace, generate a quiz and land on its detail view, which shows the settings and questions.
-- [ ] An empty subject shows the insufficient-content message, and no quiz is created.
-- [ ] With AI disabled or no user key, the error and the Profile pointer show.
-- [ ] A truncated selection shows the partial-inclusion notice on the detail view.
-- [ ] The network response and the DOM on the detail view contain no correct answers or marking criteria.
-- [ ] Reloading `/quizzes/:quizId` shows the same quiz. Another user's quiz id shows a not-found state.
-- [ ] The 390px layout stays usable. Only theme tokens are used. Lint and build pass.
+- [x] Headless browser with a mocked provider: from a nested topic in the workspace, generate a quiz and land on its detail view, which shows the settings and questions.
+- [x] An empty subject shows the insufficient-content message, and no quiz is created.
+- [x] With AI disabled or no user key, the error and the Profile pointer show.
+- [x] A truncated selection shows the partial-inclusion notice on the detail view.
+- [x] The network response and the DOM on the detail view contain no correct answers or marking criteria.
+- [x] Reloading `/quizzes/:quizId` shows the same quiz. Another user's quiz id shows a not-found state.
+- [x] The 390px layout stays usable. Only theme tokens are used. Lint and build pass.

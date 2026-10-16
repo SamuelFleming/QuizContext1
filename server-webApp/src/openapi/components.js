@@ -280,6 +280,101 @@ export const components = {
         status: { type: "string", enum: ["included", "truncated", "excluded"] },
       },
     },
+    ResultsPayload: {
+      type: "object",
+      description:
+        "Evaluated attempt. Includes the learner's response, the correct option or expected answer and criteria, feedback, and source titles. Omits the source snapshot.",
+      properties: {
+        attempt: {
+          type: "object",
+          properties: {
+            id: { type: "string" },
+            quizId: { type: "string" },
+            status: { type: "string", enum: ["evaluated"] },
+            evaluation: {
+              type: "object",
+              properties: {
+                score: { type: "number" },
+                maxScore: { type: "integer" },
+                percent: { type: "integer" },
+                summary: { type: "string" },
+                promptVersion: { type: "string", nullable: true },
+                evaluatedAt: { type: "string", format: "date-time" },
+              },
+            },
+            results: { type: "array", items: { type: "object" } },
+          },
+        },
+        quiz: { $ref: "#/components/schemas/QuizStudyView" },
+      },
+    },
+    PlayerPayload: {
+      type: "object",
+      description: "Attempt plus study-view quiz. Omits answer keys, marking criteria, and the snapshot.",
+      properties: {
+        attempt: {
+          type: "object",
+          properties: {
+            id: { type: "string" },
+            quizId: { type: "string" },
+            status: { type: "string", enum: ["in_progress", "submitted", "evaluated", "evaluation_failed"] },
+            responses: { type: "array" },
+            startedAt: { type: "string", format: "date-time" },
+            submittedAt: { type: "string", format: "date-time", nullable: true },
+          },
+        },
+        quiz: { $ref: "#/components/schemas/QuizStudyView" },
+      },
+    },
+    QuizStudyQuestion: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        type: { type: "string", enum: ["multiple_choice", "short_answer"] },
+        prompt: { type: "string" },
+        options: { type: "array", items: { type: "string" } },
+      },
+    },
+    QuizStudyView: {
+      type: "object",
+      description: "Client-facing quiz. Omits answer keys, marking criteria, and source snapshot.",
+      properties: {
+        id: { type: "string" },
+        title: { type: "string" },
+        subjectId: { type: "string" },
+        topicId: { type: "string", nullable: true },
+        subjectName: { type: "string" },
+        topicPath: { type: "string", nullable: true },
+        multipleChoiceCount: { type: "integer" },
+        shortAnswerCount: { type: "integer" },
+        difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
+        includeDescendants: { type: "boolean" },
+        contextMode: { type: "string", enum: ["very_strict", "targeted", "loose"] },
+        promptVersion: { type: "string" },
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
+        context: {
+          type: "object",
+          properties: {
+            truncated: { type: "boolean" },
+            manifest: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  type: { type: "string" },
+                  id: { type: "string" },
+                  title: { type: "string" },
+                  path: { type: "string" },
+                  status: { type: "string", enum: ["included", "truncated", "excluded"] },
+                },
+              },
+            },
+          },
+        },
+        questions: { type: "array", items: { $ref: "#/components/schemas/QuizStudyQuestion" } },
+      },
+    },
     AuthResult: {
       type: "object",
       properties: {

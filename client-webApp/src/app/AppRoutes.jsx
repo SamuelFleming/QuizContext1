@@ -1,4 +1,3 @@
-import Placeholder from "../components/Placeholder.jsx";
 import Shell from "../components/layout/Shell.jsx";
 import { useAuth } from "../context/useAuth.js";
 import AuthPage from "../features/auth/AuthPage.jsx";
@@ -7,6 +6,10 @@ import SubjectsPage from "../features/content/SubjectsPage.jsx";
 import Dashboard from "../features/dashboard/Dashboard.jsx";
 import Diagnostics from "../features/diagnostics/Diagnostics.jsx";
 import ProfilePage from "../features/profile/ProfilePage.jsx";
+import QuizDetailPage from "../features/quizzes/QuizDetailPage.jsx";
+import QuizPlayerPage from "../features/quizzes/QuizPlayerPage.jsx";
+import QuizGeneratePage from "../features/quizzes/QuizGeneratePage.jsx";
+import QuizzesHome from "../features/quizzes/QuizzesHome.jsx";
 
 export default function AppRoutes({ path, navigate }) {
   const { user, authChecked } = useAuth();
@@ -39,9 +42,18 @@ export default function AppRoutes({ path, navigate }) {
   }
 
   const subjectMatch = path.match(/^\/subjects\/([^/]+)$/);
+  const attemptMatch = path.match(/^\/attempts\/([^/]+)$/);
+  const quizMatch = path === "/quizzes/new" ? null : path.match(/^\/quizzes\/([^/]+)$/);
+  const route = subjectMatch
+    ? "/subjects/:subjectId"
+    : attemptMatch
+      ? "/attempts/:attemptId"
+      : quizMatch
+        ? "/quizzes/:quizId"
+        : path;
 
   let content;
-  switch (subjectMatch ? "/subjects/:subjectId" : path) {
+  switch (route) {
     case "/subjects":
       content = <SubjectsPage navigate={navigate} />;
       break;
@@ -54,13 +66,29 @@ export default function AppRoutes({ path, navigate }) {
         />
       );
       break;
-    case "/quizzes":
+    case "/attempts/:attemptId":
       content = (
-        <Placeholder
-          title="Quizzes"
-          message="Your quizzes will appear here. Quiz features arrive in a later phase."
+        <QuizPlayerPage
+          key={attemptMatch[1]}
+          attemptId={decodeURIComponent(attemptMatch[1])}
+          navigate={navigate}
         />
       );
+      break;
+    case "/quizzes/new":
+      content = <QuizGeneratePage navigate={navigate} />;
+      break;
+    case "/quizzes/:quizId":
+      content = (
+        <QuizDetailPage
+          key={quizMatch[1]}
+          quizId={decodeURIComponent(quizMatch[1])}
+          navigate={navigate}
+        />
+      );
+      break;
+    case "/quizzes":
+      content = <QuizzesHome navigate={navigate} />;
       break;
     case "/profile":
       content = <ProfilePage />;

@@ -1,6 +1,6 @@
 # P6-06 — Quiz Library, attempt history, delete, export, and dashboard activity
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 6  
 **Depends on:** P6-05  
 **Relevant scope:** MVP plan Phase 6 slice 4, deliverable, and "Done when"; F08, F09; S02, S04, S05 "view previous attempts / export"
@@ -29,15 +29,15 @@ The user browses their saved quizzes, reviews past attempts, repeats or deletes 
 - Analytics, spaced repetition, and sharing.
 
 ## Acceptance checks
-- [ ] Headless browser, full phase path with a mocked provider:
+- [x] Headless browser, full phase path with a mocked provider:
   1. Generate a Targeted quiz.
   2. Complete both question types and read the feedback.
   3. Open the quiz from the Library and see the attempt.
   4. Try again and submit a second attempt; both attempts are listed with their own scores.
   5. Export, and confirm the file contains the questions and the answer key (no snapshot).
-- [ ] Editing source notes after generation leaves the quiz, both attempts, and the export unchanged.
-- [ ] Deleting a quiz removes it and its attempts. The subject content is untouched. Deleting the subject leaves the quiz in the library.
-- [ ] The Dashboard shows recent quizzes and attempts and links to them. The subjects list still works.
-- [ ] User B's list, attempts, export, and delete calls never return or affect user A's data (404 by id). No token gives 401.
-- [ ] Swagger on both APIs documents every quiz, attempt, and evaluation route that exists.
-- [ ] The 390px layout stays usable. Lint and build pass. Opening the Content Workspace still works.
+- [x] Editing source notes after generation leaves the quiz, both attempts, and the export unchanged.
+- [x] Deleting a quiz removes it and its attempts. The subject content is untouched. Deleting the subject leaves the quiz in the library.
+- [x] The Dashboard shows recent quizzes and attempts and links to them. The subjects list still works.
+- [x] User B's list, attempts, export, and delete calls never return or affect user A's data (404 by id). No token gives 401.
+- [x] Swagger on both APIs documents every quiz, attempt, and evaluation route that exists.
+- [x] The 390px layout stays usable. Lint and build pass. Opening the Content Workspace still works.

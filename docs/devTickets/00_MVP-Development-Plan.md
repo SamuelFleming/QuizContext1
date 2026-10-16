@@ -1,6 +1,6 @@
 # QuizContext.io — MVP Development Plan
 
-**Status:** Roadmap approved. Phases 1–5 are implemented. Phase 6 is ticketed, not implemented.  
+**Status:** Roadmap approved. Phases 1–6 are implemented. A real successful OpenAI call is still unrun locally (no key).  
 **Date:** 9 October 2026  
 **Role:** Phase sequence for `/plan-phase`. Product behaviour stays in the [Project Ideation Charter](../ProjectIdeationCharter.md) and `docs/core-scope/`. CareerContext notes in `docs/reference/` are advisory.
 
