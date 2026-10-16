@@ -20,7 +20,7 @@ export default function ContentWorkspace({ subjectId, navigate }) {
   }, []);
 
   const select = useCallback((id) => {
-    if (notesDirty.current && !window.confirm("Discard unsaved notes?")) return;
+    if (notesDirty.current && !window.confirm("Discard unsaved changes?")) return;
     notesDirty.current = false;
     setSelectedId(id);
   }, []);
@@ -146,6 +146,12 @@ export default function ContentWorkspace({ subjectId, navigate }) {
           onDirtyChange={setNotesDirty}
           onAddTopic={handleAddTopic}
           onDelete={handleDelete}
+          suggestionScope={{
+            subjectId,
+            topicId: selectedTopic ? selectedTopic.id : null,
+            hasSubtopics: selectedTopic ? countDescendants(topics, selectedTopic.id) > 0 : false,
+          }}
+          onOpenProfile={() => navigate("/profile")}
         >
           <DocumentsPanel
             subjectId={subjectId}

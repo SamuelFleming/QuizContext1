@@ -16,6 +16,15 @@ export async function listDocuments(userId, subjectId, topicId) {
   return Document.find(filter, { content: 0 }).sort({ createdAt: 1 });
 }
 
+// With content, for context assembly. topicIds null means every document in the subject.
+export async function listDocumentsWithContent(userId, subjectId, topicIds) {
+  const filter = { userId, subjectId };
+  if (topicIds) {
+    filter.topicId = { $in: topicIds };
+  }
+  return Document.find(filter).sort({ createdAt: 1 });
+}
+
 export async function findDocument(userId, documentId) {
   if (!mongoose.isValidObjectId(documentId)) {
     return null;

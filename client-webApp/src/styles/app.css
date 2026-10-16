@@ -408,6 +408,57 @@ h2 {
   border-top: 1px solid var(--color-border);
 }
 
+.suggestion {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.suggestion-request {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+button.secondary {
+  background: var(--color-surface);
+  color: var(--color-primary-accent);
+  border: 1px solid var(--color-primary-accent);
+}
+
+.suggestion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.suggestion-review {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-secondary-accent);
+  border-radius: var(--radius-card);
+  background: var(--color-elevated-surface);
+}
+
+.suggestion-review .eyebrow,
+.suggestion-context p {
+  margin: 0;
+}
+
+.warning-text {
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--color-warning);
+  background: var(--color-surface);
+  font-size: 0.875rem;
+}
+
+.warning-text ul {
+  margin: 4px 0 0;
+  padding-left: 1.25rem;
+}
+
 .md-editor {
   display: grid;
   gap: 6px;

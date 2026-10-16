@@ -1,6 +1,6 @@
 # P5-03 — Suggest, review, and save a description in the workspace
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 5  
 **Depends on:** P5-02  
 **Relevant scope:** MVP plan Phase 5 deliverable and "Done when"; F04; S03; `docs/design/01_design-concept.md`
@@ -23,11 +23,11 @@ From the Content Workspace detail panel, the user asks for a suggested descripti
 - Quiz screens.
 
 ## Acceptance checks
-- [ ] Headless browser with a mocked provider: on a nested topic with notes and a document, request a suggestion, edit it, accept it, and see the edited description after reload.
-- [ ] Discard leaves the previous description unchanged after reload.
-- [ ] A truncated selection shows the partial-inclusion notice with source titles.
-- [ ] An empty subject shows the insufficient-content message and nothing is saved.
-- [ ] With AI disabled or no user key, the error and Profile pointer show, and existing notes and the description stay unchanged.
-- [ ] Changing selection with a pending suggestion asks for confirmation.
-- [ ] 390px layout stays usable. Theme tokens only.
-- [ ] Lint and build pass. The Phase 4 browser path still passes.
+- [x] Headless browser with a mocked provider: on a nested topic with notes and a document, request a suggestion, edit it, accept it, and see the edited description after reload.
+- [x] Discard leaves the previous description unchanged after reload.
+- [x] A truncated selection shows the partial-inclusion notice with source titles.
+- [x] An empty subject shows the insufficient-content message and nothing is saved.
+- [x] With AI disabled or no user key, the error and Profile pointer show, and existing notes and the description stay unchanged.
+- [x] Changing selection with a pending suggestion asks for confirmation.
+- [x] 390px layout stays usable. Theme tokens only.
+- [x] Lint and build pass. The Phase 4 browser path still passes.

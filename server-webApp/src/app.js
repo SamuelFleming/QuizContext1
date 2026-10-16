@@ -3,6 +3,7 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 import { openApiSpec } from "./openapi/index.js";
+import { aiRoutes } from "./routes/aiRoutes.js";
 import { authRoutes } from "./routes/authRoutes.js";
 import { diagnosticsRoutes } from "./routes/diagnosticsRoutes.js";
 import { documentRoutes } from "./routes/documentRoutes.js";
@@ -24,6 +25,7 @@ export function createApp() {
   app.use("/subjects", subjectRoutes);
   app.use("/topics", topicRoutes);
   app.use("/documents", documentRoutes);
+  app.use("/ai", aiRoutes);
 
   app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
