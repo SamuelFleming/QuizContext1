@@ -1,7 +1,10 @@
 import { components } from "./components.js";
 import { authPaths } from "./paths/auth.js";
+import { documentPaths } from "./paths/documents.js";
 import { settingsPaths } from "./paths/settings.js";
+import { subjectPaths } from "./paths/subjects.js";
 import { systemPaths } from "./paths/system.js";
+import { topicPaths } from "./paths/topics.js";
 import { userPaths } from "./paths/users.js";
 
 export const openApiSpec = {
@@ -16,6 +19,9 @@ export const openApiSpec = {
     ...authPaths,
     ...userPaths,
     ...settingsPaths,
+    ...subjectPaths,
+    ...topicPaths,
+    ...documentPaths,
   },
   components,
 };

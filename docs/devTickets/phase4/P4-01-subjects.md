@@ -1,6 +1,6 @@
 # P4-01 — Subjects vertical slice
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 4  
 **Depends on:** P3-08 (layered structure), P2-01 (trusted `X-User-Id`)  
 **Relevant scope:** MVP plan Phase 4; F03; S02, S03; `02_high-level-solution.md` §2.2, §5.1
@@ -23,12 +23,12 @@ A signed-in user can create, list, open, rename, and delete their own subjects f
 - AI descriptions (Phase 5), quiz actions.
 
 ## Acceptance checks
-- [ ] From the browser, a user creates two subjects, sees them on Subjects and Dashboard, renames one, opens it, and deletes one after confirming.
-- [ ] Empty or over-long `name` returns 400 and the form shows the message.
-- [ ] User B cannot read, update, or delete user A's subject through either API (404). A body `userId` is ignored on create and update.
-- [ ] No token returns 401; `server-data` without the internal key or `X-User-Id` returns 401.
-- [ ] Swagger on both APIs lists the subject routes that exist.
-- [ ] Client build passes.
+- [x] From the browser, a user creates two subjects, sees them on Subjects and Dashboard, renames one, opens it, and deletes one after confirming.
+- [x] Empty or over-long `name` returns 400 and the form shows the message.
+- [x] User B cannot read, update, or delete user A's subject through either API (404). A body `userId` is ignored on create and update.
+- [x] No token returns 401; `server-data` without the internal key or `X-User-Id` returns 401.
+- [x] Swagger on both APIs lists the subject routes that exist.
+- [x] Client build passes.
 
 ## Implementation notes
 Follow the P3-06/P3-07 layering and `userRepository.js`. `userScopedRequest` in `services/dataApi/client.js` only passes 400/404 through; keep subject errors within those codes or extend it deliberately.

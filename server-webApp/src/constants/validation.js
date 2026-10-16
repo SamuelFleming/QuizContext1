@@ -1,3 +1,12 @@
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const MIN_PASSWORD_LENGTH = 8;
 export const DISPLAY_NAME_MAX = 80;
+
+export const CONTENT_NAME_MAX = 120;
+export const CONTENT_DESCRIPTION_MAX = 2000;
+export const CONTENT_NOTES_MAX = 50000;
+
+export const DOCUMENT_TITLE_MAX = 200;
+export const DOCUMENT_CONTENT_MAX = 200000;
+export const DOCUMENT_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
+export const DOCUMENT_FILE_NAME_MAX = 255;

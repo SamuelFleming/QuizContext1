@@ -8,8 +8,8 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 1 | Local foundations + one dual-API vertical slice | Done |
 | 2 | Authentication, ownership + foundational persistence | Done |
 | 3 | User profile, secure AI key configuration + usage; code organisation refactor | Done |
-| 4 | Subjects, recursive topics, Markdown + document ingestion | Ticketed |
-| 5 | OpenAI integration + AI-assisted descriptions | Roadmapped |
+| 4 | Subjects, recursive topics, Markdown + document ingestion | Done |
+| 5 | OpenAI integration + AI-assisted descriptions | Ticketed |
 | 6 | Quiz generation, completion, evaluation, history + export | Roadmapped |
 
 ## Phase 1 order
@@ -18,14 +18,21 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None yet. Phase 4 is planned; approve [P4-01](phase4/P4-01-subjects.md) to start, or run `/implement-phase` for Phase 4.
+[P5-01](phase5/P5-01-context-package.md) — ownership-scoped context package. Planned, awaiting approval.
+
+## Phase 5 proposed order
+1. [P5-01](phase5/P5-01-context-package.md) — context resolver, data API source read with document content, budget, truncation and insufficient-content reporting, context-mode input.
+2. [P5-02](phase5/P5-02-description-suggestion-api.md) — description suggestion route, versioned prompt and validator, `AiUsage` run-log fields.
+3. [P5-03](phase5/P5-03-description-suggestion-ui.md) — workspace suggest, review, accept, and discard; phase close-out.
+
+Planning decisions (`AiUsage` as the run log, character budget, `very_strict` naming) are listed in the [Phase 5 README](phase5/README.md).
 
 ## Phase 4 proposed order
-1. [P4-01](phase4/P4-01-subjects.md) — subject CRUD, Subjects screen, Dashboard list. Planned.
-2. [P4-02](phase4/P4-02-topic-tree.md) — recursive topic tree and subtree delete. Planned.
-3. [P4-03](phase4/P4-03-markdown-notes.md) — Markdown description and notes with safe preview. Planned.
-4. [P4-04](phase4/P4-04-document-upload-review.md) — document upload, extraction, review, save. Planned.
-5. [P4-05](phase4/P4-05-document-edit-delete.md) — document edit/delete, cascades, phase close-out. Planned.
+1. [P4-01](phase4/P4-01-subjects.md) — subject CRUD, Subjects screen, Dashboard list. Done.
+2. [P4-02](phase4/P4-02-topic-tree.md) — recursive topic tree and subtree delete. Done.
+3. [P4-03](phase4/P4-03-markdown-notes.md) — Markdown description and notes with safe preview. Done.
+4. [P4-04](phase4/P4-04-document-upload-review.md) — document upload, extraction, review, save. Done.
+5. [P4-05](phase4/P4-05-document-edit-delete.md) — document edit/delete, cascades, phase close-out. Done.
 
 Planning decisions (hard delete with cascade, no topic move, no stored originals, limits) are listed in the [Phase 4 README](phase4/README.md).
 

@@ -1,6 +1,6 @@
 # P4-05 — Document edit, delete, and content cascades
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 4  
 **Depends on:** P4-04  
 **Relevant scope:** MVP plan Phase 4 deliverable and done-when; F03; S03
@@ -21,9 +21,9 @@ The user can edit a saved document's title and text and delete it. Deleting a to
 - Soft delete or trash.
 
 ## Acceptance checks
-- [ ] From the browser, a user edits a document's text, reloads, and sees the change; deletes a document; deletes a topic that has documents on a descendant, and those documents are gone.
-- [ ] Deleting a subject removes its topics and documents.
-- [ ] User B cannot update or delete user A's document (404), and user B's delete of a subject or topic id belonging to A removes nothing.
-- [ ] Missing auth returns 401 on both APIs; over-long content returns 400.
-- [ ] Swagger on both APIs matches all implemented content routes.
-- [ ] Full Phase 4 path checked: subject, nested topics, notes, uploaded text file and PDF, review, edit, delete.
+- [x] From the browser, a user edits a document's text, reloads, and sees the change; deletes a document; deletes a topic that has documents on a descendant, and those documents are gone.
+- [x] Deleting a subject removes its topics and documents.
+- [x] User B cannot update or delete user A's document (404), and user B's delete of a subject or topic id belonging to A removes nothing.
+- [x] Missing auth returns 401 on both APIs; over-long content returns 400.
+- [x] Swagger on both APIs matches all implemented content routes.
+- [x] Full Phase 4 path checked: subject, nested topics, notes, uploaded text file and PDF, review, edit, delete.

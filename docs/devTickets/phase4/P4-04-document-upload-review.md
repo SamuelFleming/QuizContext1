@@ -1,6 +1,6 @@
 # P4-04 — Document upload, extraction, and review
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 4  
 **Depends on:** P4-03  
 **Relevant scope:** MVP plan Phase 4 and §6 "PDF text"; F03 step 4; S03; `02_high-level-solution.md` §2.2
@@ -23,13 +23,13 @@ The user uploads a Markdown, text, or extractable PDF file to a subject or topic
 - Treating document text as AI input (Phase 5 labels and bounds it).
 
 ## Acceptance checks
-- [ ] From the browser, a user uploads a `.md`, a `.txt`, and a text PDF to a nested topic, edits the extracted text in review, saves, and sees the edited text after reload.
-- [ ] Cancelling review stores nothing.
-- [ ] A `.docx` or image returns 415, an image-only PDF returns 422, and a file over 5 MB returns 413. Each shows a clear message in the UI.
-- [ ] User B cannot attach a document to user A's subject or topic, or list or read user A's documents (404).
-- [ ] Missing auth returns 401 on both APIs.
-- [ ] Swagger on both APIs lists the document routes that exist.
-- [ ] Client build passes.
+- [x] From the browser, a user uploads a `.md`, a `.txt`, and a text PDF to a nested topic, edits the extracted text in review, saves, and sees the edited text after reload.
+- [x] Cancelling review stores nothing.
+- [x] A `.docx` or image returns 415, an image-only PDF returns 422, and a file over 5 MB returns 413. Each shows a clear message in the UI.
+- [x] User B cannot attach a document to user A's subject or topic, or list or read user A's documents (404).
+- [x] Missing auth returns 401 on both APIs.
+- [x] Swagger on both APIs lists the document routes that exist.
+- [x] Client build passes.
 
 ## Implementation notes
 New `server-webApp` dependencies: `multer` (memory storage) and `pdf-parse` (check its current API; v2 differs from v1). Extraction belongs to `server-webApp`; `server-data` only receives JSON. `apiClient` currently sets a JSON content type, so the upload path must let the browser set the multipart boundary. `userScopedRequest` maps only 400/404 through, which is enough for the save path.

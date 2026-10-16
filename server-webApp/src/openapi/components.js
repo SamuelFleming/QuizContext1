@@ -46,11 +46,137 @@ export const components = {
       description: "Missing, invalid, or expired token",
       content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
     },
+    NotFound: {
+      description: "Not found, or not owned by the signed-in user",
+      content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+    },
+    TopicDeleted: {
+      description: "Topic and descendants deleted",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              data: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  deletedTopicIds: { type: "array", items: { type: "string" } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    Deleted: {
+      description: "Deleted",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: { data: { type: "object", properties: { id: { type: "string" } } } },
+          },
+        },
+      },
+    },
   },
   securitySchemes: {
     bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" },
   },
   schemas: {
+    ContentInput: {
+      type: "object",
+      properties: {
+        name: { type: "string", minLength: 1, maxLength: 120 },
+        description: { type: "string", maxLength: 2000, description: "Markdown" },
+        notes: { type: "string", maxLength: 50000, description: "Markdown" },
+      },
+    },
+    TopicInput: {
+      allOf: [
+        { $ref: "#/components/schemas/ContentInput" },
+        {
+          type: "object",
+          required: ["name"],
+          properties: { parentTopicId: { type: "string", nullable: true } },
+        },
+      ],
+    },
+    Topic: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        subjectId: { type: "string" },
+        parentTopicId: { type: "string", nullable: true },
+        name: { type: "string" },
+        description: { type: "string" },
+        notes: { type: "string" },
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
+      },
+    },
+    ExtractedDocument: {
+      type: "object",
+      properties: {
+        title: { type: "string", description: "Suggested from the file name" },
+        content: { type: "string" },
+        originalFileName: { type: "string" },
+        mimeType: { type: "string", enum: ["text/markdown", "text/plain", "application/pdf"] },
+        sizeBytes: { type: "integer" },
+      },
+    },
+    DocumentInput: {
+      type: "object",
+      required: ["subjectId", "title", "content"],
+      properties: {
+        subjectId: { type: "string" },
+        topicId: { type: "string", nullable: true },
+        title: { type: "string", minLength: 1, maxLength: 200 },
+        content: { type: "string", minLength: 1, maxLength: 200000 },
+        originalFileName: { type: "string", maxLength: 255 },
+        mimeType: { type: "string", maxLength: 100 },
+        sizeBytes: { type: "integer", minimum: 0 },
+      },
+    },
+    DocumentChanges: {
+      type: "object",
+      properties: {
+        title: { type: "string", minLength: 1, maxLength: 200 },
+        content: { type: "string", minLength: 1, maxLength: 200000 },
+      },
+    },
+    DocumentSummary: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        subjectId: { type: "string" },
+        topicId: { type: "string", nullable: true },
+        title: { type: "string" },
+        originalFileName: { type: "string" },
+        mimeType: { type: "string" },
+        sizeBytes: { type: "integer" },
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
+      },
+    },
+    Document: {
+      allOf: [
+        { $ref: "#/components/schemas/DocumentSummary" },
+        { type: "object", properties: { content: { type: "string" } } },
+      ],
+    },
+    Subject: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        name: { type: "string" },
+        description: { type: "string" },
+        notes: { type: "string" },
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
+      },
+    },
     Health: {
       type: "object",
       properties: {
