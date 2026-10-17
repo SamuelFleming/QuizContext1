@@ -1,6 +1,6 @@
 # Implement Ticket
 
-Implement **one user-selected, approved** `P#-##` ticket.
+Implement **one user-selected, approved** ticket (`P1-01` style for Phases 1–6, or `7001` style from Phase 7). Skip a ticket marked Discovery or Deferred.
 
 1. Read `CLAUDE.md`, the ticket and only its relevant core-scope sections/rules.
 2. Inspect affected code and relevant reference examples only if needed. Flag conflicts rather than silently changing requirements.

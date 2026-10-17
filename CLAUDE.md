@@ -38,13 +38,14 @@ Full layout and layer rules: `docs/core-scope/02_high-level-solution.md` §5.1. 
 - **Plan:** write/update small tickets only; do not implement.
 - **Implement:** complete **one approved ticket**, inspect affected code, make scoped changes, perform focused checks, and update ticket/queue status.
 - **Implement phase:** `/implement-phase` runs that phase's existing tickets in order, each through `/implement-ticket`. A failed check gets one minimal in-ticket fix and a re-check. It stops only on a significant block. It does not plan the next phase or commit.
+- **Implement numerous:** `/implement-numerous` runs the ticket IDs named in that message, in that order, including across phases. Same one-at-a-time rule and stop rule as `/implement-phase`. One focused check per ticket; do not re-run earlier tickets or a wide regression between them.
 - Prove React → business API → data API → MongoDB with one vertical slice before bulk CRUD.
 - Avoid unnecessary full-suite regression runs; perform relevant startup, build, request, or focused tests for changed behaviour.
 - Never commit, push, rebase, or create branches unless the user explicitly asks.
 - Keep reports short: changed files, checks run/results, deviations, remaining risks.
 
 ## Ticket convention
-- IDs: `P1-01`, `P1-02`, etc., grouped in `docs/devTickets/PhaseN/`.
+- IDs: Phases 1–6 stay `P1-01`, `P2-01`, and so on. Phase 7 onward uses `7000`, `7001`, and so on. Tickets live in `docs/devTickets/phaseN/`.
 - Queue: `docs/devTickets/devTickets_next.md`; shipped summary: `docs/devTickets/devCompletion.md`.
 - Ticket must include objective, scope, **out of scope**, dependencies, acceptance checks, and status.
 - Do not pre-generate a large ticket backlog. Plan the next phase when needed.

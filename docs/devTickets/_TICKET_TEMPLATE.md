@@ -1,8 +1,10 @@
-# P?-?? — [Short title]
+# [ID] — [Short title]
+
+Phases 1–6 use `P1-01`. Phase 7 onward uses `7000`, `7001`, and so on.
 
 **Status:** Planned  
 **Phase:** ?  
-**Depends on:** None / P?-??  
+**Depends on:** None / [ticket ID]  
 **Relevant scope:** [core-scope section(s), flow IDs]
 
 ## Objective
