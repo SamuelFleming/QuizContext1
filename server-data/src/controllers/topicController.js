@@ -7,6 +7,7 @@ import {
   deleteTopics,
   findTopic,
   listTopics,
+  topicDocumentCounts,
   updateTopic,
 } from "../repositories/topicRepository.js";
 import { readContentFields } from "../utils/contentFields.js";
@@ -22,7 +23,8 @@ export async function listForSubject(req, res, next) {
       return;
     }
     const topics = await listTopics(req.userId, subject._id);
-    sendData(res, topics.map(toTopic));
+    const counts = await topicDocumentCounts(req.userId, subject._id);
+    sendData(res, topics.map((topic) => toTopic(topic, counts.get(topic._id.toString()) || 0)));
   } catch (err) {
     next(err);
   }
@@ -59,7 +61,8 @@ export async function createForSubject(req, res, next) {
       }
     }
     const topic = await createTopic(req.userId, subject._id, parentTopicId, values);
-    sendData(res, toTopic(topic), 201);
+    const counts = await topicDocumentCounts(req.userId, subject._id);
+    sendData(res, toTopic(topic, counts.get(topic._id.toString()) || 0), 201);
   } catch (err) {
     next(err);
   }
@@ -72,7 +75,8 @@ export async function get(req, res, next) {
       sendMessage(res, 404, NOT_FOUND);
       return;
     }
-    sendData(res, toTopic(topic));
+    const counts = await topicDocumentCounts(req.userId, topic.subjectId);
+    sendData(res, toTopic(topic, counts.get(topic._id.toString()) || 0));
   } catch (err) {
     next(err);
   }
@@ -90,7 +94,8 @@ export async function update(req, res, next) {
       sendMessage(res, 404, NOT_FOUND);
       return;
     }
-    sendData(res, toTopic(topic));
+    const counts = await topicDocumentCounts(req.userId, topic.subjectId);
+    sendData(res, toTopic(topic, counts.get(topic._id.toString()) || 0));
   } catch (err) {
     next(err);
   }

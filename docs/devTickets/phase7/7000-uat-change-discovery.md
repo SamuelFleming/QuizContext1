@@ -19,7 +19,7 @@ Test the shipped MVP and record each change wanted from that use as its own Phas
 - Quiz `AI_INVALID_OUTPUT` reliability, until a later request.
 
 ## Acceptance checks
-- [x] Changes captured so far are 7001–7005, 7010–7016, and 7026–7029. 7012 and 7026–7029 are deferred.
+- [x] Changes captured so far are 7001–7005, 7010–7016, and 7026–7029. 7012 and 7027–7029 stay deferred. 7026 was renamed to 7006 when it was approved.
 - [x] Discovery closed on 2026-10-13. No further item from this pass. Quiz `AI_INVALID_OUTPUT` reliability stays unscoped, as already recorded in the phase README.
 - [x] This ticket changes no application code.
 

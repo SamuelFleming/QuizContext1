@@ -29,6 +29,13 @@ export async function listRecentAttempts(userId, limit) {
   return query;
 }
 
+const HISTORY_FIELDS =
+  "quizId submittedAt evaluation.score evaluation.maxScore evaluation.percent evaluation.questions.questionId evaluation.questions.score";
+
+export async function listEvaluatedAttempts(userId) {
+  return Attempt.find({ userId, status: "evaluated" }).select(HISTORY_FIELDS);
+}
+
 export async function deleteAttemptsForQuiz(userId, quizId) {
   if (!mongoose.isValidObjectId(quizId)) return;
   await Attempt.deleteMany({ userId, quizId });

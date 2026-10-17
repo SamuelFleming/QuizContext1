@@ -22,6 +22,19 @@ export function countDescendants(topics, topicId) {
   return count;
 }
 
+// The topic itself plus every topic beneath it, at any depth.
+export function subtreeTopicIds(topics, topicId) {
+  const children = childrenByParent(topics);
+  const ids = [topicId];
+  const queue = [...(children.get(topicId) || [])];
+  while (queue.length) {
+    const next = queue.shift();
+    ids.push(next.id);
+    queue.push(...(children.get(next.id) || []));
+  }
+  return ids;
+}
+
 export function ancestorIds(topics, topicId) {
   const byId = new Map(topics.map((t) => [t.id, t]));
   const ids = [];

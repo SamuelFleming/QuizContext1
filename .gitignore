@@ -8,13 +8,16 @@ server-webApp/.env
 server-webApp/node_modules/
 server-webApp/dist/
 server-webApp/build/
+server-webApp/package-lock.json
 
 server-data/.env
 server-data/node_modules/
 server-data/dist/
 server-data/build/
+server-data/package-lock.json
 
 client-webApp/.env
 client-webApp/node_modules/
 client-webApp/dist/
 client-webApp/build/
+client-webApp/package-lock.json

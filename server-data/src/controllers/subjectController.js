@@ -4,6 +4,7 @@ import {
   deleteSubject,
   findSubject,
   listSubjects,
+  subjectContentStats,
   updateSubject,
 } from "../repositories/subjectRepository.js";
 import { readContentFields } from "../utils/contentFields.js";
@@ -11,10 +12,15 @@ import { sendData, sendMessage } from "../utils/responses.js";
 
 const NOT_FOUND = "Subject not found";
 
+async function present(userId, subjects) {
+  const stats = await subjectContentStats(userId, subjects);
+  return subjects.map((subject) => toSubject(subject, stats.get(subject._id.toString())));
+}
+
 export async function list(req, res, next) {
   try {
     const subjects = await listSubjects(req.userId);
-    sendData(res, subjects.map(toSubject));
+    sendData(res, await present(req.userId, subjects));
   } catch (err) {
     next(err);
   }
@@ -27,7 +33,7 @@ export async function create(req, res, next) {
       sendMessage(res, 400, error);
       return;
     }
-    sendData(res, toSubject(await createSubject(req.userId, values)), 201);
+    sendData(res, (await present(req.userId, [await createSubject(req.userId, values)]))[0], 201);
   } catch (err) {
     next(err);
   }
@@ -40,7 +46,7 @@ export async function get(req, res, next) {
       sendMessage(res, 404, NOT_FOUND);
       return;
     }
-    sendData(res, toSubject(subject));
+    sendData(res, (await present(req.userId, [subject]))[0]);
   } catch (err) {
     next(err);
   }
@@ -58,7 +64,7 @@ export async function update(req, res, next) {
       sendMessage(res, 404, NOT_FOUND);
       return;
     }
-    sendData(res, toSubject(subject));
+    sendData(res, (await present(req.userId, [subject]))[0]);
   } catch (err) {
     next(err);
   }

@@ -11,7 +11,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 4 | Subjects, recursive topics, Markdown + document ingestion | Done |
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
-| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Discovery done; build not started |
+| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build in progress |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -19,25 +19,25 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-[7001](phase7/7001-upload-size-limit.md) — raise the raw upload limit from 5 MB to 25 MB.
+[7015](phase7/7015-ai-run-diagnostics.md) — record AI scope, size, token counts, and rejection reasons.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
-1. [7001](phase7/7001-upload-size-limit.md) — raw upload limit 25 MB. Planned.
-2. [7002](phase7/7002-docx-extraction.md) — Word `.docx` to reviewed text. Planned.
-3. [7003](phase7/7003-pptx-extraction.md) — PowerPoint `.pptx` to reviewed text. Planned.
-4. [7004](phase7/7004-python-upload.md) — `.py` as UTF-8 text. Planned.
-5. [7005](phase7/7005-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Planned.
-6. [7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Planned. Depends on deferred 7026.
-7. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Planned. Depends on deferred 7026 and on 7010.
-8. [7013](phase7/7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts. Planned.
-9. [7014](phase7/7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Planned. Depends on 7013.
-10. [7015](phase7/7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected. Planned.
-11. [7016](phase7/7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Planned. Depends on 7015.
-12. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
-13. [7026](phase7/7026-content-completeness.md) — computed completeness on subject and topic reads. **Deferred.**
-14. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7026.
-15. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7026.
+1. [7001](phase7/7001-upload-size-limit.md) — raw upload limit 25 MB. Done.
+2. [7002](phase7/7002-docx-extraction.md) — Word `.docx` to reviewed text. Done.
+3. [7003](phase7/7003-pptx-extraction.md) — PowerPoint `.pptx` to reviewed text. Done.
+4. [7004](phase7/7004-python-upload.md) — `.py` as UTF-8 text. Done.
+5. [7005](phase7/7005-notebook-upload.md) — `.ipynb` cell sources to reviewed text. Done.
+6. [7006](phase7/7006-content-completeness.md) — computed completeness on subject and topic reads. Done. Renamed from 7026.
+7. [7010](phase7/7010-multi-topic-quiz-api.md) — generate from an explicit topic set. Done. Depends on 7006.
+8. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Done (browser checks pending manual UAT). Depends on 7006 and on 7010.
+9. [7013](phase7/7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts. Done.
+10. [7014](phase7/7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Done (browser checks pending manual UAT). Depends on 7013.
+11. [7015](phase7/7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected. Planned.
+12. [7016](phase7/7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Planned. Depends on 7015.
+13. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
+14. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7006.
+15. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7006.
 16. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
 
 Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUTPUT` reliability is not in this phase.
@@ -84,4 +84,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-None. The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.
+None. 7015 is next. 7011 and 7014 are implemented; their browser acceptance checks await manual UAT.
+
+The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.

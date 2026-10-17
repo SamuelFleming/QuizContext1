@@ -1,6 +1,6 @@
 # 7014 — Study history on the Dashboard
 
-**Status:** Planned  
+**Status:** Done (lint and build verified; browser acceptance checks pending manual UAT)
 **Phase:** 7  
 **Depends on:** 7013  
 **Relevant scope:** Phase 7 README; S02; `docs/design/01_design-concept.md`; P6-06
@@ -29,7 +29,7 @@ The Dashboard shows the 7013 study summary: how many quizzes exist, how many hav
 - [ ] Last 1 shows one quiz. A second evaluated attempt on the same quiz does not add a second recent-results row.
 - [ ] A filter with quizzes but no evaluated attempt shows the empty completion state and does not show a weakest list.
 - [ ] The section shows no correct option, expected answer, or marking criteria.
-- [ ] At 390px the filters and chart fit. Lint and build pass.
+- [ ] At 390px the filters and chart fit. Lint and build pass. *(Lint and build verified; browser checks above await manual UAT.)*
 
 ## Implementation notes
 This is the frontend for 7013. S02's "no sophisticated analytics" note is the same Phase 7 exception recorded on 7013. The Dashboard is the place for this history; do not add a second screen in this ticket.

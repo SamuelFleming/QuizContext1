@@ -34,9 +34,9 @@ export const quizPaths = {
       },
     },
     post: {
-      summary: "Generate and save a quiz from the caller's subject or topic",
+      summary: "Generate and save a quiz from the caller's subject, one topic, or an explicit topic set",
       description:
-        "Assembles the caller's notes and documents, asks the AI for structured questions, validates them, and stores the quiz with a frozen source snapshot. The response is the study view: prompts and options only, never answer keys, marking criteria, or snapshot text. Records one usage entry (operation quiz_generation) unless the content is insufficient.",
+        "Assembles the caller's notes and documents, asks the AI for structured questions, validates them, and stores the quiz with a frozen source snapshot. Omit topicId and topicIds for the whole subject. topicId selects one topic and honours includeDescendants. topicIds (1 to 30) selects those topics only; includeDescendants is ignored and stored false, and topicId must be omitted. A selected topic with no notes and no documents is 400 and names that topic, with no AI call and no quiz. The response is the study view: prompts and options only, never answer keys, marking criteria, or snapshot text. Records one usage entry (operation quiz_generation) unless the content is insufficient or a selected topic is incomplete.",
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
@@ -47,8 +47,24 @@ export const quizPaths = {
               required: ["subjectId", "multipleChoiceCount", "shortAnswerCount"],
               properties: {
                 subjectId: { type: "string" },
-                topicId: { type: "string", nullable: true },
-                includeDescendants: { type: "boolean", default: true },
+                topicId: {
+                  type: "string",
+                  nullable: true,
+                  description: "One topic. Do not send together with topicIds.",
+                },
+                topicIds: {
+                  type: "array",
+                  minItems: 1,
+                  maxItems: 30,
+                  items: { type: "string" },
+                  description:
+                    "Explicit topics in this subject, in the order to store. Ignored includeDescendants is stored false. Omit both topicId and topicIds to quiz the whole subject.",
+                },
+                includeDescendants: {
+                  type: "boolean",
+                  default: true,
+                  description: "Used with topicId. Ignored when topicIds is set.",
+                },
                 multipleChoiceCount: { type: "integer", minimum: 0 },
                 shortAnswerCount: { type: "integer", minimum: 0 },
                 difficulty: { type: "string", enum: ["easy", "medium", "hard"], default: "medium" },

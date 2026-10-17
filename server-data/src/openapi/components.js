@@ -97,6 +97,14 @@ export const components = {
         name: { type: "string" },
         description: { type: "string" },
         notes: { type: "string" },
+        hasDescription: { type: "boolean" },
+        hasNotes: { type: "boolean" },
+        documentCount: { type: "integer", description: "Documents on this topic only" },
+        contentComplete: {
+          type: "boolean",
+          description:
+            "Own notes are non-empty after trim, or documentCount is at least 1. Child content does not count.",
+        },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -148,6 +156,16 @@ export const components = {
         name: { type: "string" },
         description: { type: "string" },
         notes: { type: "string" },
+        hasDescription: { type: "boolean" },
+        hasNotes: { type: "boolean" },
+        documentCount: { type: "integer", description: "Documents attached to the subject itself (no topic)" },
+        contentComplete: {
+          type: "boolean",
+          description:
+            "Own notes are non-empty after trim, or documentCount is at least 1. Topic content does not count.",
+        },
+        topicCount: { type: "integer" },
+        contentCompleteTopicCount: { type: "integer" },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -171,9 +189,21 @@ export const components = {
       properties: {
         title: { type: "string", minLength: 1, maxLength: 120 },
         subjectId: { type: "string" },
-        topicId: { type: "string", nullable: true },
+        topicId: { type: "string", nullable: true, description: "Null when topicIds is non-empty." },
+        topicIds: {
+          type: "array",
+          maxItems: 30,
+          items: { type: "string" },
+          description:
+            "Explicit topic set, in request order. Omit or send an empty list for a whole-subject or single-topic quiz. Do not send together with topicId.",
+        },
         subjectName: { type: "string" },
-        topicPath: { type: "string", nullable: true },
+        topicPath: {
+          type: "string",
+          nullable: true,
+          maxLength: 2000,
+          description: "Selected topic names for a topicIds quiz, truncated to 2000 characters. Hierarchical path for a single topicId.",
+        },
         multipleChoiceCount: { type: "integer", minimum: 0 },
         shortAnswerCount: { type: "integer", minimum: 0 },
         difficulty: { type: "string", enum: ["easy", "medium", "hard"] },

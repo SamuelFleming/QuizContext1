@@ -60,3 +60,17 @@ export async function deleteDocumentsForTopics(userId, topicIds) {
 export async function deleteDocumentsForSubject(userId, subjectId) {
   await Document.deleteMany({ userId, subjectId });
 }
+
+// Own-document counts only. topicId null is the subject itself. Bodies are not loaded.
+export async function countDocumentsByOwner(userId, subjectIds) {
+  if (!subjectIds.length) return [];
+  return Document.aggregate([
+    {
+      $match: {
+        userId: new mongoose.Types.ObjectId(userId),
+        subjectId: { $in: subjectIds.map((id) => new mongoose.Types.ObjectId(id)) },
+      },
+    },
+    { $group: { _id: { subjectId: "$subjectId", topicId: "$topicId" }, count: { $sum: 1 } } },
+  ]);
+}

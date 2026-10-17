@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/useAuth.js";
 import { listSubjects } from "../../services/subjectService.js";
 import { listTopics } from "../../services/topicService.js";
 import { generateQuiz } from "../../services/quizService.js";
+import { subtreeTopicIds } from "../content/topicTree.js";
 import { CONTEXT_MODES, PROFILE_CODES, generationErrorText } from "./contextNotice.js";
+import TopicPicker from "./TopicPicker.jsx";
 
 const DIFFICULTIES = [
   ["easy", "Easy"],
@@ -30,8 +32,9 @@ export default function QuizGeneratePage({ navigate }) {
   const [subjects, setSubjects] = useState(null);
   const [topics, setTopics] = useState([]);
   const [subjectId, setSubjectId] = useState(prefill.subjectId);
-  const [topicId, setTopicId] = useState(prefill.topicId);
-  const [includeDescendants, setIncludeDescendants] = useState(true);
+  const [wholeSubject, setWholeSubject] = useState(!prefill.topicId);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const prefillTopicRef = useRef(prefill.topicId);
   const [multipleChoiceCount, setMultipleChoiceCount] = useState("6");
   const [shortAnswerCount, setShortAnswerCount] = useState("4");
   const [difficulty, setDifficulty] = useState("medium");
@@ -65,7 +68,25 @@ export default function QuizGeneratePage({ navigate }) {
       .then((data) => {
         if (!active) return;
         setTopics(data);
-        setTopicId((current) => (data.some((topic) => topic.id === current) ? current : ""));
+        // Apply a ?topicId= link once: check the topic and its content-complete
+        // descendants when it is complete; otherwise leave nothing checked so the
+        // disabled row shows why.
+        const prefillId = prefillTopicRef.current;
+        if (!prefillId) return;
+        prefillTopicRef.current = "";
+        const target = data.find((topic) => topic.id === prefillId);
+        if (!target) {
+          setWholeSubject(true);
+          return;
+        }
+        if (target.contentComplete) {
+          const byId = new Map(data.map((topic) => [topic.id, topic]));
+          setSelectedIds(
+            new Set(
+              subtreeTopicIds(data, target.id).filter((id) => byId.get(id).contentComplete),
+            ),
+          );
+        }
       })
       .catch((err) => {
         if (!active) return;
@@ -87,21 +108,30 @@ export default function QuizGeneratePage({ navigate }) {
       setFormError("Choose a subject.");
       return;
     }
+    // Mirror the server: only content-complete ids, and never both Whole
+    // subject and topicIds (whole subject sends neither field).
+    const topicIds = topics
+      .filter((topic) => selectedIds.has(topic.id) && topic.contentComplete)
+      .map((topic) => topic.id);
+    if (!wholeSubject && topicIds.length === 0) {
+      setFormError("Choose at least one topic, or Whole subject.");
+      return;
+    }
     if (mc === null || sa === null || mc + sa < 1 || mc + sa > 20) {
       setFormError("Use between 1 and 20 questions in total.");
       return;
     }
     setLoading(true);
     try {
-      const quiz = await generateQuiz({
+      const body = {
         subjectId,
-        topicId: topicId || null,
-        includeDescendants,
         multipleChoiceCount: mc,
         shortAnswerCount: sa,
         difficulty,
         contextMode,
-      });
+      };
+      if (!wholeSubject) body.topicIds = topicIds;
+      const quiz = await generateQuiz(body);
       navigate(`/quizzes/${quiz.id}`);
     } catch (err) {
       if (err.status === 401) signOut();
@@ -133,8 +163,9 @@ export default function QuizGeneratePage({ navigate }) {
             value={subjectId}
             onChange={(event) => {
               setSubjectId(event.target.value);
-              setTopicId("");
               setTopics([]);
+              setSelectedIds(new Set());
+              setWholeSubject(true);
             }}
             disabled={loading || !subjects}
             required
@@ -147,30 +178,18 @@ export default function QuizGeneratePage({ navigate }) {
             ))}
           </select>
         </label>
-        <label className="field">
-          <span>Topic</span>
-          <select
-            value={topicId}
-            onChange={(event) => setTopicId(event.target.value)}
-            disabled={loading || !subjectId}
-          >
-            <option value="">Whole subject</option>
-            {topics.map((topic) => (
-              <option key={topic.id} value={topic.id}>
-                {topic.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="suggestion-toggle">
-          <input
-            type="checkbox"
-            checked={includeDescendants}
-            onChange={(event) => setIncludeDescendants(event.target.checked)}
+        {subjectId ? (
+          <TopicPicker
+            topics={topics}
+            wholeSubject={wholeSubject}
+            selectedIds={selectedIds}
             disabled={loading}
+            onChange={(next) => {
+              setWholeSubject(next.wholeSubject);
+              setSelectedIds(next.selectedIds);
+            }}
           />
-          Include subtopics
-        </label>
+        ) : null}
         <div className="count-row">
           <label className="field">
             <span>Multiple choice</span>

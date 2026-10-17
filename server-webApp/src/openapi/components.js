@@ -112,6 +112,14 @@ export const components = {
         name: { type: "string" },
         description: { type: "string" },
         notes: { type: "string" },
+        hasDescription: { type: "boolean" },
+        hasNotes: { type: "boolean" },
+        documentCount: { type: "integer", description: "Documents on this topic only" },
+        contentComplete: {
+          type: "boolean",
+          description:
+            "Own notes are non-empty after trim, or documentCount is at least 1. Child content does not count.",
+        },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -173,6 +181,16 @@ export const components = {
         name: { type: "string" },
         description: { type: "string" },
         notes: { type: "string" },
+        hasDescription: { type: "boolean" },
+        hasNotes: { type: "boolean" },
+        documentCount: { type: "integer", description: "Documents attached to the subject itself (no topic)" },
+        contentComplete: {
+          type: "boolean",
+          description:
+            "Own notes are non-empty after trim, or documentCount is at least 1. Topic content does not count.",
+        },
+        topicCount: { type: "integer" },
+        contentCompleteTopicCount: { type: "integer" },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -343,6 +361,11 @@ export const components = {
         title: { type: "string" },
         subjectId: { type: "string" },
         topicId: { type: "string", nullable: true },
+        topicIds: {
+          type: "array",
+          items: { type: "string" },
+          description: "Explicit topic set. Empty when the quiz used a subject or a single topicId. Missing stored values are returned as an empty list.",
+        },
         subjectName: { type: "string" },
         topicPath: { type: "string", nullable: true },
         multipleChoiceCount: { type: "integer" },

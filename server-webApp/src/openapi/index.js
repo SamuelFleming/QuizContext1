@@ -5,6 +5,7 @@ import { authPaths } from "./paths/auth.js";
 import { documentPaths } from "./paths/documents.js";
 import { quizPaths } from "./paths/quizzes.js";
 import { settingsPaths } from "./paths/settings.js";
+import { studyHistoryPaths } from "./paths/studyHistory.js";
 import { subjectPaths } from "./paths/subjects.js";
 import { systemPaths } from "./paths/system.js";
 import { topicPaths } from "./paths/topics.js";
@@ -23,6 +24,7 @@ const TAGS = [
   "DOCUMENTS",
   "QUIZZES",
   "ATTEMPTS",
+  "STUDY HISTORY",
   "AI",
 ];
 
@@ -37,6 +39,7 @@ function tagForPath(path) {
   if (path.startsWith("/subjects")) return "SUBJECTS";
   if (path.startsWith("/quizzes")) return "QUIZZES";
   if (path.startsWith("/attempts")) return "ATTEMPTS";
+  if (path.startsWith("/study-history")) return "STUDY HISTORY";
   if (path.startsWith("/ai")) return "AI";
   return "DEFAULT";
 }
@@ -73,6 +76,7 @@ export const openApiSpec = {
     ...documentPaths,
     ...quizPaths,
     ...attemptPaths,
+    ...studyHistoryPaths,
     ...aiPaths,
   }),
   components,

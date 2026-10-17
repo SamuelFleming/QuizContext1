@@ -1,10 +1,25 @@
 import mongoose from "mongoose";
 import { Topic } from "../models/topic.js";
-import { deleteDocumentsForTopics } from "./documentRepository.js";
+import { countDocumentsByOwner, deleteDocumentsForTopics } from "./documentRepository.js";
 
 // Every query is scoped to the trusted owner. Callers check subject ownership first.
 export async function listTopics(userId, subjectId) {
   return Topic.find({ userId, subjectId }).sort({ createdAt: 1 });
+}
+
+// Notes only, for completeness. A child's notes never count toward its parent.
+export async function listTopicNotes(userId, subjectIds) {
+  if (!subjectIds.length) return [];
+  return Topic.find({ userId, subjectId: { $in: subjectIds } }, { subjectId: 1, notes: 1 }).lean();
+}
+
+export async function topicDocumentCounts(userId, subjectId) {
+  const groups = await countDocumentsByOwner(userId, [subjectId]);
+  const counts = new Map();
+  for (const row of groups) {
+    if (row._id.topicId) counts.set(row._id.topicId.toString(), row.count);
+  }
+  return counts;
 }
 
 export async function createTopic(userId, subjectId, parentTopicId, values) {

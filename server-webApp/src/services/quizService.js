@@ -6,12 +6,15 @@ import {
   QUIZ_DIFFICULTIES,
   QUIZ_QUESTIONS_MAX,
   QUIZ_QUESTIONS_MIN,
+  QUIZ_TOPIC_IDS_MAX,
+  QUIZ_TOPIC_PATH_MAX,
 } from "../constants/validation.js";
 import { runAiOperation } from "../openai/aiService.js";
 import * as prompt from "../openai/prompts/quizGeneration.js";
 import { createHttpError } from "../utils/httpError.js";
 import { assembleContext } from "./contextService.js";
 import * as quizzesApi from "./dataApi/quizzes.js";
+import * as topicsApi from "./dataApi/topics.js";
 import { toStudyView } from "./quizStudyView.js";
 
 function countStatus(manifest, status) {
@@ -25,10 +28,37 @@ function readCount(value, name) {
   return value;
 }
 
+function readTopicIds(raw) {
+  if (raw == null) return null;
+  if (!Array.isArray(raw) || raw.length < 1 || raw.length > QUIZ_TOPIC_IDS_MAX) {
+    throw createHttpError(400, `topicIds must contain 1 to ${QUIZ_TOPIC_IDS_MAX} topic ids`);
+  }
+  const ids = [];
+  const seen = new Set();
+  for (const id of raw) {
+    if (typeof id !== "string" || !id.trim()) {
+      throw createHttpError(400, "topicIds must contain topic ids");
+    }
+    const value = id.trim();
+    if (seen.has(value)) {
+      throw createHttpError(400, "topicIds must be unique");
+    }
+    seen.add(value);
+    ids.push(value);
+  }
+  return ids;
+}
+
+function limitTopicPath(path) {
+  if (!path) return null;
+  return path.length > QUIZ_TOPIC_PATH_MAX ? path.slice(0, QUIZ_TOPIC_PATH_MAX) : path;
+}
+
 function readGenerateInput(body) {
   const {
     subjectId,
     topicId = null,
+    topicIds: rawTopicIds,
     includeDescendants = true,
     multipleChoiceCount,
     shortAnswerCount,
@@ -42,6 +72,11 @@ function readGenerateInput(body) {
   if (topicId !== undefined && topicId !== null && (typeof topicId !== "string" || !topicId)) {
     throw createHttpError(400, "topicId must be a topic id");
   }
+  const topicIdsProvided = body != null && Object.prototype.hasOwnProperty.call(body, "topicIds") && body.topicIds != null;
+  if (topicIdsProvided && topicId) {
+    throw createHttpError(400, "Send topicId or topicIds, not both");
+  }
+  const topicIds = readTopicIds(rawTopicIds);
   if (typeof includeDescendants !== "boolean") {
     throw createHttpError(400, "includeDescendants must be true or false");
   }
@@ -62,13 +97,29 @@ function readGenerateInput(body) {
   }
   return {
     subjectId,
-    topicId: topicId || null,
-    includeDescendants,
+    topicId: topicIds ? null : topicId || null,
+    topicIds,
+    includeDescendants: topicIds ? false : includeDescendants,
     multipleChoiceCount: mc,
     shortAnswerCount: sa,
     difficulty,
     contextMode,
   };
+}
+
+// Selected topics must already have their own notes or documents. Descendants are not checked.
+async function assertTopicsComplete(userId, subjectId, topicIds) {
+  const topics = await topicsApi.listTopics(userId, subjectId);
+  const byId = new Map(topics.map((topic) => [topic.id, topic]));
+  for (const id of topicIds) {
+    const topic = byId.get(id);
+    if (!topic) {
+      throw createHttpError(404, "Topic not found");
+    }
+    if (!topic.contentComplete) {
+      throw createHttpError(400, `${topic.name} has no notes or documents`);
+    }
+  }
 }
 
 function shuffleOptions(options, correctOptionIndex) {
@@ -114,9 +165,15 @@ function finaliseQuestions(questions) {
 
 export async function generateQuiz(userId, body) {
   const settings = readGenerateInput(body);
+  if (settings.topicIds) {
+    await assertTopicsComplete(userId, settings.subjectId, settings.topicIds);
+  } else if (settings.topicId) {
+    await assertTopicsComplete(userId, settings.subjectId, [settings.topicId]);
+  }
   const context = await assembleContext(userId, {
     subjectId: settings.subjectId,
     topicId: settings.topicId,
+    topicIds: settings.topicIds,
     includeDescendants: settings.includeDescendants,
     contextMode: settings.contextMode,
   });
@@ -172,8 +229,13 @@ export async function generateQuiz(userId, body) {
     title,
     subjectId: settings.subjectId,
     topicId: settings.topicId,
+    topicIds: settings.topicIds || [],
     subjectName: context.selection.subjectName,
-    topicPath: context.selection.type === "topic" ? context.selection.path : null,
+    topicPath: settings.topicIds
+      ? limitTopicPath(context.selection.path)
+      : context.selection.type === "topic"
+        ? limitTopicPath(context.selection.path)
+        : null,
     multipleChoiceCount: settings.multipleChoiceCount,
     shortAnswerCount: settings.shortAnswerCount,
     difficulty: settings.difficulty,

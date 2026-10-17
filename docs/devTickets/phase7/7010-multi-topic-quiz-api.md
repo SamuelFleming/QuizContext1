@@ -1,8 +1,8 @@
 # 7010 — Quiz a chosen set of topics
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 7  
-**Depends on:** 7026 (deferred)  
+**Depends on:** 7006  
 **Relevant scope:** Phase 7 README; F05; product theory §4; P6-01
 
 ## Objective
@@ -24,12 +24,12 @@ The user can generate one quiz from an explicit list of topics in a subject. Top
 - Quizzing topics across two subjects. Descriptions as a completeness requirement.
 
 ## Acceptance checks
-- [ ] Two content-complete topics produce one stored quiz whose `topicIds` are those two, whose snapshot text includes their notes and documents, and whose snapshot does not include a third topic's notes.
-- [ ] A list that includes a topic with no notes and no documents returns 400 naming it. No usage record and no quiz.
-- [ ] `topicId` together with `topicIds` returns 400. More than 30 ids returns 400. Another user's topic id returns 404.
-- [ ] Whole-subject generation still succeeds when the subject has enough text, even if some topics are empty.
-- [ ] Single-topic generation of a content-complete topic still honours `includeDescendants`.
-- [ ] Business study-view JSON has no answer key. Swagger on both APIs documents `topicIds`.
+- [x] Two content-complete topics produce one stored quiz whose `topicIds` are those two, whose snapshot text includes their notes and documents, and whose snapshot does not include a third topic's notes.
+- [x] A list that includes a topic with no notes and no documents returns 400 naming it. No usage record and no quiz.
+- [x] `topicId` together with `topicIds` returns 400. More than 30 ids returns 400. Another user's topic id returns 404.
+- [x] Whole-subject generation still succeeds when the subject has enough text, even if some topics are empty.
+- [x] Single-topic generation of a content-complete topic still honours `includeDescendants`.
+- [x] Business study-view JSON has no answer key. Swagger on both APIs documents `topicIds`.
 
 ## Implementation notes
 This is the fourth scope beside product theory §4. Do not rewrite core scope in this ticket. Existing quizzes have no `topicIds`; treat missing as an empty list.

@@ -170,7 +170,7 @@ Later phases reuse these rules. They are not re-decided per entity.
 
 **Deliverable.** A user can upload a typical lecture deck or code file under the new limit, see which topics are incomplete, and generate a quiz from a chosen set of complete topics.
 
-**Done when.** The implementation tickets in `docs/devTickets/phase7/` are done. 7000 stays open while UAT discovery continues. 7012, the image investigation, stays deferred until asked. Storage is still reviewed text plus light file metadata. Swagger matches any route those tickets change.
+**Done when.** The planned implementation tickets in `docs/devTickets/phase7/` are done. 7000 is closed. Further UAT changes need a new ticket. 7012 and 7027–7029 stay deferred until asked. 7006 (formerly 7026) is the completeness read. Storage is still reviewed text plus light file metadata. Swagger matches any route those tickets change.
 
 **Out of phase.** Quiz `AI_INVALID_OUTPUT` reliability (held for a later prompt). OCR, vision captions, and storing original files. Legacy `.doc` and `.ppt`. Account Profile (S08) is not the completeness bar.
 

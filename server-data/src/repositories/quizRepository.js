@@ -20,6 +20,13 @@ export async function listQuizzes(userId, limit) {
   return query;
 }
 
+const HISTORY_FIELDS =
+  "title subjectId topicId topicIds subjectName topicPath questions.id questions.prompt createdAt";
+
+export async function listQuizzesForHistory(userId) {
+  return Quiz.find({ userId }).select(HISTORY_FIELDS);
+}
+
 export async function findQuizTitles(userId, quizIds) {
   const quizzes = await Quiz.find({ userId, _id: { $in: quizIds } }).select("title");
   return new Map(quizzes.map((quiz) => [quiz._id.toString(), quiz.title]));

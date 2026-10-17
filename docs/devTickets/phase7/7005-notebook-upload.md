@@ -1,6 +1,6 @@
 # 7005 — Jupyter notebook upload
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 7  
 **Depends on:** 7001  
 **Relevant scope:** Phase 7 README; F03; S03; P4-04
@@ -21,11 +21,11 @@ A `.ipynb` notebook becomes readable text the user can review and save. Cell out
 - `.py` behaviour beyond not breaking 7004.
 
 ## Acceptance checks
-- [ ] From the browser, a notebook with one markdown cell and one code cell uploads, review shows both sources in order and does not show output images or stream output, and the saved edit persists after reload.
-- [ ] A non-JSON `.ipynb` and a JSON file that is not a notebook return 422 and save nothing.
-- [ ] Over 25 MB returns 413. Extracted text over 200,000 characters returns 422.
-- [ ] `.py` upload from 7004 still works.
-- [ ] Swagger lists `.ipynb` on the extract route.
+- [x] From the browser, a notebook with one markdown cell and one code cell uploads, review shows both sources in order and does not show output images or stream output, and the saved edit persists after reload.
+- [x] A non-JSON `.ipynb` and a JSON file that is not a notebook return 422 and save nothing.
+- [x] Over 25 MB returns 413. Extracted text over 200,000 characters returns 422.
+- [x] `.py` upload from 7004 still works.
+- [x] Swagger lists `.ipynb` on the extract route.
 
 ## Implementation notes
 Use `JSON.parse` on the buffer after a UTF-8 check. Do not add a Jupyter runtime. Neutralise nothing special here; context assembly already treats saved document text as untrusted.

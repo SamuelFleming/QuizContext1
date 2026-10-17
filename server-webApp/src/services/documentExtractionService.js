@@ -1,4 +1,6 @@
 import path from "node:path";
+import mammoth from "mammoth";
+import { parseOffice } from "officeparser";
 import { PDFParse } from "pdf-parse";
 import {
   DOCUMENT_CONTENT_MAX,
@@ -11,8 +13,12 @@ const TEXT_TYPES = {
   ".md": "text/markdown",
   ".markdown": "text/markdown",
   ".txt": "text/plain",
+  ".py": "text/x-python",
 };
-const ALLOWED = "Markdown (.md), text (.txt), or PDF (.pdf)";
+const ALLOWED = "Markdown (.md), text (.txt), PDF (.pdf), Word (.docx), PowerPoint (.pptx), Python (.py), or Jupyter (.ipynb)";
+const WORD_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const PPTX_MIME = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+const NOTEBOOK_MIME = "application/x-ipynb+json";
 
 // Multer decodes multipart file names as latin1; browsers send UTF-8.
 function decodeFileName(name) {
@@ -47,6 +53,90 @@ async function extractPdf(buffer) {
   }
 }
 
+async function extractDocx(buffer) {
+  try {
+    const result = await mammoth.extractRawText({ buffer });
+    return result.value;
+  } catch {
+    throw createHttpError(422, "This Word file could not be read");
+  }
+}
+
+function blockText(nodes) {
+  return (nodes || [])
+    .map((node) => {
+      if (typeof node?.text === "string" && node.text.trim()) return node.text.trim();
+      return blockText(node?.children);
+    })
+    .filter(Boolean)
+    .join("\n");
+}
+
+async function extractPptx(buffer) {
+  let ast;
+  try {
+    ast = await parseOffice(buffer, {
+      ignoreSlideMasters: true,
+      ignoreComments: true,
+      ocr: false,
+    });
+  } catch {
+    throw createHttpError(422, "This PowerPoint file could not be read");
+  }
+
+  const slides = (ast.content || []).filter((node) => node.type === "slide");
+  const blocks = [];
+  slides.forEach((slide, index) => {
+    const body = blockText(slide.children);
+    const notes = (slide.notes || [])
+      .map((note) => blockText(note.children) || (typeof note.text === "string" ? note.text.trim() : ""))
+      .filter(Boolean);
+    if (!body && notes.length === 0) return;
+    const lines = [`Slide ${index + 1}`];
+    if (body) lines.push(body);
+    if (notes.length) lines.push("Notes", notes.join("\n"));
+    blocks.push(lines.join("\n"));
+  });
+  if (!blocks.length) {
+    throw createHttpError(
+      422,
+      "No extractable text was found in these slides. Image-only slides are not supported (no OCR)",
+    );
+  }
+  return blocks.join("\n\n");
+}
+
+function cellSource(source) {
+  if (Array.isArray(source)) return source.join("");
+  return typeof source === "string" ? source : "";
+}
+
+function extractNotebook(buffer) {
+  const text = decodeUtf8(buffer);
+  let notebook;
+  try {
+    notebook = JSON.parse(text);
+  } catch {
+    throw createHttpError(422, "This notebook file could not be read");
+  }
+  if (!notebook || typeof notebook !== "object" || !Array.isArray(notebook.cells)) {
+    throw createHttpError(422, "This file is not a Jupyter notebook");
+  }
+
+  const blocks = [];
+  for (const cell of notebook.cells) {
+    const kind = cell?.cell_type;
+    if (kind !== "code" && kind !== "markdown") continue;
+    const source = normalise(cellSource(cell.source)).trim();
+    if (!source) continue;
+    blocks.push(`${kind === "code" ? "Code" : "Markdown"}\n${source}`);
+  }
+  if (!blocks.length) {
+    throw createHttpError(422, "No cell source text was found in this notebook");
+  }
+  return blocks.join("\n\n");
+}
+
 // Returns extracted text for the user to review. Nothing is persisted here.
 export async function extractDocument(file) {
   if (!file?.buffer) {
@@ -63,6 +153,15 @@ export async function extractDocument(file) {
   } else if (ext === ".pdf") {
     mimeType = "application/pdf";
     raw = await extractPdf(file.buffer);
+  } else if (ext === ".docx") {
+    mimeType = WORD_MIME;
+    raw = await extractDocx(file.buffer);
+  } else if (ext === ".pptx") {
+    mimeType = PPTX_MIME;
+    raw = await extractPptx(file.buffer);
+  } else if (ext === ".ipynb") {
+    mimeType = NOTEBOOK_MIME;
+    raw = extractNotebook(file.buffer);
   } else {
     throw createHttpError(415, `Unsupported file type. Upload ${ALLOWED}`);
   }

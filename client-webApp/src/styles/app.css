@@ -475,6 +475,60 @@ h2 {
   margin: var(--space-2) 0 0 var(--space-2);
 }
 
+/* Topic picker on the quiz form reuses the tree row/toggle styles. */
+.topic-picker {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  max-height: 22rem;
+  overflow: auto;
+}
+
+.topic-picker legend {
+  padding: 0 4px;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.topic-picker > .tree {
+  padding-left: 0;
+}
+
+.picker-check {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  min-width: 0;
+}
+
+.picker-check input {
+  flex: none;
+}
+
+.picker-check span {
+  overflow-wrap: anywhere;
+}
+
+.picker-check.whole {
+  font-weight: 600;
+}
+
+.picker-check.incomplete {
+  color: var(--color-text-secondary);
+}
+
+.picker-reason {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.picker-note {
+  margin: var(--space-2) 0 0;
+}
+
 .detail-panel {
   min-width: 0;
 }
@@ -709,6 +763,107 @@ button.secondary {
   white-space: nowrap;
 }
 
+/* Study history */
+.study-history {
+  overflow: hidden;
+}
+
+.history-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+}
+
+.history-counts {
+  list-style: none;
+  margin: var(--space-4) 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.history-counts li {
+  display: grid;
+  gap: 4px;
+  padding: var(--space-3);
+  background: var(--color-elevated-surface);
+  border-radius: var(--radius-card);
+}
+
+.history-counts span {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.history-counts strong {
+  overflow-wrap: anywhere;
+}
+
+.activity-chart {
+  display: grid;
+  grid-template-columns: repeat(var(--activity-columns), minmax(0, 1fr));
+  align-items: end;
+  gap: 4px;
+  min-width: 0;
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-2) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-background);
+}
+
+.activity-bucket {
+  min-width: 0;
+  height: 9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.activity-count {
+  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.activity-bar {
+  width: min(100%, 1.5rem);
+  height: var(--activity-height);
+  min-height: 0.5rem;
+  margin-top: auto;
+  border-radius: var(--radius-card) var(--radius-card) 2px 2px;
+  background: var(--color-primary-accent);
+}
+
+.activity-bar.empty {
+  height: 2px;
+  min-height: 2px;
+  background: var(--color-border);
+}
+
+.activity-date {
+  width: 100%;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 0.625rem;
+  text-align: center;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.weakness-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.weakness-grid > div {
+  min-width: 0;
+}
+
 /* Dashboard detail list */
 .detail-list {
   list-style: none;
@@ -822,6 +977,17 @@ button.secondary {
 @media (max-width: 480px) {
   .card {
     padding: var(--space-4) var(--space-3);
+  }
+
+  .history-filters,
+  .history-counts,
+  .weakness-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-chart {
+    gap: 2px;
+    padding-inline: 4px;
   }
 
   h1 {

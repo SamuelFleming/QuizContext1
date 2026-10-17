@@ -19,7 +19,7 @@ export const documentPaths = {
     post: {
       summary: "Extract text from an uploaded file for review",
       description:
-        "Accepts one .md, .markdown, .txt, or text-based .pdf up to 5 MB. Returns the extracted text and metadata; nothing is saved and the file is not stored.",
+        "Accepts one .md, .markdown, .txt, .py, .ipynb, text-based .pdf, .docx, or .pptx up to 25 MB. Returns the extracted text and metadata; nothing is saved and the file is not stored.",
       security: auth,
       requestBody: {
         required: true,
@@ -47,10 +47,10 @@ export const documentPaths = {
         },
         400: error("No file in the `file` field"),
         401: { $ref: "#/components/responses/Unauthorized" },
-        413: error("File larger than 5 MB"),
+        413: error("File larger than 25 MB"),
         415: error("Unsupported file type"),
         422: error(
-          "No extractable text (scanned/image-only PDF, no OCR), unreadable PDF, invalid UTF-8, empty file, or text over 200,000 characters",
+          "No extractable text (scanned/image-only PDF or slides, no OCR), unreadable PDF, Word, PowerPoint, or notebook file, invalid UTF-8, empty file, or text over 200,000 characters",
         ),
       },
     },
