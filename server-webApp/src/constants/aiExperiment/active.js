@@ -1,1 +1,1 @@
-export { run } from "./runs/luna-64k.js";
+export { run } from "./runs/luna-16k-100kch.js";

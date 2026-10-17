@@ -81,7 +81,7 @@ export const quizPaths = {
     post: {
       summary: "Generate and save a quiz from the caller's subject, one topic, or an explicit topic set",
       description:
-        "Assembles the caller's notes and documents, asks the AI for structured questions, validates them, and stores the quiz with a frozen source snapshot. Omit topicId and topicIds for the whole subject. topicId selects one topic and honours includeDescendants. topicIds (1 to 30) selects those topics only; includeDescendants is ignored and stored false, and topicId must be omitted. A selected topic with no notes and no documents is 400 and names that topic, with no AI call and no quiz. The response is the study view: prompts and options only, never answer keys, marking criteria, or snapshot text. Records one usage entry (operation quiz_generation) unless the content is insufficient or a selected topic is incomplete.",
+        "Assembles the caller's notes and documents, asks the AI for structured questions, validates them, and stores the quiz with a frozen source snapshot. Omit topicId and topicIds for the whole subject. topicId selects one topic and honours includeDescendants. topicIds (1 to 30) selects those topics only; includeDescendants is ignored and stored false, and topicId must be omitted. Optional model selects a catalogue id (GET /ai/models); omitted uses the active experiment run model; unknown returns AI_UNKNOWN_MODEL with no AI call. A selected topic with no notes and no documents is 400 and names that topic, with no AI call and no quiz. The response is the study view: prompts and options only, never answer keys, marking criteria, or snapshot text. Records one usage entry (operation quiz_generation) unless the content is insufficient or a selected topic is incomplete.",
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
@@ -93,7 +93,20 @@ export const quizPaths = {
       },
       responses: {
         201: { description: "Quiz saved (study view plus safe AI run diagnostics)", ...generationResult },
-        400: { $ref: "#/components/responses/BadRequest" },
+        400: {
+          description: "Validation failure or AI_UNKNOWN_MODEL when model is not in the catalogue",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: { type: "string" },
+                  code: { type: "string", nullable: true },
+                },
+              },
+            },
+          },
+        },
         401: { $ref: "#/components/responses/Unauthorized" },
         404: { $ref: "#/components/responses/NotFound" },
         422: {
@@ -131,7 +144,7 @@ export const quizPaths = {
     post: {
       summary: "Preview quiz-generation input metrics",
       description:
-        "Validates and assembles the same caller-owned context as generation without calling AI or writing a quiz or usage record. Exact provider token counts are not available until generation completes.",
+        "Validates and assembles the same caller-owned context as generation without calling AI or writing a quiz or usage record. Returns character counts plus catalogue-based cost approximations (chars÷4 input tokens; output $ is a maxOutputTokens ceiling). Exact provider token counts are not available until generation completes. Optional model selects a catalogue id; omitted uses the active experiment run model.",
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
@@ -143,7 +156,7 @@ export const quizPaths = {
       },
       responses: {
         200: {
-          description: "Safe input and source-count preview",
+          description: "Safe input, source-count, and approximate cost preview",
           content: {
             "application/json": {
               schema: {
@@ -153,7 +166,20 @@ export const quizPaths = {
             },
           },
         },
-        400: { $ref: "#/components/responses/BadRequest" },
+        400: {
+          description: "Validation failure or AI_UNKNOWN_MODEL when model is not in the catalogue",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: { type: "string" },
+                  code: { type: "string", nullable: true },
+                },
+              },
+            },
+          },
+        },
         401: { $ref: "#/components/responses/Unauthorized" },
         404: { $ref: "#/components/responses/NotFound" },
         422: {

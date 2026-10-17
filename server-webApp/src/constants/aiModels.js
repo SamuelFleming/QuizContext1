@@ -3,11 +3,31 @@ import { createAiError } from "../openai/aiErrors.js";
 
 // USD per 1M tokens. Estimates only — verify against current OpenAI pricing before spending.
 export const AI_MODELS = {
-  "gpt-4o-mini": { priceInputPer1M: 0.15, priceOutputPer1M: 0.6 },
-  "gpt-4.1-mini": { priceInputPer1M: 0.4, priceOutputPer1M: 1.6 },
-  "gpt-6-luna": { priceInputPer1M: 0.1, priceOutputPer1M: 0.5 },
-  "gpt-6.1-sol": { priceInputPer1M: 2, priceOutputPer1M: 10 },
-  "gpt-6-astra": { priceInputPer1M: 10, priceOutputPer1M: 50 },
+  "gpt-4o-mini": {
+    displayName: "GPT-4o mini",
+    priceInputPer1M: 0.15,
+    priceOutputPer1M: 0.6,
+  },
+  "gpt-4.1-mini": {
+    displayName: "GPT-4.1 mini",
+    priceInputPer1M: 0.4,
+    priceOutputPer1M: 1.6,
+  },
+  "gpt-6-luna": {
+    displayName: "Luna",
+    priceInputPer1M: 0.1,
+    priceOutputPer1M: 0.5,
+  },
+  "gpt-6.1-sol": {
+    displayName: "Sol",
+    priceInputPer1M: 2,
+    priceOutputPer1M: 10,
+  },
+  "gpt-6-astra": {
+    displayName: "Astra",
+    priceInputPer1M: 10,
+    priceOutputPer1M: 50,
+  },
 };
 
 function isBlank(value) {
@@ -29,6 +49,16 @@ export function getModelMeta(modelId) {
     }
   }
   return bestKey ? AI_MODELS[bestKey] : null;
+}
+
+/** Public catalogue rows for the model picker (no secrets). */
+export function listModels() {
+  return Object.entries(AI_MODELS).map(([id, meta]) => ({
+    id,
+    displayName: meta.displayName,
+    priceInputPer1M: meta.priceInputPer1M,
+    priceOutputPer1M: meta.priceOutputPer1M,
+  }));
 }
 
 /**

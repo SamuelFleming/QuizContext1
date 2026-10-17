@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AiRunDetails from "../../components/ai/AiRunDetails.jsx";
 import { useAuth } from "../../context/useAuth.js";
+import { listAiModels } from "../../services/aiService.js";
 import { listSubjects } from "../../services/subjectService.js";
 import { listTopics } from "../../services/topicService.js";
 import { generateQuiz, previewQuiz } from "../../services/quizService.js";
@@ -14,6 +15,9 @@ const DIFFICULTIES = [
   ["medium", "Medium"],
   ["hard", "Hard"],
 ];
+
+const DEFAULT_MODEL = "gpt-6-luna";
+const LIVE_PREVIEW_DEBOUNCE_MS = 400;
 
 function initialQuery() {
   const params = new URLSearchParams(window.location.search);
@@ -30,8 +34,44 @@ function parseCount(raw) {
 
 const formatAiMetric = (value) => (value == null ? "—" : value.toLocaleString());
 
+function formatEstimateCost(value) {
+  if (value == null) return "—";
+  return `$${Number(value).toFixed(4)}`;
+}
+
 function sentCount(counts) {
   return (counts?.included || 0) + (counts?.truncated || 0);
+}
+
+function completeTopicIds(topics, selectedIds) {
+  return topics
+    .filter((topic) => selectedIds.has(topic.id) && topic.contentComplete)
+    .map((topic) => topic.id);
+}
+
+function buildQuizBody({
+  subjectId,
+  wholeSubject,
+  topics,
+  selectedIds,
+  multipleChoiceCount,
+  shortAnswerCount,
+  difficulty,
+  contextMode,
+  model,
+}) {
+  const body = {
+    subjectId,
+    multipleChoiceCount,
+    shortAnswerCount,
+    difficulty,
+    contextMode,
+    model,
+  };
+  if (!wholeSubject) {
+    body.topicIds = completeTopicIds(topics, selectedIds);
+  }
+  return body;
 }
 
 function PreviewPanel({ preview, preparing }) {
@@ -71,6 +111,67 @@ function PreviewPanel({ preview, preparing }) {
         Exact input and output token counts are available when the AI call finishes.
       </p>
     </section>
+  );
+}
+
+function EstimateSummary({ preview, loading, error }) {
+  if (error) {
+    return (
+      <div className="estimate-summary estimate-summary--soft" role="status">
+        <p className="usage-meta">{error}</p>
+      </div>
+    );
+  }
+  if (loading && !preview) {
+    return (
+      <div className="estimate-summary estimate-summary--soft" aria-live="polite" aria-busy="true">
+        <p className="usage-meta">Estimating cost…</p>
+      </div>
+    );
+  }
+  if (!preview) {
+    return (
+      <div className="estimate-summary estimate-summary--soft">
+        <p className="usage-meta">Choose a subject and question counts to see cost estimates.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="estimate-summary" aria-live="polite">
+      <p className="estimate-summary-title">
+        Cost estimate{loading ? " (updating…)" : ""}
+        {preview.model ? (
+          <>
+            {" "}
+            · <code>{preview.model}</code>
+          </>
+        ) : null}
+      </p>
+      <dl className="estimate-facts">
+        <div>
+          <dt>Input</dt>
+          <dd>
+            {formatAiMetric(preview.inputChars)} chars · ~{formatAiMetric(preview.estimatedInputTokens)}{" "}
+            tokens · {formatEstimateCost(preview.estimatedInputCostUsd)}
+          </dd>
+        </div>
+        <div>
+          <dt>Output (up to)</dt>
+          <dd>
+            {formatAiMetric(preview.maxOutputTokens)} tokens ·{" "}
+            {formatEstimateCost(preview.estimatedOutputCostUsd)}
+          </dd>
+        </div>
+        <div>
+          <dt>Total (up to)</dt>
+          <dd>{formatEstimateCost(preview.estimatedTotalCostUsd)}</dd>
+        </div>
+      </dl>
+      <p className="usage-meta">
+        Estimates only — input tokens use a character heuristic; output $ is a ceiling at the max
+        token cap. Exact tokens and cost appear after generation.
+      </p>
+    </div>
   );
 }
 
@@ -128,8 +229,13 @@ export default function QuizGeneratePage({ navigate }) {
   const [shortAnswerCount, setShortAnswerCount] = useState("4");
   const [difficulty, setDifficulty] = useState("medium");
   const [contextMode, setContextMode] = useState("targeted");
+  const [models, setModels] = useState(null);
+  const [model, setModel] = useState(DEFAULT_MODEL);
   const [phase, setPhase] = useState("idle");
   const [preview, setPreview] = useState(null);
+  const [livePreview, setLivePreview] = useState(null);
+  const [livePreviewLoading, setLivePreviewLoading] = useState(false);
+  const [livePreviewError, setLivePreviewError] = useState("");
   const [result, setResult] = useState(null);
   const [detailsRun, setDetailsRun] = useState(null);
   const detailsTriggerRef = useRef(null);
@@ -137,18 +243,29 @@ export default function QuizGeneratePage({ navigate }) {
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState("");
   const loading = phase === "preparing" || phase === "generating";
+  const selectedKey = useMemo(
+    () => Array.from(selectedIds).sort().join(","),
+    [selectedIds],
+  );
 
   useEffect(() => {
     let active = true;
-    listSubjects()
-      .then((data) => {
+    Promise.all([listSubjects(), listAiModels()])
+      .then(([subjectData, modelData]) => {
         if (!active) return;
-        setSubjects(data);
+        setSubjects(subjectData);
+        const rows = Array.isArray(modelData) ? modelData : [];
+        setModels(rows);
+        if (rows.some((row) => row.id === DEFAULT_MODEL)) {
+          setModel(DEFAULT_MODEL);
+        } else if (rows[0]?.id) {
+          setModel(rows[0].id);
+        }
       })
       .catch((err) => {
         if (!active) return;
         if (err.status === 401) signOut();
-        else setLoadError(err.message || "Could not load subjects.");
+        else setLoadError(err.message || "Could not load subjects or models.");
       });
     return () => {
       active = false;
@@ -192,6 +309,84 @@ export default function QuizGeneratePage({ navigate }) {
     };
   }, [subjectId, signOut]);
 
+  useEffect(() => {
+    if (phase !== "idle" && phase !== "failure") {
+      return undefined;
+    }
+    const mc = parseCount(multipleChoiceCount);
+    const sa = parseCount(shortAnswerCount);
+    const topicIds = completeTopicIds(topics, selectedIds);
+    const canPreview =
+      Boolean(subjectId) &&
+      Boolean(model) &&
+      mc !== null &&
+      sa !== null &&
+      mc + sa >= 1 &&
+      mc + sa <= 20 &&
+      (wholeSubject || topicIds.length > 0);
+
+    if (!canPreview) {
+      setLivePreview(null);
+      setLivePreviewError("");
+      setLivePreviewLoading(false);
+      return undefined;
+    }
+
+    let active = true;
+    const timer = setTimeout(() => {
+      setLivePreviewLoading(true);
+      setLivePreviewError("");
+      const body = buildQuizBody({
+        subjectId,
+        wholeSubject,
+        topics,
+        selectedIds,
+        multipleChoiceCount: mc,
+        shortAnswerCount: sa,
+        difficulty,
+        contextMode,
+        model,
+      });
+      previewQuiz(body)
+        .then((data) => {
+          if (!active) return;
+          setLivePreview(data);
+          setLivePreviewLoading(false);
+        })
+        .catch((err) => {
+          if (!active) return;
+          if (err.status === 401) {
+            signOut();
+            return;
+          }
+          setLivePreview(null);
+          setLivePreviewLoading(false);
+          setLivePreviewError(
+            err.code === "CONTEXT_INSUFFICIENT"
+              ? err.message || "Not enough content to estimate yet."
+              : err.message || "Could not refresh the cost estimate.",
+          );
+        });
+    }, LIVE_PREVIEW_DEBOUNCE_MS);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [
+    phase,
+    subjectId,
+    wholeSubject,
+    selectedKey,
+    topics,
+    multipleChoiceCount,
+    shortAnswerCount,
+    difficulty,
+    contextMode,
+    model,
+    signOut,
+  ]);
+
   async function handleSubmit(event) {
     event.preventDefault();
     setError(null);
@@ -206,9 +401,7 @@ export default function QuizGeneratePage({ navigate }) {
     }
     // Mirror the server: only content-complete ids, and never both Whole
     // subject and topicIds (whole subject sends neither field).
-    const topicIds = topics
-      .filter((topic) => selectedIds.has(topic.id) && topic.contentComplete)
-      .map((topic) => topic.id);
+    const topicIds = completeTopicIds(topics, selectedIds);
     if (!wholeSubject && topicIds.length === 0) {
       setFormError("Choose at least one topic, or Whole subject.");
       return;
@@ -217,18 +410,26 @@ export default function QuizGeneratePage({ navigate }) {
       setFormError("Use between 1 and 20 questions in total.");
       return;
     }
+    if (!model) {
+      setFormError("Choose a model.");
+      return;
+    }
     setPhase("preparing");
     try {
-      const body = {
+      const body = buildQuizBody({
         subjectId,
+        wholeSubject,
+        topics,
+        selectedIds,
         multipleChoiceCount: mc,
         shortAnswerCount: sa,
         difficulty,
         contextMode,
-      };
-      if (!wholeSubject) body.topicIds = topicIds;
+        model,
+      });
       const nextPreview = await previewQuiz(body);
       setPreview(nextPreview);
+      setLivePreview(nextPreview);
       setPhase("generating");
       const quiz = await generateQuiz({ ...body, ...(title.trim() ? { title } : {}) });
       setResult(quiz);
@@ -388,34 +589,58 @@ export default function QuizGeneratePage({ navigate }) {
             />
           </label>
         </div>
-        <label className="field">
-          <span>Difficulty</span>
-          <select
-            value={difficulty}
-            onChange={(event) => setDifficulty(event.target.value)}
-            disabled={loading}
-          >
-            {DIFFICULTIES.map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field">
-          <span>Context mode</span>
-          <select
-            value={contextMode}
-            onChange={(event) => setContextMode(event.target.value)}
-            disabled={loading}
-          >
-            {CONTEXT_MODES.map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="count-row">
+          <label className="field">
+            <span>Difficulty</span>
+            <select
+              value={difficulty}
+              onChange={(event) => setDifficulty(event.target.value)}
+              disabled={loading}
+            >
+              {DIFFICULTIES.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            <span>Context mode</span>
+            <select
+              value={contextMode}
+              onChange={(event) => setContextMode(event.target.value)}
+              disabled={loading}
+            >
+              {CONTEXT_MODES.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div className="model-estimate-row">
+          <label className="field">
+            <span>Model</span>
+            <select
+              value={model}
+              onChange={(event) => setModel(event.target.value)}
+              disabled={loading || !models}
+              required
+            >
+              {(models || [{ id: DEFAULT_MODEL, displayName: "Luna" }]).map((row) => (
+                <option key={row.id} value={row.id}>
+                  {row.displayName}
+                </option>
+              ))}
+            </select>
+          </label>
+          <EstimateSummary
+            preview={livePreview}
+            loading={livePreviewLoading}
+            error={livePreviewError}
+          />
+        </div>
         {formError ? (
           <p className="error-text" role="alert">
             {formError}

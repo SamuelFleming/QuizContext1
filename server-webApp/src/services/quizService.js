@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { getAiConfig } from "../config/aiConfig.js";
+import { estimateQuizPreviewCost, getAiConfig } from "../config/aiConfig.js";
 import { CONTEXT_MODES, DEFAULT_CONTEXT_MODE } from "../constants/contextModes.js";
+import { resolveModel } from "../constants/aiModels.js";
 import {
   CONTENT_NAME_MAX,
   QUIZ_DIFFICULTIES,
@@ -50,6 +51,15 @@ function readOptionalTitle(raw) {
     throw createHttpError(400, `title must be at most ${CONTENT_NAME_MAX} characters`);
   }
   return title;
+}
+
+function readOptionalModel(raw) {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== "string") {
+    throw createHttpError(400, "model must be a string");
+  }
+  const model = raw.trim();
+  return model || null;
 }
 
 function readQueryInteger(raw, name, min, max, fallback) {
@@ -176,6 +186,7 @@ function readGenerateInput(body) {
     shortAnswerCount,
     difficulty = "medium",
     contextMode = DEFAULT_CONTEXT_MODE,
+    model: rawModel,
   } = body || {};
 
   if (typeof subjectId !== "string" || !subjectId) {
@@ -207,6 +218,9 @@ function readGenerateInput(body) {
   if (!CONTEXT_MODES.includes(contextMode)) {
     throw createHttpError(400, `contextMode must be one of ${CONTEXT_MODES.join(", ")}`);
   }
+  const requestedModel = readOptionalModel(rawModel);
+  // Resolve early so unknown explicit models fail before context assembly.
+  const model = resolveModel({ requestedModel });
   return {
     subjectId,
     topicId: topicIds ? null : topicId || null,
@@ -216,6 +230,8 @@ function readGenerateInput(body) {
     shortAnswerCount: sa,
     difficulty,
     contextMode,
+    requestedModel,
+    model,
   };
 }
 
@@ -339,10 +355,21 @@ async function prepareGeneration(userId, body) {
 
 export async function previewQuiz(userId, body) {
   const prepared = await prepareGeneration(userId, body);
+  const maxOutputTokens = getAiConfig().quizMaxOutputTokens;
+  const estimates = estimateQuizPreviewCost(prepared.settings.model, {
+    inputChars: prepared.input.length,
+    instructionsChars: prompt.INSTRUCTIONS.length,
+    maxOutputTokens,
+  });
   return {
     selectionName: prepared.context.selection.name,
     inputChars: prepared.input.length,
-    maxOutputTokens: getAiConfig().quizMaxOutputTokens,
+    maxOutputTokens,
+    model: prepared.settings.model,
+    estimatedInputTokens: estimates.estimatedInputTokens,
+    estimatedInputCostUsd: estimates.estimatedInputCostUsd,
+    estimatedOutputCostUsd: estimates.estimatedOutputCostUsd,
+    estimatedTotalCostUsd: estimates.estimatedTotalCostUsd,
     context: prepared.runContext,
     sources: {
       topics: sourceCounts(prepared.context.manifest, "topic"),
@@ -375,6 +402,8 @@ export async function generateQuiz(userId, body) {
     maxOutputTokens: quizMaxOutputTokens,
     timeoutMs: quizTimeoutMs,
     reasoningEffort,
+    // Pass the request value (or omit) so empty still uses experiment default without re-gating.
+    ...(settings.requestedModel ? { model: settings.requestedModel } : {}),
   });
 
   const title = requestedTitle || context.selection.name.slice(0, CONTENT_NAME_MAX);

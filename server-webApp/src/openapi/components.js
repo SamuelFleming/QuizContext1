@@ -430,6 +430,12 @@ export const components = {
           enum: ["very_strict", "targeted", "loose"],
           default: "targeted",
         },
+        model: {
+          type: "string",
+          nullable: true,
+          description:
+            "Optional OpenAI model id from the catalogue (GET /ai/models). Omitted or blank uses the active experiment run model. Unknown ids return AI_UNKNOWN_MODEL.",
+        },
       },
     },
     QuizGenerateInput: {
@@ -479,12 +485,59 @@ export const components = {
         pagination: { $ref: "#/components/schemas/Pagination" },
       },
     },
+    AiModel: {
+      type: "object",
+      required: ["id", "displayName", "priceInputPer1M", "priceOutputPer1M"],
+      properties: {
+        id: { type: "string", description: "OpenAI model id used in generate/preview requests." },
+        displayName: { type: "string" },
+        priceInputPer1M: {
+          type: "number",
+          description: "Catalogue USD per 1M input tokens (estimates only).",
+        },
+        priceOutputPer1M: {
+          type: "number",
+          description: "Catalogue USD per 1M output tokens (estimates only).",
+        },
+      },
+    },
     QuizPreview: {
       type: "object",
       properties: {
         selectionName: { type: "string" },
-        inputChars: { type: "integer", minimum: 0 },
+        inputChars: {
+          type: "integer",
+          minimum: 0,
+          description: "Character length of the assembled user input channel (excludes system instructions).",
+        },
         maxOutputTokens: { type: "integer", minimum: 1 },
+        model: {
+          type: "string",
+          description: "Resolved model id that would be used for generation.",
+        },
+        estimatedInputTokens: {
+          type: "integer",
+          minimum: 0,
+          nullable: true,
+          description:
+            "Approximation only: ceil((inputChars + instructions chars) / 4). Not provider billing tokens.",
+        },
+        estimatedInputCostUsd: {
+          type: "number",
+          nullable: true,
+          description: "Approximation from estimatedInputTokens × catalogue input rate.",
+        },
+        estimatedOutputCostUsd: {
+          type: "number",
+          nullable: true,
+          description:
+            "Upper-bound approximation: maxOutputTokens × catalogue output rate (actual output is usually lower).",
+        },
+        estimatedTotalCostUsd: {
+          type: "number",
+          nullable: true,
+          description: "estimatedInputCostUsd + estimatedOutputCostUsd (output is a ceiling).",
+        },
         context: { $ref: "#/components/schemas/AiUsageContext" },
         sources: {
           type: "object",
