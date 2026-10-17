@@ -1,9 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import MarkdownEditor from "../../components/markdown/MarkdownEditor.jsx";
 import { suggestDescription } from "../../services/aiService.js";
 
 const DESCRIPTION_MAX = 2000;
 const PROFILE_CODES = new Set(["AI_KEY_MISSING", "AI_LIMIT_REACHED", "AI_DISABLED", "AI_AUTH_FAILED"]);
+
+export const initialSuggestionState = {
+  includeSubtopics: true,
+  loading: false,
+  accepting: false,
+  error: null,
+  suggestion: null,
+  text: "",
+};
 
 function errorText(err) {
   if (err.code === "CONTEXT_INSUFFICIENT") {
@@ -36,8 +45,20 @@ function ContextNotice({ context }) {
   );
 }
 
+function SparkleIcon() {
+  return (
+    <svg className="suggest-icon" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M8 1.2l1.1 3.4L12.5 5.7l-3.4 1.1L8 10.2 6.9 6.8 3.5 5.7l3.4-1.1L8 1.2zm5.2 7.3l.7 2.1 2.1.7-2.1.7-.7 2.1-.7-2.1-2.1-.7 2.1-.7.7-2.1zM3.5 10.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5.5-1.5z"
+      />
+    </svg>
+  );
+}
+
 // Requests a suggested description, lets the user edit it, and hands it to onAccept.
 // Nothing is saved unless the user accepts.
+// State is owned by the parent so the icon trigger and review panel can share it.
 export default function DescriptionSuggestion({
   subjectId,
   topicId,
@@ -45,85 +66,93 @@ export default function DescriptionSuggestion({
   onAccept,
   onPendingChange,
   onOpenProfile,
+  shared,
+  triggerOnly = false,
+  panelOnly = false,
 }) {
-  const [includeSubtopics, setIncludeSubtopics] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [accepting, setAccepting] = useState(false);
-  const [error, setError] = useState(null);
-  const [suggestion, setSuggestion] = useState(null);
-  const [text, setText] = useState("");
+  const [state, setState] = shared;
+  const { includeSubtopics, loading, accepting, error, suggestion, text } = state;
+
+  function patch(partial) {
+    setState((current) => ({ ...current, ...partial }));
+  }
 
   useEffect(() => {
     onPendingChange?.(Boolean(suggestion));
   }, [suggestion, onPendingChange]);
 
   async function handleRequest() {
-    setLoading(true);
-    setError(null);
+    patch({ loading: true, error: null });
     try {
       const result = await suggestDescription({
         subjectId,
         topicId,
         includeDescendants: topicId ? includeSubtopics : true,
       });
-      setSuggestion(result);
-      setText(result.description);
+      patch({ suggestion: result, text: result.description, loading: false });
     } catch (err) {
-      if (err.status !== 401) setError(err);
-    } finally {
-      setLoading(false);
+      if (err.status !== 401) patch({ error: err, loading: false });
+      else patch({ loading: false });
     }
   }
 
   async function handleAccept() {
-    setAccepting(true);
-    setError(null);
+    patch({ accepting: true, error: null });
     try {
       await onAccept(text);
-      setSuggestion(null);
-      setText("");
+      patch({ suggestion: null, text: "", accepting: false });
     } catch (err) {
-      if (err.status !== 401) setError(err);
-    } finally {
-      setAccepting(false);
+      if (err.status !== 401) patch({ error: err, accepting: false });
+      else patch({ accepting: false });
     }
   }
 
   function handleDiscard() {
-    setSuggestion(null);
-    setText("");
-    setError(null);
+    patch({ suggestion: null, text: "", error: null });
   }
 
   const over = text.length > DESCRIPTION_MAX;
 
+  if (triggerOnly) {
+    return (
+      <button
+        type="button"
+        className="suggest-icon-btn"
+        title="Suggest Description"
+        aria-label="Suggest Description"
+        onClick={handleRequest}
+        disabled={loading || Boolean(suggestion)}
+      >
+        {loading ? "…" : <SparkleIcon />}
+      </button>
+    );
+  }
+
+  if (panelOnly && !suggestion && !error && !(topicId && hasSubtopics)) {
+    return null;
+  }
+
   return (
     <div className="suggestion">
-      {!suggestion ? (
-        <div className="suggestion-request">
-          <button type="button" className="secondary" onClick={handleRequest} disabled={loading}>
-            {loading ? "Suggesting…" : "Suggest description"}
-          </button>
-          {topicId && hasSubtopics ? (
-            <label className="suggestion-toggle">
-              <input
-                type="checkbox"
-                checked={includeSubtopics}
-                onChange={(e) => setIncludeSubtopics(e.target.checked)}
-                disabled={loading}
-              />
-              Include subtopics
-            </label>
-          ) : null}
-        </div>
-      ) : (
+      {!suggestion && topicId && hasSubtopics ? (
+        <label className="suggestion-toggle">
+          <input
+            type="checkbox"
+            checked={includeSubtopics}
+            onChange={(e) => patch({ includeSubtopics: e.target.checked })}
+            disabled={loading}
+          />
+          Include subtopics
+        </label>
+      ) : null}
+      {suggestion ? (
         <div className="suggestion-review">
           <p className="eyebrow">Suggested description</p>
           <ContextNotice context={suggestion.context} />
           <MarkdownEditor
             label="Review suggestion"
             value={text}
-            onChange={setText}
+            onChange={(value) => patch({ text: value })}
             maxLength={DESCRIPTION_MAX}
             rows={4}
           />
@@ -137,7 +166,7 @@ export default function DescriptionSuggestion({
             </button>
           </div>
         </div>
-      )}
+      ) : null}
       {error ? (
         <p className="error-text" role="alert">
           {errorText(error)}{" "}

@@ -26,7 +26,6 @@ export default function NodeDetails({
   suggestionScope,
   onOpenProfile,
   onGenerateQuiz,
-  children,
 }) {
   const [name, setName] = useState(node.name);
   const [childName, setChildName] = useState("");
@@ -53,8 +52,8 @@ export default function NodeDetails({
     run("rename", () => onRename(name), "Name saved.");
   }
 
-  function handleAdd(event) {
-    event.preventDefault();
+  function handleAdd() {
+    if (!childName.trim()) return;
     run("add", async () => {
       await onAddTopic(childName);
       setChildName("");
@@ -69,6 +68,9 @@ export default function NodeDetails({
     if (!window.confirm(`Delete ${what} and attached documents? This cannot be undone.`)) return;
     run("delete", onDelete);
   }
+
+  const subtopicLabel =
+    descendantCount === 1 ? "1 nested topic" : `${descendantCount} nested topics`;
 
   return (
     <section className="detail-panel" aria-live="polite">
@@ -98,41 +100,47 @@ export default function NodeDetails({
         onDirtyChange={onDirtyChange}
         suggestionScope={suggestionScope}
         onOpenProfile={onOpenProfile}
+        midContent={
+          <section className="subtopics-block" aria-label="Subtopics">
+            <div className="section-head">
+              <h2>Subtopics</h2>
+              <p className="usage-meta">{subtopicLabel}</p>
+            </div>
+            <div className="inline-form">
+              <label className="field grow">
+                <span>{kind === "subject" ? "New topic" : "New nested topic"}</span>
+                <input
+                  type="text"
+                  value={childName}
+                  onChange={(e) => setChildName(e.target.value)}
+                  maxLength={120}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAdd();
+                    }
+                  }}
+                />
+              </label>
+              <button type="button" disabled={busy === "add" || !childName.trim()} onClick={handleAdd}>
+                {busy === "add" ? "Adding…" : "Add topic"}
+              </button>
+            </div>
+            <Feedback message={message} source="add" />
+          </section>
+        }
+        extraActions={
+          onGenerateQuiz ? (
+            <button type="button" className="secondary" onClick={onGenerateQuiz}>
+              Generate quiz
+            </button>
+          ) : null
+        }
       />
-
-      {onGenerateQuiz ? (
-        <div className="button-row">
-          <button type="button" className="secondary" onClick={onGenerateQuiz}>
-            Generate quiz
-          </button>
-        </div>
-      ) : null}
 
       <section className="quiz-history-scaffold" aria-label="Quiz history">
         <h2>Quiz history</h2>
-        <p className="usage-meta">
-          Summary metrics for quizzes and performance on this {kind} will appear here.
-        </p>
       </section>
-
-      {children}
-
-      <form className="inline-form" onSubmit={handleAdd} noValidate>
-        <label className="field grow">
-          <span>{kind === "subject" ? "New topic" : "New nested topic"}</span>
-          <input
-            type="text"
-            value={childName}
-            onChange={(e) => setChildName(e.target.value)}
-            maxLength={120}
-            required
-          />
-        </label>
-        <button type="submit" disabled={busy === "add"}>
-          {busy === "add" ? "Adding…" : "Add topic"}
-        </button>
-      </form>
-      <Feedback message={message} source="add" />
 
       <div className="danger-row">
         <button

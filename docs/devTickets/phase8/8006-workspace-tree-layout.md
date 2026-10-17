@@ -32,7 +32,23 @@ Cap and scroll the Content Workspace topic tree so Documents and quiz actions st
 - Quiz History scaffold after Generate quiz on `NodeDetails`.
 - Client production build passes. Visual overflow/390px checks remain manual.
 
+## Follow-on amendment (post-ship layout)
+Workspace columns reshuffled (no API change):
+
+**LHS (top → bottom)**
+- Topic tree (height still capped; approximate alignment with RHS through Suggest description).
+- Documents (list + add) for the selected subject/topic.
+
+**RHS (top → bottom)**
+- Header through Description (eyebrow, title, rename, Description editor).
+- Suggest description (tighter spacing under Description).
+- Subtopics (new topic + nested-topic count).
+- Notes (height-limited editor).
+- Save notes and Generate quiz on one row.
+- Quiz history scaffold (blank for a later metrics ticket).
+- Delete remains at the bottom of the detail panel.
+
 ## Implementation notes
 - Sort: `client-webApp/src/features/content/topicTree.js` — `childrenByParent`.
-- Height/scroll: `client-webApp/src/styles/app.css` — `.tree-panel`.
-- Scaffold: `client-webApp/src/features/content/NodeDetails.jsx` (after Generate quiz).
+- Height/scroll: `client-webApp/src/styles/app.css` — `.tree-panel`, `.workspace-side`.
+- Layout: `ContentWorkspace.jsx`, `NodeDetails.jsx`, `NotesEditor.jsx`.

@@ -128,14 +128,21 @@ export default function ContentWorkspace({ subjectId, navigate }) {
         </button>
       </div>
       <div className="workspace-body">
-        <TopicTree
-          subjectName={subject.name}
-          topics={topics}
-          selectedId={selectedId}
-          expanded={expanded}
-          onToggle={toggle}
-          onSelect={select}
-        />
+        <aside className="workspace-side">
+          <TopicTree
+            subjectName={subject.name}
+            topics={topics}
+            selectedId={selectedId}
+            expanded={expanded}
+            onToggle={toggle}
+            onSelect={select}
+          />
+          <DocumentsPanel
+            subjectId={subjectId}
+            topicId={selectedTopic ? selectedTopic.id : null}
+            guard={guard}
+          />
+        </aside>
         <NodeDetails
           key={`${kind}:${node.id}`}
           kind={kind}
@@ -157,13 +164,7 @@ export default function ContentWorkspace({ subjectId, navigate }) {
             if (selectedTopic) params.set("topicId", selectedTopic.id);
             navigate(`/quizzes/new?${params.toString()}`);
           }}
-        >
-          <DocumentsPanel
-            subjectId={subjectId}
-            topicId={selectedTopic ? selectedTopic.id : null}
-            guard={guard}
-          />
-        </NodeDetails>
+        />
       </div>
     </div>
   );

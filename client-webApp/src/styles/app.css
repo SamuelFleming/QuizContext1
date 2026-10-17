@@ -758,15 +758,22 @@ h2 {
 
 .workspace-body {
   display: grid;
-  grid-template-columns: minmax(12rem, 18rem) 1fr;
+  grid-template-columns: minmax(14rem, 20rem) 1fr;
   gap: var(--space-4);
   align-items: start;
 }
 
-.tree-panel {
+.workspace-side {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
   border-right: 1px solid var(--color-border);
   padding-right: var(--space-3);
-  max-height: 22rem;
+  min-width: 0;
+}
+
+.tree-panel {
+  max-height: 28rem;
   overflow: auto;
 }
 
@@ -893,7 +900,7 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .tree-panel {
+  .workspace-side {
     border-right: 0;
     border-bottom: 1px solid var(--color-border);
     padding: 0 0 var(--space-3);
@@ -903,7 +910,7 @@ h2 {
 /* Markdown editor and preview */
 .notes-form {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
   margin: var(--space-4) 0;
   padding-top: var(--space-3);
   border-top: 1px solid var(--color-border);
@@ -972,9 +979,40 @@ button.secondary {
   gap: var(--space-2);
 }
 
+.md-editor-label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
 .md-editor-label {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
+}
+
+.suggest-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-primary-accent);
+  line-height: 1;
+}
+
+.suggest-icon-btn:hover:not(:disabled),
+.suggest-icon-btn:focus-visible {
+  border-color: var(--color-primary-accent);
+  background: var(--color-elevated-surface);
+}
+
+.suggest-icon-btn:disabled {
+  opacity: 0.55;
 }
 
 .md-tabs {
@@ -1077,10 +1115,43 @@ button.secondary {
   margin: var(--space-4) 0;
   padding-top: var(--space-3);
   border-top: 1px solid var(--color-border);
+  min-height: 4rem;
 }
 
 .quiz-history-scaffold h2 {
-  margin: 0 0 var(--space-2);
+  margin: 0;
+}
+
+.subtopics-block {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.subtopics-block .section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.subtopics-block h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.notes-form > .md-editor + .suggestion {
+  margin-top: calc(-1 * var(--space-2));
+}
+
+.notes-actions {
+  align-items: center;
+}
+
+.workspace-side .documents {
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
 }
 
 /* Documents */
