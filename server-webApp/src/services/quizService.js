@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { estimateQuizPreviewCost, getAiConfig } from "../config/aiConfig.js";
+import { getContextConfig } from "../config/contextConfig.js";
 import { CONTEXT_MODES, DEFAULT_CONTEXT_MODE } from "../constants/contextModes.js";
 import { resolveModel } from "../constants/aiModels.js";
 import {
@@ -356,6 +357,7 @@ async function prepareGeneration(userId, body) {
 export async function previewQuiz(userId, body) {
   const prepared = await prepareGeneration(userId, body);
   const maxOutputTokens = getAiConfig().quizMaxOutputTokens;
+  const contextMaxChars = getContextConfig().maxChars;
   const estimates = estimateQuizPreviewCost(prepared.settings.model, {
     inputChars: prepared.input.length,
     instructionsChars: prompt.INSTRUCTIONS.length,
@@ -365,6 +367,7 @@ export async function previewQuiz(userId, body) {
     selectionName: prepared.context.selection.name,
     inputChars: prepared.input.length,
     maxOutputTokens,
+    contextMaxChars,
     model: prepared.settings.model,
     estimatedInputTokens: estimates.estimatedInputTokens,
     estimatedInputCostUsd: estimates.estimatedInputCostUsd,

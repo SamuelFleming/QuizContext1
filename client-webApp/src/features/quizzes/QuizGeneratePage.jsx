@@ -136,6 +136,7 @@ function EstimateSummary({ preview, loading, error }) {
       </div>
     );
   }
+  const includedChars = preview.context?.includedChars;
   return (
     <div className="estimate-summary" aria-live="polite">
       <p className="estimate-summary-title">
@@ -149,10 +150,19 @@ function EstimateSummary({ preview, loading, error }) {
       </p>
       <dl className="estimate-facts">
         <div>
-          <dt>Input</dt>
+          <dt>Input (sent to API)</dt>
           <dd>
-            {formatAiMetric(preview.inputChars)} chars · ~{formatAiMetric(preview.estimatedInputTokens)}{" "}
-            tokens · {formatEstimateCost(preview.estimatedInputCostUsd)}
+            {formatAiMetric(preview.inputChars)} characters · ~
+            {formatAiMetric(preview.estimatedInputTokens)} tokens ·{" "}
+            {formatEstimateCost(preview.estimatedInputCostUsd)}
+          </dd>
+        </div>
+        <div>
+          <dt>Context budget</dt>
+          <dd>
+            {includedChars != null
+              ? `${formatAiMetric(includedChars)} of ${formatAiMetric(preview.contextMaxChars)} characters used`
+              : `${formatAiMetric(preview.contextMaxChars)} character cap`}
           </dd>
         </div>
         <div>
@@ -168,8 +178,8 @@ function EstimateSummary({ preview, loading, error }) {
         </div>
       </dl>
       <p className="usage-meta">
-        Estimates only — input tokens use a character heuristic; output $ is a ceiling at the max
-        token cap. Exact tokens and cost appear after generation.
+        Estimates only — input tokens use a character heuristic (prompt input plus instructions);
+        output $ is a ceiling at the max token cap. Exact tokens and cost appear after generation.
       </p>
     </div>
   );
@@ -563,78 +573,78 @@ export default function QuizGeneratePage({ navigate }) {
             }}
           />
         ) : null}
-        <div className="count-row">
-          <label className="field">
-            <span>Multiple choice</span>
-            <input
-              type="number"
-              min="0"
-              max="20"
-              value={multipleChoiceCount}
-              onChange={(event) => setMultipleChoiceCount(event.target.value)}
-              disabled={loading}
-              required
-            />
-          </label>
-          <label className="field">
-            <span>Short answer</span>
-            <input
-              type="number"
-              min="0"
-              max="20"
-              value={shortAnswerCount}
-              onChange={(event) => setShortAnswerCount(event.target.value)}
-              disabled={loading}
-              required
-            />
-          </label>
-        </div>
-        <div className="count-row">
-          <label className="field">
-            <span>Difficulty</span>
-            <select
-              value={difficulty}
-              onChange={(event) => setDifficulty(event.target.value)}
-              disabled={loading}
-            >
-              {DIFFICULTIES.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            <span>Context mode</span>
-            <select
-              value={contextMode}
-              onChange={(event) => setContextMode(event.target.value)}
-              disabled={loading}
-            >
-              {CONTEXT_MODES.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <div className="model-estimate-row">
-          <label className="field">
-            <span>Model</span>
-            <select
-              value={model}
-              onChange={(event) => setModel(event.target.value)}
-              disabled={loading || !models}
-              required
-            >
-              {(models || [{ id: DEFAULT_MODEL, displayName: "Luna" }]).map((row) => (
-                <option key={row.id} value={row.id}>
-                  {row.displayName}
-                </option>
-              ))}
-            </select>
-          </label>
+        <div className="generate-settings-row">
+          <div className="generate-settings-fields">
+            <label className="field">
+              <span>Model</span>
+              <select
+                value={model}
+                onChange={(event) => setModel(event.target.value)}
+                disabled={loading || !models}
+                required
+              >
+                {(models || [{ id: DEFAULT_MODEL, displayName: "Luna" }]).map((row) => (
+                  <option key={row.id} value={row.id}>
+                    {row.displayName}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="count-row">
+              <label className="field">
+                <span>Multiple choice</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="20"
+                  value={multipleChoiceCount}
+                  onChange={(event) => setMultipleChoiceCount(event.target.value)}
+                  disabled={loading}
+                  required
+                />
+              </label>
+              <label className="field">
+                <span>Short answer</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="20"
+                  value={shortAnswerCount}
+                  onChange={(event) => setShortAnswerCount(event.target.value)}
+                  disabled={loading}
+                  required
+                />
+              </label>
+            </div>
+            <label className="field">
+              <span>Difficulty</span>
+              <select
+                value={difficulty}
+                onChange={(event) => setDifficulty(event.target.value)}
+                disabled={loading}
+              >
+                {DIFFICULTIES.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              <span>Context mode</span>
+              <select
+                value={contextMode}
+                onChange={(event) => setContextMode(event.target.value)}
+                disabled={loading}
+              >
+                {CONTEXT_MODES.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           <EstimateSummary
             preview={livePreview}
             loading={livePreviewLoading}

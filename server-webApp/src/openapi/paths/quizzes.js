@@ -144,7 +144,7 @@ export const quizPaths = {
     post: {
       summary: "Preview quiz-generation input metrics",
       description:
-        "Validates and assembles the same caller-owned context as generation without calling AI or writing a quiz or usage record. Returns character counts plus catalogue-based cost approximations (chars÷4 input tokens; output $ is a maxOutputTokens ceiling). Exact provider token counts are not available until generation completes. Optional model selects a catalogue id; omitted uses the active experiment run model.",
+        "Validates and assembles the same caller-owned context as generation without calling AI or writing a quiz or usage record. Returns character counts, contextMaxChars (experiment source budget), and catalogue-based cost approximations (chars÷4 input tokens; output $ is a maxOutputTokens ceiling). Exact provider token counts are not available until generation completes. Optional model selects a catalogue id; omitted uses the fixed experiment default model.",
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,

@@ -178,15 +178,15 @@ Later phases reuse these rules. They are not re-decided per entity.
 
 ### Phase 8 — AI quiz generation experiment
 
-**Objective.** Make quiz-generation model, context, output, and reasoning settings easy to vary, then compare reliability and quality through a controlled manual protocol. Follow-on tickets improve AI usage visibility for those runs and centralise model pricing metadata.
+**Objective.** Make quiz-generation model, context, output, and reasoning settings easy to vary, then compare reliability and quality through a controlled manual protocol. Follow-on tickets improve AI usage visibility for those runs, centralise model pricing metadata, and add a quiz-form model picker with pre-generate cost approximations.
 
-**Scope.** Ticket 8000 selects the experiment model, context size, output cap, reasoning effort, and prices from constants files, and writes the operator guide. Tickets 8001 and 8003 persist and display question-type counts on AI usage. Ticket 8002 centralises model catalogue pricing. Do not change the prompt, schema, question limit, or retry behaviour in these tickets.
+**Scope.** Ticket 8000 selects the experiment model, context size, output cap, and reasoning effort from constants files, and writes the operator guide. Tickets 8001 and 8003 persist and display question-type counts on AI usage. Ticket 8002 centralises model catalogue pricing (rates no longer live on run files). Tickets 8004–8005 expose the catalogue, accept optional `model` on quiz preview/generate, return preview cost estimates, and add the generate-form picker (default Luna). Do not change the prompt, schema, question limit, or retry behaviour in these tickets.
 
 **Depends on.** Phases 5–7 as shipped, including the AI-run diagnostics in 7015–7019.
 
-**Deliverable.** A developer selects one constants run, restarts `server-webApp`, sees that run's output cap in quiz preview, and follows one written protocol to compare models and budgets. Profile Recent Activity can show question-type counts for new generation and evaluation runs. The developer runs any live model calls manually.
+**Deliverable.** A developer selects one constants run, restarts `server-webApp`, sees that run's output cap in quiz preview, and follows one written protocol to compare models and budgets. Profile Recent Activity can show question-type counts for new generation and evaluation runs. The generate form can list catalogue models, default to Luna, and show live API-driven cost approximations before generate. The developer runs any live model calls manually.
 
-**Done when.** Tickets 8000–8003 planned for this phase are done. Further reliability work, including retries, a 40-question limit, batching, prompt changes, or raw-output capture, needs its own later ticket.
+**Done when.** Tickets 8000–8005 planned for this phase are done. Further reliability work, including retries, a 40-question limit, batching, prompt changes, or raw-output capture, needs its own later ticket.
 
 **Out of phase.** Automatic retries, raising the 20-question limit, batch generation, prompt or schema changes, storing raw model output, and evaluation results-screen AI-run details.
 

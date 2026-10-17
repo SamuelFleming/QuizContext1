@@ -36,6 +36,10 @@ Let the user pick a catalogue model on the generate form (default Luna), see liv
 - Model select + debounced live `previewQuiz` estimates on `QuizGeneratePage`; default `gpt-6-luna`.
 - Client production build passes. Browser/390px UAT remains manual.
 
+## Follow-on amendment (post-ship)
+- Layout: left column stacks Multiple choice, Short answer, Difficulty, Context mode, and Model; right column is the cost-estimate panel.
+- Estimate panel shows input sent to the API (chars / ~tokens / $), context budget (`includedChars` of `contextMaxChars`), output ceiling, and total.
+
 ## Implementation notes
 - Primary screen: `client-webApp/src/features/quizzes/QuizGeneratePage.jsx`.
 - Reuse `previewQuiz` / `generateQuiz` client services; add a thin list-models fetch.

@@ -2,7 +2,9 @@ import { run } from "./active.js";
 
 const CONTEXT_MIN_CHARS = 200;
 const APP_MONTHLY_TOKEN_LIMIT = 100000;
-const DEFAULT_OUTPUT_TOKENS = 8000;
+/** Omit-request / non-picker default. Quiz form selection overrides per request. */
+const DEFAULT_MODEL = "gpt-6-luna";
+const DEFAULT_OUTPUT_TOKENS = 16000;
 const REASONING_EFFORTS = new Set(["none", "low", "medium", "high", "xhigh", "max"]);
 
 let warnedOutput = false;
@@ -14,7 +16,7 @@ function readOutputTokens(value) {
   }
   if (!warnedOutput) {
     warnedOutput = true;
-    console.warn("AI experiment quizMaxOutputTokens is invalid; using 8000");
+    console.warn("AI experiment quizMaxOutputTokens is invalid; using 16000");
   }
   return DEFAULT_OUTPUT_TOKENS;
 }
@@ -34,9 +36,11 @@ function readReasoningEffort(value) {
 export function mergeExperimentConfig(selected) {
   return {
     id: selected.id,
-    model: selected.model,
+    model: DEFAULT_MODEL,
     contextMaxChars: selected.contextMaxChars,
-    quizMaxOutputTokens: readOutputTokens(selected.quizMaxOutputTokens),
+    quizMaxOutputTokens: readOutputTokens(
+      selected.quizMaxOutputTokens ?? DEFAULT_OUTPUT_TOKENS,
+    ),
     quizTimeoutMs: selected.quizTimeoutMs,
     reasoningEffort: readReasoningEffort(selected.reasoningEffort),
     contextMinChars: CONTEXT_MIN_CHARS,

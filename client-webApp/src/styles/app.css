@@ -527,11 +527,17 @@ h2 {
   gap: var(--space-3);
 }
 
-.model-estimate-row {
+.generate-settings-row {
   display: grid;
-  grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
+  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
   gap: var(--space-3);
   align-items: start;
+}
+
+.generate-settings-fields {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
 }
 
 .estimate-summary {
@@ -617,7 +623,7 @@ h2 {
 
 @media (max-width: 720px) {
   .count-row,
-  .model-estimate-row {
+  .generate-settings-row {
     grid-template-columns: 1fr;
   }
 }

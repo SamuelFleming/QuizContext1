@@ -45,6 +45,10 @@ Expose the model catalogue over the business API, accept an optional `model` on 
 - Focused check: `node scripts/checkAiModels.js` (catalogue list, heuristic costs, unknown model). Changed files pass `node --check`.
 - Live HTTP auth smoke for `GET /ai/models` left to manual UAT / 8005 browser work.
 
+## Follow-on amendment (post-ship)
+- Preview also returns `contextMaxChars` (active experiment source packing cap) so the UI can show input against the context budget.
+- Experiment run files no longer carry `model`; omit-request default is fixed `gpt-6-luna` in `baseline.js`. Working output ceiling default is 16,000 tokens.
+
 ## Implementation notes
 - Mount list on `server-webApp/src/routes/aiRoutes.js` beside description suggestions.
 - Reuse `resolveModel` / `getModelMeta` / `estimateCostUsd`; do not duplicate rate tables.

@@ -511,6 +511,11 @@ export const components = {
           description: "Character length of the assembled user input channel (excludes system instructions).",
         },
         maxOutputTokens: { type: "integer", minimum: 1 },
+        contextMaxChars: {
+          type: "integer",
+          minimum: 1,
+          description: "Active experiment context character budget (source packing cap).",
+        },
         model: {
           type: "string",
           description: "Resolved model id that would be used for generation.",
