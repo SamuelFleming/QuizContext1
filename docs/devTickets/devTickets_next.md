@@ -12,7 +12,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
-| 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker | 8000–8005 done |
+| 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker | 8000–8006 done |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -20,7 +20,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-Phase 8 tickets 8000–8005 are done. Plan the next phase or follow-on when needed.
+Phase 8 tickets 8000–8006 are done. Plan the next phase or follow-on when needed.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -56,6 +56,7 @@ Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUT
 4. [8002](phase8/8002-model-catalogue.md) — central model catalogue for pricing and default selection. Done. Depends on 8000; independent of 8001/8003.
 5. [8004](phase8/8004-quiz-model-selection-api.md) — `GET /ai/models`, optional `model` on preview/generate, preview cost estimates. Done. Depends on 8002 and 7018.
 6. [8005](phase8/8005-quiz-model-picker-ui.md) — generate-form model picker (default Luna) + live estimate summary. Done. Depends on 8004 and 7019.
+7. [8006](phase8/8006-workspace-tree-layout.md) — workspace topic tree cap/scroll, alphanumeric order, Quiz History scaffold. Done.
 
 Shared rules are in the [Phase 8 README](phase8/README.md). Retries, a higher question limit, batching, prompt changes, and raw-output capture stay out until a later decision.
 

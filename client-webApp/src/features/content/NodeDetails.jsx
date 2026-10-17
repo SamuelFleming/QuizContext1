@@ -108,6 +108,13 @@ export default function NodeDetails({
         </div>
       ) : null}
 
+      <section className="quiz-history-scaffold" aria-label="Quiz history">
+        <h2>Quiz history</h2>
+        <p className="usage-meta">
+          Summary metrics for quizzes and performance on this {kind} will appear here.
+        </p>
+      </section>
+
       {children}
 
       <form className="inline-form" onSubmit={handleAdd} noValidate>

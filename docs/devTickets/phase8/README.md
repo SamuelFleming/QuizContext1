@@ -1,6 +1,6 @@
 # Phase 8 — AI quiz generation experiment
 
-**Status:** Tickets 8000–8005 done. Live model calls remain manual for the experiment protocol.
+**Status:** Tickets 8000–8006 done. Live model calls remain manual for the experiment protocol.
 
 **Objective.** Make the quiz-generation model, context budget, output budget, and reasoning effort easy to change, and provide a controlled manual protocol for comparing reliability, quality, and cost. Follow-on work improves usage visibility for those experiment runs, centralises model pricing metadata, and exposes per-request model selection with pre-generate cost approximations.
 
@@ -18,6 +18,7 @@
 4. [8003](8003-question-type-counts-ui.md) — show question-type counts on Profile and shared `AiRunDetails`. Done (browser UAT pending). Depends on 8001.
 5. [8004](8004-quiz-model-selection-api.md) — `GET /ai/models`, optional `model` on preview/generate, preview cost estimates. Done. Depends on 8002 and 7018.
 6. [8005](8005-quiz-model-picker-ui.md) — generate-form model picker (default Luna) + live estimate summary. Done. Depends on 8004 and 7019.
+7. [8006](8006-workspace-tree-layout.md) — workspace topic tree cap/scroll, alphanumeric sibling order, Quiz History scaffold. Done.
 
 **Not in this phase.** Automatic retries, a question limit above 20, batch generation, prompt or schema changes, and storing raw model output. Those options are recorded at the end of the experiment, not implemented here. Evaluation results-screen AI-run details stay out unless a later ticket asks for them. Per-request context/output/reasoning overrides stay out of 8004–8005.
 

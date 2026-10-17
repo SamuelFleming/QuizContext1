@@ -766,7 +766,8 @@ h2 {
 .tree-panel {
   border-right: 1px solid var(--color-border);
   padding-right: var(--space-3);
-  overflow-x: auto;
+  max-height: 22rem;
+  overflow: auto;
 }
 
 .tree {
@@ -1070,6 +1071,16 @@ button.secondary {
 
 .markdown a {
   color: var(--color-primary-accent);
+}
+
+.quiz-history-scaffold {
+  margin: var(--space-4) 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.quiz-history-scaffold h2 {
+  margin: 0 0 var(--space-2);
 }
 
 /* Documents */
