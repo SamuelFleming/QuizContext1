@@ -33,6 +33,16 @@ export const components = {
                   "AI_INVALID_OUTPUT",
                 ],
               },
+              failures: {
+                type: "array",
+                maxItems: 20,
+                description: "Present when AI_INVALID_OUTPUT has specific rejection reasons.",
+                items: { type: "string", maxLength: 80 },
+              },
+              aiRun: {
+                $ref: "#/components/schemas/AiRun",
+                description: "Present when the AI operation was attempted.",
+              },
             },
           },
         },
@@ -248,6 +258,15 @@ export const components = {
         remainingTokens: { type: "integer" },
       },
     },
+    Pagination: {
+      type: "object",
+      properties: {
+        page: { type: "integer", minimum: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 25 },
+        totalItems: { type: "integer", minimum: 0 },
+        totalPages: { type: "integer", minimum: 0 },
+      },
+    },
     AiUsageTotals: {
       type: "object",
       properties: {
@@ -272,6 +291,14 @@ export const components = {
         errorCode: { type: "string", nullable: true },
         latencyMs: { type: "integer", nullable: true },
         context: { $ref: "#/components/schemas/AiUsageContext" },
+        inputChars: { type: "integer", nullable: true },
+        maxOutputTokens: { type: "integer", nullable: true },
+        scope: { $ref: "#/components/schemas/AiUsageScope" },
+        failures: {
+          type: "array",
+          maxItems: 20,
+          items: { type: "string", maxLength: 80 },
+        },
         createdAt: { type: "string", format: "date-time" },
       },
     },
@@ -287,6 +314,23 @@ export const components = {
         sourcesExcluded: { type: "integer" },
       },
     },
+    AiUsageScope: {
+      type: "object",
+      nullable: true,
+      description:
+        "Operation identifiers and manifest metadata only. Never holds prompt instructions, source bodies, or answer material.",
+      properties: {
+        subjectId: { type: "string" },
+        topicId: { type: "string" },
+        selectionName: { type: "string" },
+        manifest: {
+          type: "array",
+          items: { $ref: "#/components/schemas/ContextManifestEntry" },
+        },
+        quizId: { type: "string" },
+        attemptId: { type: "string" },
+      },
+    },
     ContextManifestEntry: {
       type: "object",
       properties: {
@@ -296,6 +340,137 @@ export const components = {
         path: { type: "string" },
         chars: { type: "integer" },
         status: { type: "string", enum: ["included", "truncated", "excluded"] },
+      },
+    },
+    AiRun: {
+      type: "object",
+      description:
+        "Safe diagnostics for one AI operation. Never includes prompts, source bodies, credentials, raw output, or answer material.",
+      properties: {
+        operation: { type: "string" },
+        promptVersion: { type: "string", nullable: true },
+        providerMode: { type: "string", enum: ["application", "user"] },
+        model: { type: "string", nullable: true },
+        inputTokens: { type: "integer", nullable: true },
+        outputTokens: { type: "integer", nullable: true },
+        estimatedCostUsd: { type: "number", nullable: true },
+        status: { type: "string", enum: ["succeeded", "failed"] },
+        errorCode: { type: "string", nullable: true },
+        latencyMs: { type: "integer", nullable: true },
+        context: { $ref: "#/components/schemas/AiUsageContext" },
+        inputChars: { type: "integer" },
+        maxOutputTokens: { type: "integer" },
+        scope: { $ref: "#/components/schemas/AiUsageScope" },
+        failures: {
+          type: "array",
+          maxItems: 20,
+          items: { type: "string", maxLength: 80 },
+        },
+      },
+    },
+    SourceStatusCounts: {
+      type: "object",
+      required: ["included", "truncated", "excluded"],
+      properties: {
+        included: { type: "integer", minimum: 0 },
+        truncated: { type: "integer", minimum: 0 },
+        excluded: { type: "integer", minimum: 0 },
+      },
+    },
+    QuizPreviewInput: {
+      type: "object",
+      required: ["subjectId", "multipleChoiceCount", "shortAnswerCount"],
+      properties: {
+        subjectId: { type: "string" },
+        topicId: {
+          type: "string",
+          nullable: true,
+          description: "One topic. Do not send together with topicIds.",
+        },
+        topicIds: {
+          type: "array",
+          minItems: 1,
+          maxItems: 30,
+          items: { type: "string" },
+          description:
+            "Explicit topics in this subject. Omit both topicId and topicIds for the whole subject.",
+        },
+        includeDescendants: {
+          type: "boolean",
+          default: true,
+          description: "Used with topicId. Ignored when topicIds is set.",
+        },
+        multipleChoiceCount: { type: "integer", minimum: 0 },
+        shortAnswerCount: { type: "integer", minimum: 0 },
+        difficulty: { type: "string", enum: ["easy", "medium", "hard"], default: "medium" },
+        contextMode: {
+          type: "string",
+          enum: ["very_strict", "targeted", "loose"],
+          default: "targeted",
+        },
+      },
+    },
+    QuizGenerateInput: {
+      allOf: [
+        { $ref: "#/components/schemas/QuizPreviewInput" },
+        {
+          type: "object",
+          properties: {
+            title: {
+              type: "string",
+              nullable: true,
+              maxLength: 120,
+              description:
+                "Optional saved label. Blank or null uses the scope-derived title and the value is never sent to the AI.",
+            },
+          },
+        },
+      ],
+    },
+    QuizSummary: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        title: { type: "string" },
+        subjectName: { type: "string" },
+        topicPath: { type: "string", nullable: true },
+        contextMode: { type: "string", enum: ["very_strict", "targeted", "loose"] },
+        difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
+        questionCount: { type: "integer", minimum: 1, maximum: 20 },
+        createdAt: { type: "string", format: "date-time" },
+        attemptCount: { type: "integer", minimum: 0 },
+        latestResult: {
+          type: "object",
+          nullable: true,
+          properties: {
+            score: { type: "number" },
+            maxScore: { type: "number" },
+            percent: { type: "number" },
+          },
+        },
+      },
+    },
+    QuizListResult: {
+      type: "object",
+      properties: {
+        items: { type: "array", items: { $ref: "#/components/schemas/QuizSummary" } },
+        pagination: { $ref: "#/components/schemas/Pagination" },
+      },
+    },
+    QuizPreview: {
+      type: "object",
+      properties: {
+        selectionName: { type: "string" },
+        inputChars: { type: "integer", minimum: 0 },
+        maxOutputTokens: { type: "integer", minimum: 1 },
+        context: { $ref: "#/components/schemas/AiUsageContext" },
+        sources: {
+          type: "object",
+          properties: {
+            topics: { $ref: "#/components/schemas/SourceStatusCounts" },
+            documents: { $ref: "#/components/schemas/SourceStatusCounts" },
+          },
+        },
       },
     },
     ResultsPayload: {
@@ -397,6 +572,16 @@ export const components = {
         },
         questions: { type: "array", items: { $ref: "#/components/schemas/QuizStudyQuestion" } },
       },
+    },
+    QuizGenerationResult: {
+      allOf: [
+        { $ref: "#/components/schemas/QuizStudyView" },
+        {
+          type: "object",
+          required: ["aiRun"],
+          properties: { aiRun: { $ref: "#/components/schemas/AiRun" } },
+        },
+      ],
     },
     AuthResult: {
       type: "object",

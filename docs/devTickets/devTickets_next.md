@@ -11,7 +11,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 4 | Subjects, recursive topics, Markdown + document ingestion | Done |
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
-| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build in progress |
+| 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -19,7 +19,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-[7015](phase7/7015-ai-run-diagnostics.md) — record AI scope, size, token counts, and rejection reasons.
+No approved implementation ticket is queued.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -33,12 +33,18 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 8. [7011](phase7/7011-quiz-topic-picker.md) — multi-select; incomplete topics cannot be chosen. Done (browser checks pending manual UAT). Depends on 7006 and on 7010.
 9. [7013](phase7/7013-study-history-api.md) — study history summary from saved quizzes and evaluated attempts. Done.
 10. [7014](phase7/7014-study-history-dashboard.md) — Dashboard counts, activity, recent results, and weakest topics and questions. Done (browser checks pending manual UAT). Depends on 7013.
-11. [7015](phase7/7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected. Planned.
-12. [7016](phase7/7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Planned. Depends on 7015.
-13. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
-14. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7006.
-15. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7006.
-16. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
+11. [7015](phase7/7015-ai-run-diagnostics.md) — record scope, size, token counts, and why an AI reply was rejected. Done.
+12. [7016](phase7/7016-ai-run-visibility.md) — show those diagnostics on Profile and on a failed quiz generation. Done (browser checks pending manual UAT). Depends on 7015.
+13. [7017](phase7/7017-ai-usage-pagination.md) — paginate AI usage history. Done (browser checks pending manual UAT). Depends on 7015 and 7016.
+14. [7018](phase7/7018-quiz-generation-diagnostics-api.md) — preview quiz input metrics and return safe AI run diagnostics. Done (provider-mocked UAT pending). Depends on 7015.
+15. [7019](phase7/7019-quiz-generation-progress-ui.md) — loading, result, error, and details UX. Done (browser UAT pending). Depends on 7016 and 7018.
+16. [7030](phase7/7030-quiz-title-library-api.md) — optional quiz titles plus filtered, sorted, paginated library APIs. Done.
+17. [7031](phase7/7031-quiz-title-library-ui.md) — title entry and scalable Quiz library controls. Done. Depends on 7030.
+18. [7032](phase7/7032-quiz-title-rename.md) — rename a saved quiz title. Done. Depends on 7030.
+19. [7012](phase7/7012-image-source-investigation.md) — image-heavy files. **Deferred.** `/implement-phase` skips it. Do not implement until asked.
+20. [7027](phase7/7027-topic-completeness-indicators.md) — workspace indicators. **Deferred.** Depends on 7006.
+21. [7028](phase7/7028-subject-completeness-bar.md) — per-subject completeness bar. **Deferred.** Depends on 7006.
+22. [7029](phase7/7029-description-freshness.md) — AI description older than later notes or documents. **Deferred.**
 
 Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUTPUT` reliability is not in this phase.
 
@@ -84,6 +90,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-None. 7015 is next. 7011 and 7014 are implemented; their browser acceptance checks await manual UAT.
+7030, 7031, and 7032 are done. 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click remain pending manual UAT where noted.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.

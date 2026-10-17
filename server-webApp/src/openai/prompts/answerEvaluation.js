@@ -78,22 +78,36 @@ export function buildInput({ contextMode, questions, sourceSnapshot }) {
 
 export function validate(data, { questionIds, allowedSourceIds }) {
   const questions = data?.questions;
-  if (!Array.isArray(questions) || questions.length !== questionIds.length) {
-    return false;
+  if (!Array.isArray(questions)) {
+    return ["question_count"];
   }
+  const failures = [];
+  if (questions.length !== questionIds.length) failures.push("question_count");
   const seen = new Set();
-  for (const item of questions) {
+  for (const [index, item] of questions.entries()) {
+    const code = (name) => `${name}:${index + 1}`;
     if (!item || typeof item.questionId !== "string" || !questionIds.includes(item.questionId) || seen.has(item.questionId)) {
-      return false;
+      failures.push(code("question_id"));
+    } else {
+      seen.add(item.questionId);
     }
-    seen.add(item.questionId);
-    if (!RESULTS.has(item.result)) return false;
-    if (typeof item.explanation !== "string" || item.explanation.length > EXPLANATION_MAX) return false;
-    if (!Array.isArray(item.missingConcepts) || item.missingConcepts.length > MISSING_CONCEPTS_MAX) return false;
-    if (item.missingConcepts.some((concept) => typeof concept !== "string" || concept.length > MISSING_CONCEPT_MAX)) {
-      return false;
+    if (!RESULTS.has(item?.result)) failures.push(code("result"));
+    if (typeof item?.explanation !== "string" || item.explanation.length > EXPLANATION_MAX) {
+      failures.push(code("explanation"));
     }
-    if (!Array.isArray(item.sourceRefs) || item.sourceRefs.some((id) => !allowedSourceIds.has(id))) return false;
+    if (!Array.isArray(item?.missingConcepts) || item.missingConcepts.length > MISSING_CONCEPTS_MAX) {
+      failures.push(code("missing_concepts"));
+    } else if (
+      item.missingConcepts.some(
+        (concept) => typeof concept !== "string" || concept.length > MISSING_CONCEPT_MAX,
+      )
+    ) {
+      failures.push(code("missing_concepts"));
+    }
+    if (!Array.isArray(item?.sourceRefs) || item.sourceRefs.some((id) => !allowedSourceIds.has(id))) {
+      failures.push(code("source_ref"));
+    }
   }
-  return seen.size === questionIds.length;
+  if (seen.size !== questionIds.length) failures.push("question_count");
+  return [...new Set(failures)].slice(0, 20);
 }

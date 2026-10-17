@@ -17,18 +17,27 @@ function classifyProviderError(error) {
   return createAiError("AI_PROVIDER_ERROR");
 }
 
+function invalidOutput(failure) {
+  const error = createAiError("AI_INVALID_OUTPUT");
+  error.failures = [failure];
+  return error;
+}
+
 function parseOutput(response) {
+  if (response?.status === "incomplete") {
+    throw invalidOutput("output_truncated");
+  }
   const refused = (response?.output || []).some((item) =>
     (item?.content || []).some((part) => part?.type === "refusal"),
   );
-  if (refused || response?.status === "incomplete") {
-    throw createAiError("AI_INVALID_OUTPUT");
+  if (refused) {
+    throw invalidOutput("output_refused");
   }
   const text = typeof response?.output_text === "string" ? response.output_text.trim() : "";
   try {
     return JSON.parse(text);
   } catch {
-    throw createAiError("AI_INVALID_OUTPUT");
+    throw invalidOutput("output_not_json");
   }
 }
 
@@ -45,8 +54,9 @@ export async function createStructuredResponse({
 }) {
   const client = new OpenAI({ apiKey, maxRetries: 0, timeout: timeoutMs });
   const startedAt = Date.now();
+  let response;
   try {
-    const response = await client.responses.create({
+    response = await client.responses.create({
       model,
       instructions,
       input,
@@ -68,6 +78,13 @@ export async function createStructuredResponse({
   } catch (error) {
     const aiError = classifyProviderError(error);
     aiError.latencyMs = Date.now() - startedAt;
+    if (response && aiError.aiErrorCode === "AI_INVALID_OUTPUT") {
+      aiError.model = response.model || model;
+      aiError.usage = {
+        inputTokens: response?.usage?.input_tokens ?? null,
+        outputTokens: response?.usage?.output_tokens ?? null,
+      };
+    }
     throw aiError;
   }
 }

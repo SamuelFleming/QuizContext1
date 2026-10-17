@@ -30,9 +30,8 @@ export function buildInput({ selectionType, selectionName, contextText }) {
 
 export function validate(data) {
   const description = data?.description;
-  return (
-    typeof description === "string" &&
-    description.trim().length > 0 &&
-    description.trim().length <= CONTENT_DESCRIPTION_MAX
-  );
+  if (typeof description !== "string") return ["description_type"];
+  const length = description.trim().length;
+  if (length === 0) return ["description_empty"];
+  return length <= CONTENT_DESCRIPTION_MAX ? [] : ["description_length"];
 }

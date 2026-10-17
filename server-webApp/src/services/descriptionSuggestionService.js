@@ -38,6 +38,19 @@ export async function suggestDescription(userId, body) {
       sourcesTruncated: countStatus(context.manifest, "truncated"),
       sourcesExcluded: countStatus(context.manifest, "excluded"),
     },
+    scope: {
+      subjectId,
+      ...(topicId ? { topicId } : {}),
+      selectionName: context.selection.name,
+      manifest: context.manifest.map(({ type, id, title, path, chars, status }) => ({
+        type,
+        id,
+        title,
+        path,
+        chars,
+        status,
+      })),
+    },
     instructions: prompt.INSTRUCTIONS,
     input: prompt.buildInput({
       selectionType: context.selection.type,

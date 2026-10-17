@@ -21,11 +21,123 @@ function countStatus(manifest, status) {
   return manifest.filter((entry) => entry.status === status).length;
 }
 
+function sourceCounts(manifest, type) {
+  const entries = manifest.filter((entry) => entry.type === type);
+  return {
+    included: countStatus(entries, "included"),
+    truncated: countStatus(entries, "truncated"),
+    excluded: countStatus(entries, "excluded"),
+  };
+}
+
 function readCount(value, name) {
   if (!Number.isInteger(value) || value < 0) {
     throw createHttpError(400, `${name} must be a non-negative integer`);
   }
   return value;
+}
+
+const QUIZ_SORTS = ["newest", "oldest", "question_count_asc", "question_count_desc"];
+
+function readOptionalTitle(raw) {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== "string") {
+    throw createHttpError(400, "title must be a string");
+  }
+  const title = raw.trim();
+  if (!title) return null;
+  if (title.length > CONTENT_NAME_MAX) {
+    throw createHttpError(400, `title must be at most ${CONTENT_NAME_MAX} characters`);
+  }
+  return title;
+}
+
+function readQueryInteger(raw, name, min, max, fallback) {
+  if (raw === undefined) return fallback;
+  if (typeof raw !== "string" || !/^\d+$/.test(raw)) {
+    throw createHttpError(400, `${name} must be an integer from ${min} to ${max}`);
+  }
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value < min || value > max) {
+    throw createHttpError(400, `${name} must be an integer from ${min} to ${max}`);
+  }
+  return value;
+}
+
+function readListTopicIds(raw) {
+  if (raw === undefined) return [];
+  const values = Array.isArray(raw) ? raw : [raw];
+  if (values.length < 1 || values.length > QUIZ_TOPIC_IDS_MAX) {
+    throw createHttpError(400, `topicIds must contain 1 to ${QUIZ_TOPIC_IDS_MAX} unique topic ids`);
+  }
+  const topicIds = [];
+  const seen = new Set();
+  for (const id of values) {
+    if (typeof id !== "string" || !/^[a-f\d]{24}$/i.test(id.trim())) {
+      throw createHttpError(400, "topicIds must contain valid topic ids");
+    }
+    const value = id.trim().toLowerCase();
+    if (seen.has(value)) throw createHttpError(400, "topicIds must be unique");
+    seen.add(value);
+    topicIds.push(value);
+  }
+  return topicIds;
+}
+
+function readListQuery(query = {}) {
+  const page = readQueryInteger(query.page, "page", 1, Number.MAX_SAFE_INTEGER, 1);
+  const limit = readQueryInteger(query.limit, "limit", 1, 25, 25);
+  const sort = query.sort ?? "newest";
+  if (typeof sort !== "string" || !QUIZ_SORTS.includes(sort)) {
+    throw createHttpError(400, `sort must be one of ${QUIZ_SORTS.join(", ")}`);
+  }
+  const topicIds = readListTopicIds(query.topicIds);
+  const questionCount = readQueryInteger(
+    query.questionCount,
+    "questionCount",
+    QUIZ_QUESTIONS_MIN,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  const multipleChoiceCount = readQueryInteger(
+    query.multipleChoiceCount,
+    "multipleChoiceCount",
+    0,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  const shortAnswerCount = readQueryInteger(
+    query.shortAnswerCount,
+    "shortAnswerCount",
+    0,
+    QUIZ_QUESTIONS_MAX,
+    undefined,
+  );
+  if (
+    (questionCount !== undefined &&
+      multipleChoiceCount !== undefined &&
+      multipleChoiceCount > questionCount) ||
+    (questionCount !== undefined &&
+      shortAnswerCount !== undefined &&
+      shortAnswerCount > questionCount) ||
+    (multipleChoiceCount !== undefined &&
+      shortAnswerCount !== undefined &&
+      (multipleChoiceCount + shortAnswerCount < QUIZ_QUESTIONS_MIN ||
+        multipleChoiceCount + shortAnswerCount > QUIZ_QUESTIONS_MAX ||
+        (questionCount !== undefined &&
+          multipleChoiceCount + shortAnswerCount !== questionCount)))
+  ) {
+    throw createHttpError(400, "question count filters describe an impossible quiz");
+  }
+  return {
+    page,
+    limit,
+    sort,
+    topicIds,
+    questionCount,
+    multipleChoiceCount,
+    shortAnswerCount,
+  };
 }
 
 function readTopicIds(raw) {
@@ -163,7 +275,7 @@ function finaliseQuestions(questions) {
   });
 }
 
-export async function generateQuiz(userId, body) {
+async function prepareGeneration(userId, body) {
   const settings = readGenerateInput(body);
   if (settings.topicIds) {
     await assertTopicsComplete(userId, settings.subjectId, settings.topicIds);
@@ -185,34 +297,71 @@ export async function generateQuiz(userId, body) {
     );
   }
 
+  const input = prompt.buildInput({
+    selectionType: context.selection.type,
+    selectionName: context.selection.name,
+    multipleChoiceCount: settings.multipleChoiceCount,
+    shortAnswerCount: settings.shortAnswerCount,
+    difficulty: settings.difficulty,
+    contextMode: context.contextMode,
+    contextText: context.text,
+  });
   const allowedSourceIds = new Set(
     context.manifest
       .filter((entry) => entry.status === "included" || entry.status === "truncated")
       .map((entry) => entry.id),
   );
+  const runContext = {
+    contextMode: context.contextMode,
+    includedChars: context.totals.includedChars,
+    sourcesIncluded: countStatus(context.manifest, "included"),
+    sourcesTruncated: countStatus(context.manifest, "truncated"),
+    sourcesExcluded: countStatus(context.manifest, "excluded"),
+  };
+  const runScope = {
+    subjectId: settings.subjectId,
+    ...(settings.topicId ? { topicId: settings.topicId } : {}),
+    selectionName: context.selection.name,
+    manifest: context.manifest.map(({ type, id, title, path, chars, status }) => ({
+      type,
+      id,
+      title,
+      path,
+      chars,
+      status,
+    })),
+  };
+  return { settings, context, input, allowedSourceIds, runContext, runScope };
+}
+
+export async function previewQuiz(userId, body) {
+  const prepared = await prepareGeneration(userId, body);
+  return {
+    selectionName: prepared.context.selection.name,
+    inputChars: prepared.input.length,
+    maxOutputTokens: prompt.MAX_OUTPUT_TOKENS,
+    context: prepared.runContext,
+    sources: {
+      topics: sourceCounts(prepared.context.manifest, "topic"),
+      documents: sourceCounts(prepared.context.manifest, "document"),
+    },
+  };
+}
+
+export async function generateQuiz(userId, body) {
+  const requestedTitle = readOptionalTitle(body?.title);
+  const { settings, context, input, allowedSourceIds, runContext, runScope } =
+    await prepareGeneration(userId, body);
   const { quizTimeoutMs } = getAiConfig();
 
   const result = await runAiOperation({
     userId,
     operation: prompt.OPERATION,
     promptVersion: prompt.PROMPT_VERSION,
-    context: {
-      contextMode: context.contextMode,
-      includedChars: context.totals.includedChars,
-      sourcesIncluded: countStatus(context.manifest, "included"),
-      sourcesTruncated: countStatus(context.manifest, "truncated"),
-      sourcesExcluded: countStatus(context.manifest, "excluded"),
-    },
+    context: runContext,
+    scope: runScope,
     instructions: prompt.INSTRUCTIONS,
-    input: prompt.buildInput({
-      selectionType: context.selection.type,
-      selectionName: context.selection.name,
-      multipleChoiceCount: settings.multipleChoiceCount,
-      shortAnswerCount: settings.shortAnswerCount,
-      difficulty: settings.difficulty,
-      contextMode: context.contextMode,
-      contextText: context.text,
-    }),
+    input,
     jsonSchema: prompt.JSON_SCHEMA,
     validate: (data) =>
       prompt.validate(data, {
@@ -224,7 +373,7 @@ export async function generateQuiz(userId, body) {
     timeoutMs: quizTimeoutMs,
   });
 
-  const title = context.selection.name.slice(0, CONTENT_NAME_MAX);
+  const title = requestedTitle || context.selection.name.slice(0, CONTENT_NAME_MAX);
   const stored = await quizzesApi.createQuiz(userId, {
     title,
     subjectId: settings.subjectId,
@@ -246,15 +395,26 @@ export async function generateQuiz(userId, body) {
     sourceManifest: context.manifest,
     sourceSnapshot: context.text,
   });
-  return toStudyView(stored);
+  return { ...toStudyView(stored), aiRun: result.aiRun };
 }
 
 export async function getQuiz(userId, quizId) {
   return toStudyView(await quizzesApi.getQuiz(userId, quizId));
 }
 
-export function listQuizzes(userId, limit) {
-  return quizzesApi.listQuizzes(userId, limit);
+export async function renameQuiz(userId, quizId, body) {
+  if (typeof body?.title !== "string") {
+    throw createHttpError(400, "title must be a string");
+  }
+  const title = body.title.trim();
+  if (!title || title.length > CONTENT_NAME_MAX) {
+    throw createHttpError(400, `title must be 1-${CONTENT_NAME_MAX} characters`);
+  }
+  return toStudyView(await quizzesApi.updateQuizTitle(userId, quizId, title));
+}
+
+export function listQuizzes(userId, query) {
+  return quizzesApi.listQuizzes(userId, readListQuery(query));
 }
 
 export function listQuizAttempts(userId, quizId) {

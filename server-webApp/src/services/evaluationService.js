@@ -96,6 +96,7 @@ export async function buildEvaluation(userId, quiz, attempt) {
       operation: prompt.OPERATION,
       promptVersion: prompt.PROMPT_VERSION,
       context: contextCounts(quiz),
+      scope: { quizId: quiz.id, attemptId: attempt.id },
       instructions: prompt.INSTRUCTIONS,
       input: prompt.buildInput({
         contextMode: quiz.contextMode,

@@ -23,6 +23,13 @@ export async function listAttemptsForQuiz(userId, quizId) {
   return Attempt.find({ userId, quizId }).sort({ createdAt: -1 }).select("quizId status startedAt submittedAt evaluation createdAt");
 }
 
+export async function listAttemptsForQuizzes(userId, quizIds) {
+  if (!Array.isArray(quizIds) || quizIds.length === 0) return [];
+  return Attempt.find({ userId, quizId: { $in: quizIds } })
+    .sort({ createdAt: -1 })
+    .select("quizId status evaluation createdAt");
+}
+
 export async function listRecentAttempts(userId, limit) {
   const query = Attempt.find({ userId }).sort({ createdAt: -1 }).select("quizId status startedAt submittedAt evaluation createdAt");
   if (limit) query.limit(limit);

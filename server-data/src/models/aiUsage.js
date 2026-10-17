@@ -14,6 +14,31 @@ const contextSummarySchema = new mongoose.Schema(
   { _id: false },
 );
 
+const scopeManifestEntrySchema = new mongoose.Schema(
+  {
+    type: { type: String, enum: ["subject", "topic", "document"], required: true },
+    id: { type: String, required: true, maxlength: 120 },
+    title: { type: String, required: true, maxlength: 200 },
+    path: { type: String, required: true, maxlength: 2000 },
+    chars: { type: Number, min: 0, required: true },
+    status: { type: String, enum: ["included", "truncated", "excluded"], required: true },
+  },
+  { _id: false },
+);
+
+// Operation-specific identifiers and source metadata only. Never prompt/source bodies.
+const scopeSchema = new mongoose.Schema(
+  {
+    subjectId: { type: String, maxlength: 120 },
+    topicId: { type: String, maxlength: 120 },
+    selectionName: { type: String, maxlength: 120 },
+    manifest: { type: [scopeManifestEntrySchema], default: undefined },
+    quizId: { type: String, maxlength: 120 },
+    attemptId: { type: String, maxlength: 120 },
+  },
+  { _id: false },
+);
+
 // One record per AI operation. Holds no prompt text, key, or key fingerprint.
 const aiUsageSchema = new mongoose.Schema(
   {
@@ -29,6 +54,14 @@ const aiUsageSchema = new mongoose.Schema(
     errorCode: { type: String, maxlength: 40, default: null },
     latencyMs: { type: Number, min: 0, default: null },
     context: { type: contextSummarySchema, default: null },
+    inputChars: { type: Number, min: 0, default: null },
+    maxOutputTokens: { type: Number, min: 0, default: null },
+    scope: { type: scopeSchema, default: null },
+    failures: {
+      type: [{ type: String, maxlength: 80 }],
+      validate: [(value) => value.length <= 20, "failures cannot contain more than 20 entries"],
+      default: [],
+    },
   },
   { timestamps: { createdAt: true, updatedAt: false } },
 );
@@ -47,6 +80,27 @@ export function toAiUsage(doc) {
         sourcesExcluded: doc.context.sourcesExcluded,
       }
     : null;
+  const scope = doc.scope
+    ? {
+        ...(doc.scope.subjectId ? { subjectId: doc.scope.subjectId } : {}),
+        ...(doc.scope.topicId ? { topicId: doc.scope.topicId } : {}),
+        ...(doc.scope.selectionName ? { selectionName: doc.scope.selectionName } : {}),
+        ...(doc.scope.manifest
+          ? {
+              manifest: doc.scope.manifest.map((entry) => ({
+                type: entry.type,
+                id: entry.id,
+                title: entry.title,
+                path: entry.path,
+                chars: entry.chars,
+                status: entry.status,
+              })),
+            }
+          : {}),
+        ...(doc.scope.quizId ? { quizId: doc.scope.quizId } : {}),
+        ...(doc.scope.attemptId ? { attemptId: doc.scope.attemptId } : {}),
+      }
+    : null;
   return {
     id: doc._id.toString(),
     operation: doc.operation,
@@ -60,6 +114,10 @@ export function toAiUsage(doc) {
     errorCode: doc.errorCode,
     latencyMs: doc.latencyMs,
     context,
+    inputChars: doc.inputChars,
+    maxOutputTokens: doc.maxOutputTokens,
+    scope,
+    failures: doc.failures || [],
     createdAt: doc.createdAt,
   };
 }

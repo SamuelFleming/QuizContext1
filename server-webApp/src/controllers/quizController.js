@@ -9,6 +9,14 @@ export async function create(req, res, next) {
   }
 }
 
+export async function preview(req, res, next) {
+  try {
+    sendData(res, await quizService.previewQuiz(req.userId, req.body));
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function get(req, res, next) {
   try {
     sendData(res, await quizService.getQuiz(req.userId, req.params.quizId));
@@ -19,7 +27,7 @@ export async function get(req, res, next) {
 
 export async function list(req, res, next) {
   try {
-    sendData(res, await quizService.listQuizzes(req.userId, req.query.limit));
+    sendData(res, await quizService.listQuizzes(req.userId, req.query));
   } catch (err) {
     next(err);
   }
@@ -28,6 +36,14 @@ export async function list(req, res, next) {
 export async function listAttempts(req, res, next) {
   try {
     sendData(res, await quizService.listQuizAttempts(req.userId, req.params.quizId));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function rename(req, res, next) {
+  try {
+    sendData(res, await quizService.renameQuiz(req.userId, req.params.quizId, req.body));
   } catch (err) {
     next(err);
   }

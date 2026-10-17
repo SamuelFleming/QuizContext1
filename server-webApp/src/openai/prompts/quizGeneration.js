@@ -102,62 +102,69 @@ function allowedRefs(refs, allowedSourceIds) {
   return refs.every((id) => typeof id === "string" && allowedSourceIds.has(id));
 }
 
-function validMultipleChoice(question, allowedSourceIds) {
-  if (!Array.isArray(question.options) || question.options.length !== 4) {
-    return false;
-  }
-  const trimmed = question.options.map((option) => (typeof option === "string" ? option.trim() : ""));
-  if (trimmed.some((option) => !option || option.length > QUIZ_OPTION_MAX)) {
-    return false;
-  }
-  if (new Set(trimmed).size !== 4) {
-    return false;
-  }
-  if (!Number.isInteger(question.correctOptionIndex) || question.correctOptionIndex < 0 || question.correctOptionIndex > 3) {
-    return false;
-  }
-  return allowedRefs(question.sourceRefs, allowedSourceIds);
-}
-
-function validShortAnswer(question, allowedSourceIds) {
-  return (
-    isTrimmedString(question.expectedAnswer, QUIZ_EXPECTED_ANSWER_MAX) &&
-    stringList(question.markingCriteria, {
-      min: QUIZ_CRITERIA_MIN,
-      max: QUIZ_CRITERIA_MAX,
-      itemMax: QUIZ_CRITERION_MAX,
-    }) &&
-    allowedRefs(question.sourceRefs, allowedSourceIds)
-  );
+function indexed(code, index) {
+  return `${code}:${index + 1}`;
 }
 
 export function validate(data, { multipleChoiceCount, shortAnswerCount, allowedSourceIds }) {
   const questions = data?.questions;
-  if (!Array.isArray(questions) || questions.length !== multipleChoiceCount + shortAnswerCount) {
-    return false;
+  if (!Array.isArray(questions)) {
+    return ["question_count"];
   }
+  const failures = [];
+  if (questions.length !== multipleChoiceCount + shortAnswerCount) failures.push("question_count");
   let mc = 0;
   let sa = 0;
-  for (const question of questions) {
+  for (const [index, question] of questions.entries()) {
     if (!question || !isTrimmedString(question.prompt, QUIZ_PROMPT_MAX)) {
-      return false;
+      failures.push(indexed("prompt", index));
     }
-    if (!stringList(question.concepts ?? [], { max: QUIZ_CONCEPTS_MAX, itemMax: QUIZ_CONCEPT_MAX })) {
-      return false;
+    if (!question || !stringList(question.concepts ?? [], { max: QUIZ_CONCEPTS_MAX, itemMax: QUIZ_CONCEPT_MAX })) {
+      failures.push(indexed("concepts", index));
     }
-    if (question.type === "multiple_choice") {
-      if (!validMultipleChoice(question, allowedSourceIds)) {
-        return false;
+    if (question?.type === "multiple_choice") {
+      const options = question.options;
+      const trimmed = Array.isArray(options)
+        ? options.map((option) => (typeof option === "string" ? option.trim() : ""))
+        : [];
+      if (
+        !Array.isArray(options) ||
+        options.length !== 4 ||
+        trimmed.some((option) => !option || option.length > QUIZ_OPTION_MAX)
+      ) {
+        failures.push(indexed("mc_options", index));
       }
+      if (Array.isArray(options) && options.length === 4 && new Set(trimmed).size !== 4) {
+        failures.push(indexed("mc_duplicate", index));
+      }
+      if (
+        !Number.isInteger(question.correctOptionIndex) ||
+        question.correctOptionIndex < 0 ||
+        question.correctOptionIndex > 3
+      ) {
+        failures.push(indexed("mc_correct_index", index));
+      }
+      if (!allowedRefs(question.sourceRefs, allowedSourceIds)) failures.push(indexed("source_ref", index));
       mc += 1;
-    } else if (question.type === "short_answer") {
-      if (!validShortAnswer(question, allowedSourceIds)) {
-        return false;
+    } else if (question?.type === "short_answer") {
+      if (!isTrimmedString(question.expectedAnswer, QUIZ_EXPECTED_ANSWER_MAX)) {
+        failures.push(indexed("sa_expected_answer", index));
       }
+      if (
+        !stringList(question.markingCriteria, {
+          min: QUIZ_CRITERIA_MIN,
+          max: QUIZ_CRITERIA_MAX,
+          itemMax: QUIZ_CRITERION_MAX,
+        })
+      ) {
+        failures.push(indexed("sa_criteria", index));
+      }
+      if (!allowedRefs(question.sourceRefs, allowedSourceIds)) failures.push(indexed("source_ref", index));
       sa += 1;
     } else {
-      return false;
+      failures.push("question_count");
     }
   }
-  return mc === multipleChoiceCount && sa === shortAnswerCount;
+  if (mc !== multipleChoiceCount || sa !== shortAnswerCount) failures.push("question_count");
+  return [...new Set(failures)].slice(0, 20);
 }

@@ -1,4 +1,28 @@
 const quizId = { in: "path", name: "quizId", required: true, schema: { type: "string" } };
+const listParameters = [
+  { in: "query", name: "page", schema: { type: "integer", minimum: 1, default: 1 } },
+  { in: "query", name: "limit", schema: { type: "integer", minimum: 1, maximum: 25, default: 25 } },
+  {
+    in: "query",
+    name: "sort",
+    schema: {
+      type: "string",
+      enum: ["newest", "oldest", "question_count_asc", "question_count_desc"],
+      default: "newest",
+    },
+  },
+  {
+    in: "query",
+    name: "topicIds",
+    description: "Repeat 1-30 unique topic IDs. Matches any stored topicId or topicIds value.",
+    schema: { type: "array", maxItems: 30, uniqueItems: true, items: { type: "string" } },
+    style: "form",
+    explode: true,
+  },
+  { in: "query", name: "questionCount", schema: { type: "integer", minimum: 1, maximum: 20 } },
+  { in: "query", name: "multipleChoiceCount", schema: { type: "integer", minimum: 0, maximum: 20 } },
+  { in: "query", name: "shortAnswerCount", schema: { type: "integer", minimum: 0, maximum: 20 } },
+];
 
 const playerResult = {
   content: {
@@ -19,16 +43,37 @@ const studyViewResult = {
   },
 };
 
+const generationResult = {
+  content: {
+    "application/json": {
+      schema: {
+        type: "object",
+        properties: { data: { $ref: "#/components/schemas/QuizGenerationResult" } },
+      },
+    },
+  },
+};
+
 export const quizPaths = {
   "/quizzes": {
     get: {
-      summary: "List the caller's quizzes, newest first",
+      summary: "List the caller's quizzes",
       description:
-        "Each item has the title, scope names, mode, difficulty, question count, created date, attempt count, and the latest evaluated result. No questions or snapshot.",
+        "Returns a stable owner-scoped page. Topic filters use OR semantics and exclude whole-subject quizzes. Each item has safe summary fields and no questions or snapshot.",
       security: [{ bearerAuth: [] }],
-      parameters: [{ in: "query", name: "limit", schema: { type: "integer", minimum: 1, maximum: 100 } }],
+      parameters: listParameters,
       responses: {
-        200: { description: "Quiz summaries" },
+        200: {
+          description: "Paginated quiz summaries",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: { data: { $ref: "#/components/schemas/QuizListResult" } },
+              },
+            },
+          },
+        },
         400: { $ref: "#/components/responses/BadRequest" },
         401: { $ref: "#/components/responses/Unauthorized" },
       },
@@ -42,44 +87,12 @@ export const quizPaths = {
         required: true,
         content: {
           "application/json": {
-            schema: {
-              type: "object",
-              required: ["subjectId", "multipleChoiceCount", "shortAnswerCount"],
-              properties: {
-                subjectId: { type: "string" },
-                topicId: {
-                  type: "string",
-                  nullable: true,
-                  description: "One topic. Do not send together with topicIds.",
-                },
-                topicIds: {
-                  type: "array",
-                  minItems: 1,
-                  maxItems: 30,
-                  items: { type: "string" },
-                  description:
-                    "Explicit topics in this subject, in the order to store. Ignored includeDescendants is stored false. Omit both topicId and topicIds to quiz the whole subject.",
-                },
-                includeDescendants: {
-                  type: "boolean",
-                  default: true,
-                  description: "Used with topicId. Ignored when topicIds is set.",
-                },
-                multipleChoiceCount: { type: "integer", minimum: 0 },
-                shortAnswerCount: { type: "integer", minimum: 0 },
-                difficulty: { type: "string", enum: ["easy", "medium", "hard"], default: "medium" },
-                contextMode: {
-                  type: "string",
-                  enum: ["very_strict", "targeted", "loose"],
-                  default: "targeted",
-                },
-              },
-            },
+            schema: { $ref: "#/components/schemas/QuizGenerateInput" },
           },
         },
       },
       responses: {
-        201: { description: "Quiz saved (study view)", ...studyViewResult },
+        201: { description: "Quiz saved (study view plus safe AI run diagnostics)", ...generationResult },
         400: { $ref: "#/components/responses/BadRequest" },
         401: { $ref: "#/components/responses/Unauthorized" },
         404: { $ref: "#/components/responses/NotFound" },
@@ -93,6 +106,15 @@ export const quizPaths = {
                 properties: {
                   message: { type: "string" },
                   code: { type: "string", enum: ["CONTEXT_INSUFFICIENT", "AI_INVALID_OUTPUT"] },
+                  failures: {
+                    type: "array",
+                    maxItems: 20,
+                    items: { type: "string", maxLength: 80 },
+                  },
+                  aiRun: {
+                    $ref: "#/components/schemas/AiRun",
+                    description: "Present for AI_INVALID_OUTPUT; absent when no AI call was made.",
+                  },
                 },
               },
             },
@@ -102,6 +124,52 @@ export const quizPaths = {
         502: { $ref: "#/components/responses/AiError" },
         503: { $ref: "#/components/responses/AiError" },
         504: { $ref: "#/components/responses/AiError" },
+      },
+    },
+  },
+  "/quizzes/preview": {
+    post: {
+      summary: "Preview quiz-generation input metrics",
+      description:
+        "Validates and assembles the same caller-owned context as generation without calling AI or writing a quiz or usage record. Exact provider token counts are not available until generation completes.",
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/QuizPreviewInput" },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Safe input and source-count preview",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: { data: { $ref: "#/components/schemas/QuizPreview" } },
+              },
+            },
+          },
+        },
+        400: { $ref: "#/components/responses/BadRequest" },
+        401: { $ref: "#/components/responses/Unauthorized" },
+        404: { $ref: "#/components/responses/NotFound" },
+        422: {
+          description: "CONTEXT_INSUFFICIENT; no AI call was made",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: { type: "string" },
+                  code: { type: "string", enum: ["CONTEXT_INSUFFICIENT"] },
+                },
+              },
+            },
+          },
+        },
       },
     },
   },
@@ -153,6 +221,31 @@ export const quizPaths = {
       parameters: [quizId],
       responses: {
         200: { description: "Quiz (study view)", ...studyViewResult },
+        401: { $ref: "#/components/responses/Unauthorized" },
+        404: { $ref: "#/components/responses/NotFound" },
+      },
+    },
+    patch: {
+      summary: "Rename a saved quiz",
+      description:
+        "Changes only the saved title. Returns the study view. Questions, attempts, scope, answer keys, and the source snapshot are unchanged.",
+      security: [{ bearerAuth: [] }],
+      parameters: [quizId],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["title"],
+              properties: { title: { type: "string", minLength: 1, maxLength: 120 } },
+            },
+          },
+        },
+      },
+      responses: {
+        200: { description: "Renamed quiz (study view)", ...studyViewResult },
+        400: { $ref: "#/components/responses/BadRequest" },
         401: { $ref: "#/components/responses/Unauthorized" },
         404: { $ref: "#/components/responses/NotFound" },
       },

@@ -29,8 +29,29 @@ export async function getStatus(userId) {
   return { ...settings, applicationLimit };
 }
 
-export async function getUsage(userId) {
-  const summary = await getAiUsageSummary(userId);
+function readUsagePage(query = {}) {
+  const read = (raw, name, maximum) => {
+    if (raw === undefined) return {};
+    if (typeof raw !== "string" || !/^[1-9]\d*$/.test(raw)) {
+      return { error: `${name} must be a positive integer${maximum ? ` from 1 to ${maximum}` : ""}` };
+    }
+    const value = Number(raw);
+    if (!Number.isSafeInteger(value) || (maximum && value > maximum)) {
+      return { error: `${name} must be a positive integer${maximum ? ` from 1 to ${maximum}` : ""}` };
+    }
+    return { value };
+  };
+  const page = read(query.page, "page");
+  const limit = read(query.limit, "limit", 25);
+  if (page.error || limit.error) {
+    throw createHttpError(400, page.error || limit.error);
+  }
+  return { page: page.value || 1, limit: limit.value || 5 };
+}
+
+export async function getUsage(userId, query) {
+  const pagination = readUsagePage(query);
+  const summary = await getAiUsageSummary(userId, pagination);
   const applicationLimit = await getApplicationAllowance(userId, summary);
   return { ...summary, applicationLimit };
 }

@@ -7,4 +7,5 @@ export const saveAiKey = (apiKey) =>
   request("/settings/ai/key", { method: "PUT", body: { apiKey }, auth: true });
 export const removeAiKey = () => request("/settings/ai/key", { method: "DELETE", auth: true });
 export const checkAiConnection = () => request("/settings/ai/check", { method: "POST", auth: true });
-export const getAiUsage = () => request("/settings/ai/usage", { auth: true });
+export const getAiUsage = (page = 1) =>
+  request(`/settings/ai/usage?page=${encodeURIComponent(page)}&limit=5`, { auth: true });

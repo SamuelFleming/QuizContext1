@@ -1,5 +1,5 @@
-// Closed set of AI error codes. The response body is { message, code } and never includes the
-// key or the provider's raw error text (provider messages can echo part of the key).
+// Closed set of AI error codes. The response body may add bounded validation failure codes,
+// and never includes the key or provider raw text (provider messages can echo part of the key).
 const AI_ERRORS = {
   AI_DISABLED: [503, "AI is not enabled for application access on this server. Everything else still works."],
   AI_KEY_MISSING: [400, "Add your OpenAI API key in Profile, or switch to the application key."],

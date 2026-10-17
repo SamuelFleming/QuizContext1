@@ -11,7 +11,7 @@ export async function getAiStatus(req, res, next) {
 
 export async function getAiUsage(req, res, next) {
   try {
-    sendData(res, await aiSettingsService.getUsage(req.userId));
+    sendData(res, await aiSettingsService.getUsage(req.userId, req.query));
   } catch (err) {
     next(err);
   }
