@@ -1,8 +1,7 @@
 export const run = {
-  id: "luna-32k",
-  model: "gpt-6-luna",
+  id: "16k-48kch",
   contextMaxChars: 48000,
-  quizMaxOutputTokens: 32000,
+  quizMaxOutputTokens: 16000,
   quizTimeoutMs: 180000,
   reasoningEffort: null,
 };
