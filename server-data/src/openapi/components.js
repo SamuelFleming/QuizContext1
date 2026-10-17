@@ -212,7 +212,11 @@ export const components = {
         promptVersion: { type: "string" },
         questions: { type: "array", items: { $ref: "#/components/schemas/QuizQuestion" } },
         sourceManifest: { type: "array", items: { $ref: "#/components/schemas/ContextManifestEntry" } },
-        sourceSnapshot: { type: "string" },
+        sourceSnapshot: {
+          type: "string",
+          maxLength: 250000,
+          description: "Frozen labelled context text used for later evaluation (max 250000).",
+        },
       },
     },
     QuizQuestion: {

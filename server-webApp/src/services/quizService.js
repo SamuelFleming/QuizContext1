@@ -8,6 +8,7 @@ import {
   QUIZ_DIFFICULTIES,
   QUIZ_QUESTIONS_MAX,
   QUIZ_QUESTIONS_MIN,
+  QUIZ_SNAPSHOT_MAX,
   QUIZ_TOPIC_IDS_MAX,
   QUIZ_TOPIC_PATH_MAX,
 } from "../constants/validation.js";
@@ -311,6 +312,12 @@ async function prepareGeneration(userId, body) {
       422,
       "There is not enough content here yet. Add notes or a document, then try again.",
       { errorCode: "CONTEXT_INSUFFICIENT" },
+    );
+  }
+  if (context.text.length > QUIZ_SNAPSHOT_MAX) {
+    throw createHttpError(
+      400,
+      `Assembled source context is too large to save as a quiz snapshot (${context.text.length} characters; max ${QUIZ_SNAPSHOT_MAX}). Reduce the selection or the context budget.`,
     );
   }
 
