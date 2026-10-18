@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/useAuth.js";
 import { listQuizzes } from "../../services/quizService.js";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 3;
 
 function resultLabel(quiz) {
   if (!quiz.latestResult) return "No evaluated attempt";
@@ -47,10 +47,39 @@ export default function ScopeQuizList({ subjectId, topicId, navigate }) {
 
   const loading = loadedKey !== requestKey;
   const scopeLabel = topicId ? "topic" : "subject";
+  const totalItems = result?.pagination?.totalItems;
+  const totalPages = result?.pagination?.totalPages ?? 0;
+  const heading =
+    typeof totalItems === "number" && !loading ? `Quizzes (${totalItems})` : "Quizzes";
 
   return (
     <section className="scope-quiz-list" aria-label="Quizzes">
-      <h2>Quizzes</h2>
+      <div className="section-head scope-quiz-head">
+        <h2>{heading}</h2>
+        {totalPages > 1 ? (
+          <nav className="pagination" aria-label="Scoped quiz pages">
+            <button
+              type="button"
+              aria-label="Previous page"
+              onClick={() => setPage((current) => current - 1)}
+              disabled={loading || page <= 1}
+            >
+              Prev
+            </button>
+            <p>
+              {page} / {totalPages}
+            </p>
+            <button
+              type="button"
+              aria-label="Next page"
+              onClick={() => setPage((current) => current + 1)}
+              disabled={loading || page >= totalPages}
+            >
+              Next
+            </button>
+          </nav>
+        ) : null}
+      </div>
       {error ? (
         <p className="error-text" role="alert">
           {error}
@@ -61,47 +90,23 @@ export default function ScopeQuizList({ subjectId, topicId, navigate }) {
       ) : !result || result.items.length === 0 ? (
         <p className="status-line">No quizzes for this {scopeLabel} yet.</p>
       ) : (
-        <>
-          <ul className="item-list">
-            {result.items.map((quiz) => (
-              <li key={quiz.id}>
-                <button
-                  type="button"
-                  className="item-link"
-                  onClick={() => navigate(`/quizzes/${quiz.id}`)}
-                >
-                  <span>{quiz.title}</span>
-                  <span className="usage-meta">{quiz.topicPath || quiz.subjectName}</span>
-                  <span className="usage-meta">
-                    {quiz.questionCount} questions · {quiz.attemptCount}{" "}
-                    {quiz.attemptCount === 1 ? "attempt" : "attempts"} · {resultLabel(quiz)}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          {result.pagination.totalPages > 1 ? (
-            <nav className="pagination scope-panel-pagination" aria-label="Scoped quiz pages">
+        <ul className="item-list compact-item-list">
+          {result.items.map((quiz) => (
+            <li key={quiz.id}>
               <button
                 type="button"
-                onClick={() => setPage((current) => current - 1)}
-                disabled={page <= 1}
+                className="item-link"
+                onClick={() => navigate(`/quizzes/${quiz.id}`)}
               >
-                Previous
+                <span>{quiz.title}</span>
+                <span className="usage-meta">
+                  {quiz.questionCount} questions · {quiz.attemptCount}{" "}
+                  {quiz.attemptCount === 1 ? "attempt" : "attempts"} · {resultLabel(quiz)}
+                </span>
               </button>
-              <p>
-                Page {result.pagination.page} of {result.pagination.totalPages}
-              </p>
-              <button
-                type="button"
-                onClick={() => setPage((current) => current + 1)}
-                disabled={page >= result.pagination.totalPages}
-              >
-                Next
-              </button>
-            </nav>
-          ) : null}
-        </>
+            </li>
+          ))}
+        </ul>
       )}
     </section>
   );

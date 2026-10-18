@@ -1,6 +1,6 @@
 # Phase 8 — AI quiz generation experiment
 
-**Status:** Tickets 8000–8009 done. Follow-on 8010 (LHS density + document modal) ready. Live model calls remain manual for the experiment protocol.
+**Status:** Tickets 8000–8010 done. Live model calls remain manual for the experiment protocol.
 
 **Objective.** Make the quiz-generation model, context budget, output budget, and reasoning effort easy to change, and provide a controlled manual protocol for comparing reliability, quality, and cost. Follow-on work improves usage visibility for those experiment runs, centralises model pricing metadata, exposes per-request model selection with pre-generate cost approximations, and surfaces subject/topic-scoped quizzes, study history, and content character totals in the Content Workspace. Density and document-open UX for the workspace LHS are 8010.
 
@@ -22,7 +22,7 @@
 8. [8007](8007-quiz-subject-filter-api.md) — `GET /quizzes` optional `subjectId` filter. Done. Depends on 7030.
 9. [8008](8008-content-character-totals.md) — `ownContentChars` and `subtreeContentChars` on subject/topic reads. Done. Depends on 7006.
 10. [8009](8009-workspace-study-panel.md) — workspace size summary, scoped quiz list, and study history panel. Done. Depends on 8006, 8007, 8008, and 7013.
-11. [8010](8010-workspace-lhs-density-document-modal.md) — LHS density (Quizzes under Documents), compact rows, page size 3, document open modal. Ready. Depends on 8009.
+11. [8010](8010-workspace-lhs-density-document-modal.md) — LHS density (Quizzes under Documents), compact rows, page size 3, document open modal. Done. Depends on 8009.
 
 **Not in this phase.** Automatic retries, a question limit above 20, batch generation, prompt or schema changes, and storing raw model output. Those options are recorded at the end of the experiment, not implemented here. Evaluation results-screen AI-run details stay out unless a later ticket asks for them. Per-request context/output/reasoning overrides stay out of 8004–8005. Completeness indicators (7027/7028) stay deferred.
 

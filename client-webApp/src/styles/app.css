@@ -421,7 +421,8 @@ h2 {
   justify-self: start;
 }
 
-.ai-run-dialog {
+.ai-run-dialog,
+.document-dialog {
   width: min(calc(100% - 2rem), 38rem);
   max-height: calc(100vh - 2rem);
   overflow: auto;
@@ -433,8 +434,17 @@ h2 {
   box-shadow: 0 16px 48px color-mix(in srgb, var(--color-text) 20%, transparent);
 }
 
-.ai-run-dialog::backdrop {
+.ai-run-dialog::backdrop,
+.document-dialog::backdrop {
   background: color-mix(in srgb, var(--color-text) 45%, transparent);
+}
+
+.document-dialog {
+  width: min(calc(100% - 2rem), 42rem);
+}
+
+.document-dialog .form {
+  margin-top: var(--space-3);
 }
 
 .dialog-head {
@@ -1132,6 +1142,35 @@ button.secondary {
 .scope-study-summary {
   display: grid;
   gap: var(--space-2);
+}
+
+.workspace-side .scope-quiz-list {
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.scope-quiz-list h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.scope-quiz-head {
+  margin-bottom: 0;
+  align-items: center;
+}
+
+.scope-quiz-head .pagination {
+  margin-left: auto;
+}
+
+.compact-item-list .item-link {
+  gap: 2px;
+  padding-block: 6px;
+}
+
+.compact-item-list .item-link .usage-meta {
+  font-size: 0.8125rem;
 }
 
 .scope-panel-pagination {

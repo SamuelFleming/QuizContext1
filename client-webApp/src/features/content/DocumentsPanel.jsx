@@ -23,10 +23,13 @@ function formatSize(bytes) {
 // guard wraps API calls so a 401 ends the session.
 export default function DocumentsPanel({ subjectId, topicId, guard }) {
   const fileInput = useRef(null);
+  const dialogRef = useRef(null);
   const [documents, setDocuments] = useState(null);
   const [view, setView] = useState({ mode: "list" });
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
+
+  const dialogOpen = view.mode === "open" || view.mode === "edit" || view.mode === "review";
 
   useEffect(() => {
     let active = true;
@@ -37,6 +40,24 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
       active = false;
     };
   }, [subjectId, topicId, guard]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return undefined;
+    if (dialogOpen && !dialog.open) dialog.showModal();
+    return undefined;
+  }, [dialogOpen, view.mode]);
+
+  function closeDialog() {
+    setError("");
+    setView({ mode: "list" });
+    if (dialogRef.current?.open) dialogRef.current.close();
+  }
+
+  function handleDialogClose() {
+    setError("");
+    setView((current) => (current.mode === "list" ? current : { mode: "list" }));
+  }
 
   async function handleFile(event) {
     const file = event.target.files?.[0];
@@ -63,7 +84,7 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
         createDocument({ ...view.draft, subjectId, topicId: topicId ?? null }),
       );
       setDocuments((current) => [...(current || []), saved]);
-      setView({ mode: "list" });
+      closeDialog();
     } catch (err) {
       if (err.status !== 401) setError(err.message || "Could not save the document.");
     } finally {
@@ -109,7 +130,7 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
     try {
       await guard(() => deleteDocument(doc.id));
       setDocuments((current) => current.filter((d) => d.id !== doc.id));
-      setView({ mode: "list" });
+      closeDialog();
     } catch (err) {
       if (err.status !== 401) setError(err.message || "Could not delete the document.");
     } finally {
@@ -126,12 +147,18 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
     </p>
   ) : null;
 
+  let dialogBody = null;
   if (view.mode === "review" || view.mode === "edit") {
     const { draft } = view;
     const editing = view.mode === "edit";
-    return (
-      <section className="documents" aria-label={editing ? "Edit document" : "Review document"}>
-        <h2>{editing ? "Edit document" : "Review extracted text"}</h2>
+    dialogBody = (
+      <>
+        <div className="dialog-head">
+          <h2 id="document-dialog-title">{editing ? "Edit document" : "Review extracted text"}</h2>
+          <button type="button" className="secondary" aria-label="Close document dialog" onClick={closeDialog}>
+            Close
+          </button>
+        </div>
         <p className="usage-meta">
           {editing
             ? `From ${draft.originalFileName || "no file"}.`
@@ -165,24 +192,23 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
               className="link"
               onClick={() => {
                 setError("");
-                setView(editing ? { mode: "open", document: view.document } : { mode: "list" });
+                if (editing) setView({ mode: "open", document: view.document });
+                else closeDialog();
               }}
             >
               Cancel
             </button>
           </div>
         </form>
-      </section>
+      </>
     );
-  }
-
-  if (view.mode === "open") {
+  } else if (view.mode === "open") {
     const doc = view.document;
-    return (
-      <section className="documents" aria-label="Document">
-        <div className="section-head">
-          <h2>{doc.title}</h2>
-          <button type="button" className="link" onClick={() => setView({ mode: "list" })}>
+    dialogBody = (
+      <>
+        <div className="dialog-head">
+          <h2 id="document-dialog-title">{doc.title}</h2>
+          <button type="button" className="secondary" aria-label="Close document dialog" onClick={closeDialog}>
             Close
           </button>
         </div>
@@ -218,7 +244,7 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
             Delete document
           </button>
         </div>
-      </section>
+      </>
     );
   }
 
@@ -246,13 +272,13 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
         Markdown, text, PDFs with selectable text, Word (.docx), PowerPoint (.pptx), Python (.py), or Jupyter
         (.ipynb), up to 25 MB.
       </p>
-      {errorLine}
+      {!dialogOpen ? errorLine : null}
       {documents === null ? (
-        error ? null : <p className="status-line">Loading…</p>
+        error && !dialogOpen ? null : <p className="status-line">Loading…</p>
       ) : documents.length === 0 ? (
         <p className="status-line">No documents here yet.</p>
       ) : (
-        <ul className="item-list">
+        <ul className="item-list compact-item-list">
           {documents.map((doc) => (
             <li key={doc.id}>
               <button
@@ -261,7 +287,6 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
                 onClick={() => openDocument(doc.id)}
                 disabled={busy === "open"}
               >
-                <span>{doc.title}</span>
                 <span className="usage-meta">
                   {doc.originalFileName || "No file"} · {formatSize(doc.sizeBytes)}
                 </span>
@@ -270,6 +295,15 @@ export default function DocumentsPanel({ subjectId, topicId, guard }) {
           ))}
         </ul>
       )}
+
+      <dialog
+        ref={dialogRef}
+        className="document-dialog"
+        aria-labelledby="document-dialog-title"
+        onClose={handleDialogClose}
+      >
+        {dialogBody}
+      </dialog>
     </section>
   );
 }

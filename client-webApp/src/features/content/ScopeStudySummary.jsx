@@ -17,7 +17,7 @@ export default function ScopeStudySummary({ subjectId, topicId, navigate }) {
     getStudyHistory({
       subjectId,
       ...(topicId ? { topicId } : {}),
-      recent: "5",
+      recent: "3",
     })
       .then((data) => {
         if (!active) return;

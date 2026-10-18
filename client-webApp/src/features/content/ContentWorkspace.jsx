@@ -4,6 +4,7 @@ import { deleteSubject, getSubject, updateSubject } from "../../services/subject
 import { createTopic, deleteTopic, listTopics, updateTopic } from "../../services/topicService.js";
 import DocumentsPanel from "./DocumentsPanel.jsx";
 import NodeDetails from "./NodeDetails.jsx";
+import ScopeQuizList from "./ScopeQuizList.jsx";
 import TopicTree from "./TopicTree.jsx";
 import { ancestorIds, countDescendants } from "./topicTree.js";
 
@@ -138,9 +139,16 @@ export default function ContentWorkspace({ subjectId, navigate }) {
             onSelect={select}
           />
           <DocumentsPanel
+            key={`docs:${selectedTopic ? selectedTopic.id : `subject:${subjectId}`}`}
             subjectId={subjectId}
             topicId={selectedTopic ? selectedTopic.id : null}
             guard={guard}
+          />
+          <ScopeQuizList
+            key={`quizzes:${selectedTopic ? selectedTopic.id : `subject:${subjectId}`}`}
+            subjectId={subjectId}
+            topicId={selectedTopic ? selectedTopic.id : null}
+            navigate={navigate}
           />
         </aside>
         <NodeDetails

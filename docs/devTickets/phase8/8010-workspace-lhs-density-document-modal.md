@@ -1,6 +1,6 @@
 # 8010 — Workspace LHS density and document open modal
 
-**Status:** Ready  
+**Status:** Done  
 **Phase:** 8 (follow-on)  
 **Depends on:** 8009  
 **Relevant scope:** S03 Content Workspace; F03 documents; F08 study history (display only)
@@ -39,12 +39,12 @@ Make the Content Workspace left column denser and usable: place the scoped quiz 
 - Optional thin shared dialog chrome reuse from `QuizGeneratePage` / `.ai-run-dialog` patterns (do not couple features tightly)
 
 ## Acceptance checks
-- [ ] LHS order under the tree: Documents (compact filename + size rows), then Quizzes (page size 3; heading includes total count; Previous/Next aligned with the Quizzes heading when multi-page).
-- [ ] RHS detail panel shows Study history / recent results with at most 3 recent results; scoped Quizzes are no longer rendered in `NodeDetails`.
-- [ ] Clicking a document opens a modal with existing open / edit / delete capabilities; after close, the document list is still usable and the workspace selection/notes state is intact.
-- [ ] Document list rows do not show a separate title line; quiz rows do not show a double title.
-- [ ] Empty, loading, and error states remain local; list UIs expose no answer keys, criteria, or source/document body text.
-- [ ] Client lint and production build pass. Narrow viewport (~390px) keeps the side column and modal usable (no unusable horizontal overflow for the primary actions).
+- [x] LHS order under the tree: Documents (compact filename + size rows), then Quizzes (page size 3; heading includes total count; Previous/Next aligned with the Quizzes heading when multi-page).
+- [x] RHS detail panel shows Study history / recent results with at most 3 recent results; scoped Quizzes are no longer rendered in `NodeDetails`.
+- [x] Clicking a document opens a modal with existing open / edit / delete capabilities; after close, the document list is still usable and the workspace selection/notes state is intact.
+- [x] Document list rows do not show a separate title line; quiz rows do not show a double title.
+- [x] Empty, loading, and error states remain local; list UIs expose no answer keys, criteria, or source/document body text.
+- [x] Client lint and production build pass. Narrow viewport (~390px) keeps the side column and modal usable (no unusable horizontal overflow for the primary actions).
 
 ## Implementation notes
 8009 placed Quizzes and Study history together in the detail panel; this ticket splits them for density. Prefer lifting open/edit/review into a dialog while keeping list state in `DocumentsPanel`. Quiz scoping rules from 8007/8009 (`subjectId` vs `topicIds`) must not change.

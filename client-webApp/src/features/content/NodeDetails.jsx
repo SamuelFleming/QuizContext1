@@ -1,7 +1,6 @@
 import { useState } from "react";
 import ContentSizeSummary from "./ContentSizeSummary.jsx";
 import NotesEditor from "./NotesEditor.jsx";
-import ScopeQuizList from "./ScopeQuizList.jsx";
 import ScopeStudySummary from "./ScopeStudySummary.jsx";
 
 function Feedback({ message, source }) {
@@ -149,8 +148,7 @@ export default function NodeDetails({
         }
       />
 
-      <section className="quiz-history-scaffold" aria-label="Quiz history">
-        <ScopeQuizList subjectId={subjectId} topicId={topicId} navigate={navigate} />
+      <section className="quiz-history-scaffold" aria-label="Study history">
         <ScopeStudySummary subjectId={subjectId} topicId={topicId} navigate={navigate} />
       </section>
 
