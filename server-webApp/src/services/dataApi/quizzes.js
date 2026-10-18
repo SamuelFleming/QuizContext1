@@ -11,6 +11,7 @@ export const listQuizzes = (userId, filters) => {
   query.set("page", String(filters.page));
   query.set("limit", String(filters.limit));
   query.set("sort", filters.sort);
+  if (filters.subjectId) query.set("subjectId", filters.subjectId);
   for (const topicId of filters.topicIds) query.append("topicIds", topicId);
   for (const name of ["questionCount", "multipleChoiceCount", "shortAnswerCount"]) {
     if (filters[name] !== undefined) query.set(name, String(filters[name]));

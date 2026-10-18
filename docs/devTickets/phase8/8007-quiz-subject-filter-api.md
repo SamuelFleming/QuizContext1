@@ -1,6 +1,6 @@
 # 8007 — Quiz library `subjectId` filter
 
-**Status:** Ready  
+**Status:** Done  
 **Phase:** 8 (follow-on)  
 **Depends on:** 7030  
 **Relevant scope:** S03; S04; F05; 7013 topic/subject matching
@@ -30,11 +30,16 @@ Owner-scoped `GET /quizzes` can filter by one `subjectId` so the Content Workspa
 - `server-data/src/openapi/paths/quizzes.js`
 
 ## Acceptance checks
-- [ ] `GET /quizzes?subjectId=` returns only that subject's quizzes, including whole-subject quizzes, with correct pagination totals.
-- [ ] `subjectId` + `topicIds` returns only quizzes in that subject that match the topic OR rule; whole-subject quizzes are excluded when `topicIds` is present.
-- [ ] Unknown or other-user `subjectId` is 404. Missing JWT is 401. Malformed `subjectId` is 400.
-- [ ] Existing list behaviour without `subjectId` is unchanged.
-- [ ] Both live OpenAPI documents include `subjectId`.
+- [x] `GET /quizzes?subjectId=` returns only that subject's quizzes, including whole-subject quizzes, with correct pagination totals.
+- [x] `subjectId` + `topicIds` returns only quizzes in that subject that match the topic OR rule; whole-subject quizzes are excluded when `topicIds` is present.
+- [x] Unknown or other-user `subjectId` is 404. Missing JWT is 401. Malformed `subjectId` is 400.
+- [x] Existing list behaviour without `subjectId` is unchanged.
+- [x] Both live OpenAPI documents include `subjectId`.
+
+## Outcome notes
+- Business `listQuizzes` validates `subjectId` and calls `subjectsApi.getSubject` for ownership 404 before forwarding.
+- Data repository matches `subjectId` as a string (Quiz schema stores it as string, not ObjectId).
+- OpenAPI list params and business 404 response updated on both APIs.
 
 ## Implementation notes
 7030 left subject filtering out of scope. Reuse the study-history ownership check pattern for the subject id before querying. Filtering stays in `server-data` under the trusted `X-User-Id`.

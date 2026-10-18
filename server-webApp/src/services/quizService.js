@@ -17,6 +17,7 @@ import * as prompt from "../openai/prompts/quizGeneration.js";
 import { createHttpError } from "../utils/httpError.js";
 import { assembleContext } from "./contextService.js";
 import * as quizzesApi from "./dataApi/quizzes.js";
+import * as subjectsApi from "./dataApi/subjects.js";
 import * as topicsApi from "./dataApi/topics.js";
 import { toStudyView } from "./quizStudyView.js";
 
@@ -96,6 +97,14 @@ function readListTopicIds(raw) {
   return topicIds;
 }
 
+function readListSubjectId(raw) {
+  if (raw === undefined) return undefined;
+  if (typeof raw !== "string" || !raw.trim() || !/^[a-f\d]{24}$/i.test(raw.trim())) {
+    throw createHttpError(400, "subjectId must be a subject id");
+  }
+  return raw.trim().toLowerCase();
+}
+
 function readListQuery(query = {}) {
   const page = readQueryInteger(query.page, "page", 1, Number.MAX_SAFE_INTEGER, 1);
   const limit = readQueryInteger(query.limit, "limit", 1, 25, 25);
@@ -103,6 +112,7 @@ function readListQuery(query = {}) {
   if (typeof sort !== "string" || !QUIZ_SORTS.includes(sort)) {
     throw createHttpError(400, `sort must be one of ${QUIZ_SORTS.join(", ")}`);
   }
+  const subjectId = readListSubjectId(query.subjectId);
   const topicIds = readListTopicIds(query.topicIds);
   const questionCount = readQueryInteger(
     query.questionCount,
@@ -145,6 +155,7 @@ function readListQuery(query = {}) {
     page,
     limit,
     sort,
+    subjectId,
     topicIds,
     questionCount,
     multipleChoiceCount,
@@ -456,8 +467,13 @@ export async function renameQuiz(userId, quizId, body) {
   return toStudyView(await quizzesApi.updateQuizTitle(userId, quizId, title));
 }
 
-export function listQuizzes(userId, query) {
-  return quizzesApi.listQuizzes(userId, readListQuery(query));
+export async function listQuizzes(userId, query) {
+  const filters = readListQuery(query);
+  if (filters.subjectId) {
+    // Unknown or another user's subject is a 404 from the data API.
+    await subjectsApi.getSubject(userId, filters.subjectId);
+  }
+  return quizzesApi.listQuizzes(userId, filters);
 }
 
 export function listQuizAttempts(userId, quizId) {

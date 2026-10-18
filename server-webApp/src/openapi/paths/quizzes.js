@@ -13,6 +13,13 @@ const listParameters = [
   },
   {
     in: "query",
+    name: "subjectId",
+    description:
+      "Limit to quizzes for this subject, including whole-subject quizzes. Unknown or unowned subject is 404. Combined with topicIds uses AND (subject match plus topic OR).",
+    schema: { type: "string" },
+  },
+  {
+    in: "query",
     name: "topicIds",
     description: "Repeat 1-30 unique topic IDs. Matches any stored topicId or topicIds value.",
     schema: { type: "array", maxItems: 30, uniqueItems: true, items: { type: "string" } },
@@ -59,7 +66,7 @@ export const quizPaths = {
     get: {
       summary: "List the caller's quizzes",
       description:
-        "Returns a stable owner-scoped page. Topic filters use OR semantics and exclude whole-subject quizzes. Each item has safe summary fields and no questions or snapshot.",
+        "Returns a stable owner-scoped page. Optional subjectId includes whole-subject quizzes for that subject. Topic filters use OR semantics and exclude whole-subject quizzes; with subjectId both filters apply (AND). Each item has safe summary fields and no questions or snapshot.",
       security: [{ bearerAuth: [] }],
       parameters: listParameters,
       responses: {
@@ -76,6 +83,7 @@ export const quizPaths = {
         },
         400: { $ref: "#/components/responses/BadRequest" },
         401: { $ref: "#/components/responses/Unauthorized" },
+        404: { $ref: "#/components/responses/NotFound" },
       },
     },
     post: {
