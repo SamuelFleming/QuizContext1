@@ -105,6 +105,16 @@ export const components = {
           description:
             "Own notes are non-empty after trim, or documentCount is at least 1. Child content does not count.",
         },
+        ownContentChars: {
+          type: "integer",
+          description:
+            "Character length of own notes (as stored) plus content lengths of documents on this topic only. Description excluded.",
+        },
+        subtreeContentChars: {
+          type: "integer",
+          description:
+            "ownContentChars plus the same measure for every nested descendant topic. Equals ownContentChars when there are no descendants.",
+        },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -166,6 +176,16 @@ export const components = {
         },
         topicCount: { type: "integer" },
         contentCompleteTopicCount: { type: "integer" },
+        ownContentChars: {
+          type: "integer",
+          description:
+            "Character length of subject notes (as stored) plus content lengths of subject-level documents (topicId null). Description excluded.",
+        },
+        subtreeContentChars: {
+          type: "integer",
+          description:
+            "ownContentChars plus the same measure for every topic under this subject. Equals ownContentChars when there are no topics.",
+        },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },

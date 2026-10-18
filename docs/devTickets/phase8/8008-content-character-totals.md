@@ -1,6 +1,6 @@
 # 8008 — Content character totals on subject and topic reads
 
-**Status:** Ready  
+**Status:** Done  
 **Phase:** 8 (follow-on)  
 **Depends on:** 7006  
 **Relevant scope:** S03; F03; completeness projection
@@ -34,12 +34,12 @@ Subject and topic list/read payloads include living character totals so summarie
 - `server-webApp/src/openapi/components.js` (pass-through schemas)
 
 ## Acceptance checks
-- [ ] A topic with notes of length N and one document of length M reports `ownContentChars = N + M` and the same `subtreeContentChars` when it has no children.
-- [ ] A subject with empty own notes/docs and topics that have content reports `ownContentChars = 0` and `subtreeContentChars` equal to the sum of those topics' own content (plus nested descendants).
-- [ ] A topic's `subtreeContentChars` includes nested descendant notes/docs and does not include sibling topics.
-- [ ] List and read payloads include both fields; document `content` bodies are not added to list responses to compute them.
-- [ ] User B's totals never include user A's content; cross-user subject/topic read stays 404.
-- [ ] Both live OpenAPI documents include the new fields. No new route.
+- [x] A topic with notes of length N and one document of length M reports `ownContentChars = N + M` and the same `subtreeContentChars` when it has no children.
+- [x] A subject with empty own notes/docs and topics that have content reports `ownContentChars = 0` and `subtreeContentChars` equal to the sum of those topics' own content (plus nested descendants).
+- [x] A topic's `subtreeContentChars` includes nested descendant notes/docs and does not include sibling topics.
+- [x] List and read payloads include both fields; document `content` bodies are not added to list responses to compute them.
+- [x] User B's totals never include user A's content; cross-user subject/topic read stays 404.
+- [x] Both live OpenAPI documents include the new fields. No new route.
 
 ## Implementation notes
 Reuse ownership filters already used for `documentCount`. Prefer Mongo `$strLenCP` (or equivalent) on `content` and notes rather than fetching strings. Keep description out so parents that only hold structure still show useful “with subtopics” size in 8009.

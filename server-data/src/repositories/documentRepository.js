@@ -61,7 +61,8 @@ export async function deleteDocumentsForSubject(userId, subjectId) {
   await Document.deleteMany({ userId, subjectId });
 }
 
-// Own-document counts only. topicId null is the subject itself. Bodies are not loaded.
+// Own-document counts and content character sums. topicId null is the subject itself.
+// Bodies are not loaded into list responses; length is aggregated with $strLenCP.
 export async function countDocumentsByOwner(userId, subjectIds) {
   if (!subjectIds.length) return [];
   return Document.aggregate([
@@ -71,6 +72,12 @@ export async function countDocumentsByOwner(userId, subjectIds) {
         subjectId: { $in: subjectIds.map((id) => new mongoose.Types.ObjectId(id)) },
       },
     },
-    { $group: { _id: { subjectId: "$subjectId", topicId: "$topicId" }, count: { $sum: 1 } } },
+    {
+      $group: {
+        _id: { subjectId: "$subjectId", topicId: "$topicId" },
+        count: { $sum: 1 },
+        contentChars: { $sum: { $strLenCP: { $ifNull: ["$content", ""] } } },
+      },
+    },
   ]);
 }

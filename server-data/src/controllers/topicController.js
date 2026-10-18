@@ -7,13 +7,19 @@ import {
   deleteTopics,
   findTopic,
   listTopics,
-  topicDocumentCounts,
+  topicContentStats,
   updateTopic,
 } from "../repositories/topicRepository.js";
 import { readContentFields } from "../utils/contentFields.js";
 import { sendData, sendMessage } from "../utils/responses.js";
 
 const NOT_FOUND = "Topic not found";
+
+const EMPTY_TOPIC_STATS = {
+  documentCount: 0,
+  ownContentChars: 0,
+  subtreeContentChars: 0,
+};
 
 export async function listForSubject(req, res, next) {
   try {
@@ -23,8 +29,11 @@ export async function listForSubject(req, res, next) {
       return;
     }
     const topics = await listTopics(req.userId, subject._id);
-    const counts = await topicDocumentCounts(req.userId, subject._id);
-    sendData(res, topics.map((topic) => toTopic(topic, counts.get(topic._id.toString()) || 0)));
+    const stats = await topicContentStats(req.userId, subject._id);
+    sendData(
+      res,
+      topics.map((topic) => toTopic(topic, stats.get(topic._id.toString()) || EMPTY_TOPIC_STATS)),
+    );
   } catch (err) {
     next(err);
   }
@@ -61,8 +70,8 @@ export async function createForSubject(req, res, next) {
       }
     }
     const topic = await createTopic(req.userId, subject._id, parentTopicId, values);
-    const counts = await topicDocumentCounts(req.userId, subject._id);
-    sendData(res, toTopic(topic, counts.get(topic._id.toString()) || 0), 201);
+    const stats = await topicContentStats(req.userId, subject._id);
+    sendData(res, toTopic(topic, stats.get(topic._id.toString()) || EMPTY_TOPIC_STATS), 201);
   } catch (err) {
     next(err);
   }
@@ -75,8 +84,8 @@ export async function get(req, res, next) {
       sendMessage(res, 404, NOT_FOUND);
       return;
     }
-    const counts = await topicDocumentCounts(req.userId, topic.subjectId);
-    sendData(res, toTopic(topic, counts.get(topic._id.toString()) || 0));
+    const stats = await topicContentStats(req.userId, topic.subjectId);
+    sendData(res, toTopic(topic, stats.get(topic._id.toString()) || EMPTY_TOPIC_STATS));
   } catch (err) {
     next(err);
   }
@@ -94,8 +103,8 @@ export async function update(req, res, next) {
       sendMessage(res, 404, NOT_FOUND);
       return;
     }
-    const counts = await topicDocumentCounts(req.userId, topic.subjectId);
-    sendData(res, toTopic(topic, counts.get(topic._id.toString()) || 0));
+    const stats = await topicContentStats(req.userId, topic.subjectId);
+    sendData(res, toTopic(topic, stats.get(topic._id.toString()) || EMPTY_TOPIC_STATS));
   } catch (err) {
     next(err);
   }
