@@ -1,8 +1,8 @@
 # Phase 8 — AI quiz generation experiment
 
-**Status:** Tickets 8000–8008 done. Follow-on 8009 (workspace study panel) ready. Live model calls remain manual for the experiment protocol.
+**Status:** Tickets 8000–8009 done. Follow-on 8010 (LHS density + document modal) ready. Live model calls remain manual for the experiment protocol.
 
-**Objective.** Make the quiz-generation model, context budget, output budget, and reasoning effort easy to change, and provide a controlled manual protocol for comparing reliability, quality, and cost. Follow-on work improves usage visibility for those experiment runs, centralises model pricing metadata, exposes per-request model selection with pre-generate cost approximations, and surfaces subject/topic-scoped quizzes, study history, and content character totals in the Content Workspace.
+**Objective.** Make the quiz-generation model, context budget, output budget, and reasoning effort easy to change, and provide a controlled manual protocol for comparing reliability, quality, and cost. Follow-on work improves usage visibility for those experiment runs, centralises model pricing metadata, exposes per-request model selection with pre-generate cost approximations, and surfaces subject/topic-scoped quizzes, study history, and content character totals in the Content Workspace. Density and document-open UX for the workspace LHS are 8010.
 
 **Deliverable.** A baseline constants file, one pointer, and one constants file per prepared run, plus the operator guide. The baseline run preserves today's behaviour. Live model calls are run by the developer; they are not part of ticket acceptance. Question-type counts on AI usage, a central model catalogue for pricing, and a quiz-form model picker with live preview estimates are included in this phase. Workspace quiz list / study panel and content size fields are 8007–8009.
 
@@ -21,7 +21,8 @@
 7. [8006](8006-workspace-tree-layout.md) — workspace topic tree cap/scroll, alphanumeric sibling order, Quiz History scaffold. Done.
 8. [8007](8007-quiz-subject-filter-api.md) — `GET /quizzes` optional `subjectId` filter. Done. Depends on 7030.
 9. [8008](8008-content-character-totals.md) — `ownContentChars` and `subtreeContentChars` on subject/topic reads. Done. Depends on 7006.
-10. [8009](8009-workspace-study-panel.md) — workspace size summary, scoped quiz list, and study history panel. Ready. Depends on 8006, 8007, 8008, and 7013.
+10. [8009](8009-workspace-study-panel.md) — workspace size summary, scoped quiz list, and study history panel. Done. Depends on 8006, 8007, 8008, and 7013.
+11. [8010](8010-workspace-lhs-density-document-modal.md) — LHS density (Quizzes under Documents), compact rows, page size 3, document open modal. Ready. Depends on 8009.
 
 **Not in this phase.** Automatic retries, a question limit above 20, batch generation, prompt or schema changes, and storing raw model output. Those options are recorded at the end of the experiment, not implemented here. Evaluation results-screen AI-run details stay out unless a later ticket asks for them. Per-request context/output/reasoning overrides stay out of 8004–8005. Completeness indicators (7027/7028) stay deferred.
 
@@ -35,3 +36,4 @@
 - **Model picker (8004/8005).** Catalogue list and estimate math are server-driven. Preview uses a chars÷4 input-token heuristic (including instructions) and an output-cost ceiling from `maxOutputTokens`. UI defaults the select to Luna (`gpt-6-luna`). Live estimates debounce the existing preview endpoint.
 - **The developer spends the model budget.** The guide sets a $15 estimated-cost stop, below the $50 development-key cap. Implementation does not call OpenAI.
 - **Workspace quiz visibility (8007–8009).** Characters, not words. Own content = notes + own documents (description excluded). Subtree = own + descendant topics. Always return both char fields; when there is no subtree they are equal. Subject quiz list uses `subjectId` (includes whole-subject quizzes); topic list reuses `topicIds` OR matching. Study panel reuses `GET /study-history` in compact form (no full Dashboard chrome).
+- **LHS density + document modal (8010).** Quizzes move under Documents on the LHS; Study history stays on the RHS. Document list shows filename + size only; open/edit/review/delete use a modal so the side column stays a list. Quiz page size 3 with heading total + inline Prev/Next; study recent results window of 3. No API changes.

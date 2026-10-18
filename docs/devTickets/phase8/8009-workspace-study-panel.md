@@ -1,6 +1,6 @@
 # 8009 — Workspace study panel and size summary
 
-**Status:** Ready  
+**Status:** Done  
 **Phase:** 8 (follow-on)  
 **Depends on:** 8006, 8007, 8008, 7013  
 **Relevant scope:** S03 Content Workspace; F03; F08 study history
@@ -34,12 +34,12 @@ On the Content Workspace selected subject or topic, show content size, a paginat
 - `client-webApp/src/styles/app.css`
 
 ## Acceptance checks
-- [ ] Selecting a subject shows size (own, and with-subtopics when topics exist), a paginated quiz list for that subject (including whole-subject quizzes), and study-history counts/recent results for that subject.
-- [ ] Selecting a topic shows size (own, and with-subtopics when nested descendants exist), quizzes matching that topic id (`topicId` or `topicIds` membership), and study history scoped to that topic (whole-subject quizzes excluded).
-- [ ] A subject with no own notes/docs but topic content shows 0 own and a non-zero with-subtopics total when 8008 fields are present.
-- [ ] Empty quiz and empty evaluated-history states are explicit; loading and error states do not break the rest of the detail panel.
-- [ ] Rows link to existing quiz/attempt routes; response and UI expose no answer keys, criteria, or source snapshots.
-- [ ] Client lint and production build pass. Narrow viewport (~390px) keeps the panel usable.
+- [x] Selecting a subject shows size (own, and with-subtopics when topics exist), a paginated quiz list for that subject (including whole-subject quizzes), and study-history counts/recent results for that subject.
+- [x] Selecting a topic shows size (own, and with-subtopics when nested descendants exist), quizzes matching that topic id (`topicId` or `topicIds` membership), and study history scoped to that topic (whole-subject quizzes excluded).
+- [x] A subject with no own notes/docs but topic content shows 0 own and a non-zero with-subtopics total when 8008 fields are present.
+- [x] Empty quiz and empty evaluated-history states are explicit; loading and error states do not break the rest of the detail panel.
+- [x] Rows link to existing quiz/attempt routes; response and UI expose no answer keys, criteria, or source snapshots.
+- [x] Client lint and production build pass. Narrow viewport (~390px) keeps the panel usable.
 
 ## Implementation notes
 8006 left a heading-only scaffold after Generate quiz. Quiz matching must stay aligned with 7013/7030/8007. Prefer small presentational components over importing the full `StudyHistorySection`.

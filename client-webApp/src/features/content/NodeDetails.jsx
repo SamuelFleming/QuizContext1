@@ -1,5 +1,8 @@
 import { useState } from "react";
+import ContentSizeSummary from "./ContentSizeSummary.jsx";
 import NotesEditor from "./NotesEditor.jsx";
+import ScopeQuizList from "./ScopeQuizList.jsx";
+import ScopeStudySummary from "./ScopeStudySummary.jsx";
 
 function Feedback({ message, source }) {
   if (!message.text || message.source !== source) return null;
@@ -18,6 +21,9 @@ export default function NodeDetails({
   kind,
   node,
   descendantCount,
+  subjectId,
+  topicId,
+  navigate,
   onRename,
   onSaveNotes,
   onDirtyChange,
@@ -76,6 +82,11 @@ export default function NodeDetails({
     <section className="detail-panel" aria-live="polite">
       <p className="eyebrow">{kind === "subject" ? "Subject" : "Topic"}</p>
       <h1>{node.name}</h1>
+      <ContentSizeSummary
+        ownContentChars={node.ownContentChars}
+        subtreeContentChars={node.subtreeContentChars}
+        hasSubtree={descendantCount > 0}
+      />
 
       <form className="inline-form" onSubmit={handleRename} noValidate>
         <label className="field grow">
@@ -139,7 +150,8 @@ export default function NodeDetails({
       />
 
       <section className="quiz-history-scaffold" aria-label="Quiz history">
-        <h2>Quiz history</h2>
+        <ScopeQuizList subjectId={subjectId} topicId={topicId} navigate={navigate} />
+        <ScopeStudySummary subjectId={subjectId} topicId={topicId} navigate={navigate} />
       </section>
 
       <div className="danger-row">

@@ -148,6 +148,9 @@ export default function ContentWorkspace({ subjectId, navigate }) {
           kind={kind}
           node={node}
           descendantCount={selectedTopic ? countDescendants(topics, selectedTopic.id) : topics.length}
+          subjectId={subjectId}
+          topicId={selectedTopic ? selectedTopic.id : null}
+          navigate={navigate}
           onRename={(name) => saveSelected({ name })}
           onSaveNotes={saveSelected}
           onDirtyChange={setNotesDirty}
