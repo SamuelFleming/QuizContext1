@@ -6,7 +6,9 @@ Default URL: http://localhost:5017
 
 ## Run
 
-From this folder (MongoDB + both APIs should already be running — see the [root README](../README.md)):
+**First time on this machine?** Install Node.js and MongoDB, create all three `.env` files, and start every process using the beginner walkthrough: [docs/getting-started-local.md](../docs/getting-started-local.md).
+
+Once dependencies exist and MongoDB + both APIs are already running, from this folder:
 
 ```bash
 cp .env.example .env   # if you have not already

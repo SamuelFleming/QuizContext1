@@ -7,7 +7,9 @@ Swagger: http://localhost:4017/api/docs
 
 ## Run
 
-Prerequisites: MongoDB and `server-data` running (see the [root README](../README.md)).
+**First time on this machine?** Install Node.js and MongoDB, create all three `.env` files, and start every process using the beginner walkthrough: [docs/getting-started-local.md](../docs/getting-started-local.md).
+
+Prerequisites for this app alone: MongoDB and `server-data` already running.
 
 ```bash
 cp .env.example .env   # if you have not already

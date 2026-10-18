@@ -7,7 +7,9 @@ Swagger: http://localhost:4007/api/docs
 
 ## Run
 
-Prerequisites: MongoDB reachable at `MONGODB_URI` (see the [root README](../README.md)).
+**First time on this machine?** Install Node.js and MongoDB, create all three `.env` files, and start every process using the beginner walkthrough: [docs/getting-started-local.md](../docs/getting-started-local.md).
+
+Prerequisite for this app alone: MongoDB reachable at `MONGODB_URI`.
 
 ```bash
 cp .env.example .env   # if you have not already
