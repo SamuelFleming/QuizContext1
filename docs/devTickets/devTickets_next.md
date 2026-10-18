@@ -12,7 +12,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 5 | OpenAI integration + AI-assisted descriptions | Done |
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
-| 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker | 8000–8006 done |
+| 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker; workspace quiz visibility + content size | 8000–8006 done; 8007–8009 ready |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -20,7 +20,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-Phase 8 tickets 8000–8006 are done. Plan the next phase or follow-on when needed.
+[8007](phase8/8007-quiz-subject-filter-api.md) — Quiz library `subjectId` filter (API). Then 8008 (parallel-capable), then 8009.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -57,6 +57,9 @@ Shared rules are in the [Phase 7 README](phase7/README.md). Quiz `AI_INVALID_OUT
 5. [8004](phase8/8004-quiz-model-selection-api.md) — `GET /ai/models`, optional `model` on preview/generate, preview cost estimates. Done. Depends on 8002 and 7018.
 6. [8005](phase8/8005-quiz-model-picker-ui.md) — generate-form model picker (default Luna) + live estimate summary. Done. Depends on 8004 and 7019.
 7. [8006](phase8/8006-workspace-tree-layout.md) — workspace topic tree cap/scroll, alphanumeric order, Quiz History scaffold. Done.
+8. [8007](phase8/8007-quiz-subject-filter-api.md) — `GET /quizzes` optional `subjectId` filter. Ready. Depends on 7030.
+9. [8008](phase8/8008-content-character-totals.md) — own and subtree content character totals on subject/topic reads. Ready. Depends on 7006; parallel with 8007.
+10. [8009](phase8/8009-workspace-study-panel.md) — workspace size summary, scoped quiz list, study history panel. Ready. Depends on 8006, 8007, 8008, and 7013.
 
 Shared rules are in the [Phase 8 README](phase8/README.md). Retries, a higher question limit, batching, prompt changes, and raw-output capture stay out until a later decision.
 
@@ -102,6 +105,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-7030, 7031, and 7032 are done. 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click remain pending manual UAT where noted.
+Next implement: **8007**, then **8008** (may run parallel with 8007), then **8009**. 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click remain pending manual UAT where noted.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.
