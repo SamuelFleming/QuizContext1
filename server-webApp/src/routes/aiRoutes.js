@@ -6,4 +6,5 @@ export const aiRoutes = Router();
 
 aiRoutes.use(requireAuth);
 
+aiRoutes.get("/models", aiController.listModels);
 aiRoutes.post("/description-suggestions", aiController.suggestDescription);

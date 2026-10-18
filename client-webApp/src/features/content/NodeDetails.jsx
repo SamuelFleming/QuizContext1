@@ -1,5 +1,7 @@
 import { useState } from "react";
+import ContentSizeSummary from "./ContentSizeSummary.jsx";
 import NotesEditor from "./NotesEditor.jsx";
+import ScopeStudySummary from "./ScopeStudySummary.jsx";
 
 function Feedback({ message, source }) {
   if (!message.text || message.source !== source) return null;
@@ -18,6 +20,9 @@ export default function NodeDetails({
   kind,
   node,
   descendantCount,
+  subjectId,
+  topicId,
+  navigate,
   onRename,
   onSaveNotes,
   onDirtyChange,
@@ -26,7 +31,6 @@ export default function NodeDetails({
   suggestionScope,
   onOpenProfile,
   onGenerateQuiz,
-  children,
 }) {
   const [name, setName] = useState(node.name);
   const [childName, setChildName] = useState("");
@@ -53,8 +57,8 @@ export default function NodeDetails({
     run("rename", () => onRename(name), "Name saved.");
   }
 
-  function handleAdd(event) {
-    event.preventDefault();
+  function handleAdd() {
+    if (!childName.trim()) return;
     run("add", async () => {
       await onAddTopic(childName);
       setChildName("");
@@ -70,10 +74,18 @@ export default function NodeDetails({
     run("delete", onDelete);
   }
 
+  const subtopicLabel =
+    descendantCount === 1 ? "1 nested topic" : `${descendantCount} nested topics`;
+
   return (
     <section className="detail-panel" aria-live="polite">
       <p className="eyebrow">{kind === "subject" ? "Subject" : "Topic"}</p>
       <h1>{node.name}</h1>
+      <ContentSizeSummary
+        ownContentChars={node.ownContentChars}
+        subtreeContentChars={node.subtreeContentChars}
+        hasSubtree={descendantCount > 0}
+      />
 
       <form className="inline-form" onSubmit={handleRename} noValidate>
         <label className="field grow">
@@ -98,34 +110,47 @@ export default function NodeDetails({
         onDirtyChange={onDirtyChange}
         suggestionScope={suggestionScope}
         onOpenProfile={onOpenProfile}
+        midContent={
+          <section className="subtopics-block" aria-label="Subtopics">
+            <div className="section-head">
+              <h2>Subtopics</h2>
+              <p className="usage-meta">{subtopicLabel}</p>
+            </div>
+            <div className="inline-form">
+              <label className="field grow">
+                <span>{kind === "subject" ? "New topic" : "New nested topic"}</span>
+                <input
+                  type="text"
+                  value={childName}
+                  onChange={(e) => setChildName(e.target.value)}
+                  maxLength={120}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAdd();
+                    }
+                  }}
+                />
+              </label>
+              <button type="button" disabled={busy === "add" || !childName.trim()} onClick={handleAdd}>
+                {busy === "add" ? "Adding…" : "Add topic"}
+              </button>
+            </div>
+            <Feedback message={message} source="add" />
+          </section>
+        }
+        extraActions={
+          onGenerateQuiz ? (
+            <button type="button" className="secondary" onClick={onGenerateQuiz}>
+              Generate quiz
+            </button>
+          ) : null
+        }
       />
 
-      {onGenerateQuiz ? (
-        <div className="button-row">
-          <button type="button" className="secondary" onClick={onGenerateQuiz}>
-            Generate quiz
-          </button>
-        </div>
-      ) : null}
-
-      {children}
-
-      <form className="inline-form" onSubmit={handleAdd} noValidate>
-        <label className="field grow">
-          <span>{kind === "subject" ? "New topic" : "New nested topic"}</span>
-          <input
-            type="text"
-            value={childName}
-            onChange={(e) => setChildName(e.target.value)}
-            maxLength={120}
-            required
-          />
-        </label>
-        <button type="submit" disabled={busy === "add"}>
-          {busy === "add" ? "Adding…" : "Add topic"}
-        </button>
-      </form>
-      <Feedback message={message} source="add" />
+      <section className="quiz-history-scaffold" aria-label="Study history">
+        <ScopeStudySummary subjectId={subjectId} topicId={topicId} navigate={navigate} />
+      </section>
 
       <div className="danger-row">
         <button

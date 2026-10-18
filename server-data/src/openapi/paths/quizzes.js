@@ -17,6 +17,13 @@ const listParameters = [
   },
   {
     in: "query",
+    name: "subjectId",
+    description:
+      "Limit to quizzes with this subjectId, including whole-subject quizzes. Combined with topicIds uses AND (subject match plus topic OR).",
+    schema: { type: "string" },
+  },
+  {
+    in: "query",
     name: "topicIds",
     description: "Repeat 1-30 unique topic IDs. Uses OR semantics across topicId and topicIds.",
     schema: { type: "array", maxItems: 30, uniqueItems: true, items: { type: "string" } },
@@ -56,7 +63,7 @@ export const quizPaths = {
     get: {
       summary: "List the caller's quizzes (keyed, internal only)",
       description:
-        "Filters, sorts, counts, and pages owner-scoped quizzes before loading attempt summaries. Omits questions and source snapshots.",
+        "Filters, sorts, counts, and pages owner-scoped quizzes before loading attempt summaries. Optional subjectId includes whole-subject quizzes; with topicIds both filters apply (AND). Omits questions and source snapshots.",
       parameters: [...keyed, ...listParameters],
       responses: {
         200: {

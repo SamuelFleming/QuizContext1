@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Subject } from "../models/subject.js";
-import { hasText } from "../utils/completeness.js";
+import { hasText, notesCharLength } from "../utils/completeness.js";
 import { countDocumentsByOwner, deleteDocumentsForSubject } from "./documentRepository.js";
 import { deleteTopicsForSubject, listTopicNotes } from "./topicRepository.js";
 
@@ -22,12 +22,20 @@ export async function subjectContentStats(userId, subjects) {
 
   const topicDocCount = new Map();
   const subjectDocCount = new Map();
+  const topicDocChars = new Map();
+  const subjectDocChars = new Map();
   for (const row of groups) {
     const subjectId = row._id.subjectId.toString();
     if (row._id.topicId) {
-      topicDocCount.set(row._id.topicId.toString(), row.count);
+      const topicId = row._id.topicId.toString();
+      topicDocCount.set(topicId, row.count);
+      topicDocChars.set(topicId, row.contentChars || 0);
     } else {
       subjectDocCount.set(subjectId, (subjectDocCount.get(subjectId) || 0) + row.count);
+      subjectDocChars.set(
+        subjectId,
+        (subjectDocChars.get(subjectId) || 0) + (row.contentChars || 0),
+      );
     }
   }
 
@@ -42,15 +50,22 @@ export async function subjectContentStats(userId, subjects) {
     const subjectId = subject._id.toString();
     const ownTopics = topicsBySubject.get(subjectId) || [];
     let contentCompleteTopicCount = 0;
+    let topicsOwnChars = 0;
     for (const topic of ownTopics) {
-      if (hasText(topic.notes) || (topicDocCount.get(topic._id.toString()) || 0) > 0) {
+      const topicId = topic._id.toString();
+      topicsOwnChars += notesCharLength(topic.notes) + (topicDocChars.get(topicId) || 0);
+      if (hasText(topic.notes) || (topicDocCount.get(topicId) || 0) > 0) {
         contentCompleteTopicCount += 1;
       }
     }
+    const ownContentChars =
+      notesCharLength(subject.notes) + (subjectDocChars.get(subjectId) || 0);
     stats.set(subjectId, {
       documentCount: subjectDocCount.get(subjectId) || 0,
       topicCount: ownTopics.length,
       contentCompleteTopicCount,
+      ownContentChars,
+      subtreeContentChars: ownContentChars + topicsOwnChars,
     });
   }
   return stats;

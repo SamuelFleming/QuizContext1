@@ -1,4 +1,5 @@
 import { estimateCostUsd, getAiConfig } from "../config/aiConfig.js";
+import { resolveModel } from "../constants/aiModels.js";
 import { createAiUsage } from "../services/dataApi/aiUsage.js";
 import { createStructuredResponse } from "./aiClient.js";
 import { createAiError } from "./aiErrors.js";
@@ -75,8 +76,11 @@ export async function runAiOperation({
   validate,
   maxOutputTokens,
   timeoutMs: timeoutOverride,
+  reasoningEffort = null,
+  model: requestedModel,
 }) {
-  const { model, timeoutMs: defaultTimeout } = getAiConfig();
+  const model = resolveModel({ requestedModel });
+  const { timeoutMs: defaultTimeout } = getAiConfig();
   const timeoutMs = timeoutOverride > 0 ? timeoutOverride : defaultTimeout;
   const usageScope = sanitizeScope(scope);
   let providerMode = null;
@@ -100,6 +104,7 @@ export async function runAiOperation({
       input,
       jsonSchema,
       maxOutputTokens,
+      reasoningEffort,
     });
 
     if (validate) {

@@ -1,50 +1,66 @@
-// Placeholder default; verify against OpenAI's live model catalogue before relying on it.
-const DEFAULT_MODEL = "gpt-4o-mini";
+import { getExperimentConfig } from "../constants/aiExperiment/baseline.js";
+import { getModelMeta } from "../constants/aiModels.js";
 
-// USD per 1M tokens. Placeholder figures to verify against current OpenAI pricing.
-// AI_PRICE_INPUT_PER_1M / AI_PRICE_OUTPUT_PER_1M override the entry for AI_MODEL_DEFAULT.
-const PRICES_PER_1M = {
-  "gpt-4o-mini": { input: 0.15, output: 0.6 },
-  "gpt-4.1-mini": { input: 0.4, output: 1.6 },
-};
+/** Rough English chars-per-token for pre-call approximations only — not provider billing. */
+export const CHARS_PER_TOKEN_ESTIMATE = 4;
 
 export function getAiConfig() {
+  const experiment = getExperimentConfig();
   return {
     enabled: process.env.AI_ENABLED === "true",
     applicationKey: process.env.OPENAI_API_KEY || "",
-    model: process.env.AI_MODEL_DEFAULT || DEFAULT_MODEL,
+    model: experiment.model,
     timeoutMs: Number(process.env.AI_TIMEOUT_MS) || 20000,
-    quizTimeoutMs: Number(process.env.AI_QUIZ_TIMEOUT_MS) || 60000,
-    appMonthlyTokenLimit: readLimit(process.env.AI_APP_MONTHLY_TOKEN_LIMIT),
+    quizTimeoutMs: experiment.quizTimeoutMs,
+    quizMaxOutputTokens: experiment.quizMaxOutputTokens,
+    reasoningEffort: experiment.reasoningEffort,
+    appMonthlyTokenLimit: experiment.appMonthlyTokenLimit,
   };
 }
 
-const DEFAULT_APP_MONTHLY_TOKEN_LIMIT = 100000;
-
-function readLimit(raw) {
-  const value = Number(raw);
-  return raw !== undefined && raw !== "" && Number.isFinite(value) && value >= 0
-    ? value
-    : DEFAULT_APP_MONTHLY_TOKEN_LIMIT;
-}
-
-function priceFor(model) {
-  const { model: defaultModel } = getAiConfig();
-  const input = Number(process.env.AI_PRICE_INPUT_PER_1M);
-  const output = Number(process.env.AI_PRICE_OUTPUT_PER_1M);
-  if (model === defaultModel && input > 0 && output > 0) {
-    return { input, output };
-  }
-  // Provider responses can name a dated snapshot, e.g. gpt-4o-mini-2024-07-18.
-  const known = Object.keys(PRICES_PER_1M).find((name) => model === name || model?.startsWith(`${name}-`));
-  return known ? PRICES_PER_1M[known] : null;
-}
-
 export function estimateCostUsd(model, { inputTokens, outputTokens }) {
-  const price = priceFor(model);
-  if (!price || inputTokens == null || outputTokens == null) {
+  const meta = getModelMeta(model);
+  if (!meta || inputTokens == null || outputTokens == null) {
     return null;
   }
-  const cost = (inputTokens * price.input + outputTokens * price.output) / 1_000_000;
+  const cost =
+    (inputTokens * meta.priceInputPer1M + outputTokens * meta.priceOutputPer1M) / 1_000_000;
   return Number(cost.toFixed(6));
+}
+
+export function estimateTokensFromChars(charCount) {
+  if (charCount == null || !Number.isFinite(charCount) || charCount < 0) {
+    return null;
+  }
+  return Math.ceil(charCount / CHARS_PER_TOKEN_ESTIMATE);
+}
+
+/**
+ * Pre-call quiz cost approximation from catalogue rates.
+ * Input tokens use chars÷4 (including instructions). Output $ is a ceiling at maxOutputTokens.
+ */
+export function estimateQuizPreviewCost(model, { inputChars, instructionsChars, maxOutputTokens }) {
+  const meta = getModelMeta(model);
+  const billableChars = (inputChars ?? 0) + (instructionsChars ?? 0);
+  const estimatedInputTokens = estimateTokensFromChars(billableChars);
+  if (!meta || estimatedInputTokens == null || maxOutputTokens == null) {
+    return {
+      estimatedInputTokens,
+      estimatedInputCostUsd: null,
+      estimatedOutputCostUsd: null,
+      estimatedTotalCostUsd: null,
+    };
+  }
+  const estimatedInputCostUsd = Number(
+    ((estimatedInputTokens * meta.priceInputPer1M) / 1_000_000).toFixed(6),
+  );
+  const estimatedOutputCostUsd = Number(
+    ((maxOutputTokens * meta.priceOutputPer1M) / 1_000_000).toFixed(6),
+  );
+  return {
+    estimatedInputTokens,
+    estimatedInputCostUsd,
+    estimatedOutputCostUsd,
+    estimatedTotalCostUsd: Number((estimatedInputCostUsd + estimatedOutputCostUsd).toFixed(6)),
+  };
 }

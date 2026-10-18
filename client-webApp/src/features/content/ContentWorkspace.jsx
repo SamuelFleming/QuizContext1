@@ -4,6 +4,7 @@ import { deleteSubject, getSubject, updateSubject } from "../../services/subject
 import { createTopic, deleteTopic, listTopics, updateTopic } from "../../services/topicService.js";
 import DocumentsPanel from "./DocumentsPanel.jsx";
 import NodeDetails from "./NodeDetails.jsx";
+import ScopeQuizList from "./ScopeQuizList.jsx";
 import TopicTree from "./TopicTree.jsx";
 import { ancestorIds, countDescendants } from "./topicTree.js";
 
@@ -128,19 +129,36 @@ export default function ContentWorkspace({ subjectId, navigate }) {
         </button>
       </div>
       <div className="workspace-body">
-        <TopicTree
-          subjectName={subject.name}
-          topics={topics}
-          selectedId={selectedId}
-          expanded={expanded}
-          onToggle={toggle}
-          onSelect={select}
-        />
+        <aside className="workspace-side">
+          <TopicTree
+            subjectName={subject.name}
+            topics={topics}
+            selectedId={selectedId}
+            expanded={expanded}
+            onToggle={toggle}
+            onSelect={select}
+          />
+          <DocumentsPanel
+            key={`docs:${selectedTopic ? selectedTopic.id : `subject:${subjectId}`}`}
+            subjectId={subjectId}
+            topicId={selectedTopic ? selectedTopic.id : null}
+            guard={guard}
+          />
+          <ScopeQuizList
+            key={`quizzes:${selectedTopic ? selectedTopic.id : `subject:${subjectId}`}`}
+            subjectId={subjectId}
+            topicId={selectedTopic ? selectedTopic.id : null}
+            navigate={navigate}
+          />
+        </aside>
         <NodeDetails
           key={`${kind}:${node.id}`}
           kind={kind}
           node={node}
           descendantCount={selectedTopic ? countDescendants(topics, selectedTopic.id) : topics.length}
+          subjectId={subjectId}
+          topicId={selectedTopic ? selectedTopic.id : null}
+          navigate={navigate}
           onRename={(name) => saveSelected({ name })}
           onSaveNotes={saveSelected}
           onDirtyChange={setNotesDirty}
@@ -157,13 +175,7 @@ export default function ContentWorkspace({ subjectId, navigate }) {
             if (selectedTopic) params.set("topicId", selectedTopic.id);
             navigate(`/quizzes/new?${params.toString()}`);
           }}
-        >
-          <DocumentsPanel
-            subjectId={subjectId}
-            topicId={selectedTopic ? selectedTopic.id : null}
-            guard={guard}
-          />
-        </NodeDetails>
+        />
       </div>
     </div>
   );

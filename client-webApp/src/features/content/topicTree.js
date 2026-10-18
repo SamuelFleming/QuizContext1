@@ -7,6 +7,11 @@ export function childrenByParent(topics) {
     if (!map.has(key)) map.set(key, []);
     map.get(key).push(topic);
   }
+  for (const siblings of map.values()) {
+    siblings.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" }),
+    );
+  }
   return map;
 }
 

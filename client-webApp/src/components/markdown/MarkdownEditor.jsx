@@ -2,7 +2,7 @@ import { useId, useState } from "react";
 import MarkdownPreview from "./MarkdownPreview.jsx";
 
 // Textarea with a Write/Preview toggle and a character count against maxLength.
-export default function MarkdownEditor({ label, value, onChange, maxLength, rows = 8 }) {
+export default function MarkdownEditor({ label, value, onChange, maxLength, rows = 8, headActions }) {
   const id = useId();
   const [mode, setMode] = useState("write");
   const over = maxLength && value.length > maxLength;
@@ -10,9 +10,12 @@ export default function MarkdownEditor({ label, value, onChange, maxLength, rows
   return (
     <div className="md-editor">
       <div className="md-editor-head">
-        <label htmlFor={id} className="md-editor-label">
-          {label}
-        </label>
+        <div className="md-editor-label-row">
+          <label htmlFor={id} className="md-editor-label">
+            {label}
+          </label>
+          {headActions}
+        </div>
         <div className="md-tabs" role="group" aria-label={`${label} view`}>
           <button
             type="button"

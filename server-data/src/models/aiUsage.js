@@ -10,6 +10,11 @@ const contextSummarySchema = new mongoose.Schema(
     sourcesIncluded: { type: Number, min: 0, required: true },
     sourcesTruncated: { type: Number, min: 0, required: true },
     sourcesExcluded: { type: Number, min: 0, required: true },
+    // Nullable so pre-8001 documents need no migration. Missing means unknown, not zero.
+    multipleChoiceCount: { type: Number, min: 0, default: null },
+    shortAnswerCount: { type: Number, min: 0, default: null },
+    // Non-blank short answers sent to the model on answer_evaluation; null on other ops.
+    shortAnswerAiCount: { type: Number, min: 0, default: null },
   },
   { _id: false },
 );
@@ -78,6 +83,9 @@ export function toAiUsage(doc) {
         sourcesIncluded: doc.context.sourcesIncluded,
         sourcesTruncated: doc.context.sourcesTruncated,
         sourcesExcluded: doc.context.sourcesExcluded,
+        multipleChoiceCount: doc.context.multipleChoiceCount ?? null,
+        shortAnswerCount: doc.context.shortAnswerCount ?? null,
+        shortAnswerAiCount: doc.context.shortAnswerAiCount ?? null,
       }
     : null;
   const scope = doc.scope

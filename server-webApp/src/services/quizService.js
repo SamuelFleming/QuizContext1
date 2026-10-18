@@ -1,11 +1,14 @@
 import { randomUUID } from "node:crypto";
-import { getAiConfig } from "../config/aiConfig.js";
+import { estimateQuizPreviewCost, getAiConfig } from "../config/aiConfig.js";
+import { getContextConfig } from "../config/contextConfig.js";
 import { CONTEXT_MODES, DEFAULT_CONTEXT_MODE } from "../constants/contextModes.js";
+import { resolveModel } from "../constants/aiModels.js";
 import {
   CONTENT_NAME_MAX,
   QUIZ_DIFFICULTIES,
   QUIZ_QUESTIONS_MAX,
   QUIZ_QUESTIONS_MIN,
+  QUIZ_SNAPSHOT_MAX,
   QUIZ_TOPIC_IDS_MAX,
   QUIZ_TOPIC_PATH_MAX,
 } from "../constants/validation.js";
@@ -14,6 +17,7 @@ import * as prompt from "../openai/prompts/quizGeneration.js";
 import { createHttpError } from "../utils/httpError.js";
 import { assembleContext } from "./contextService.js";
 import * as quizzesApi from "./dataApi/quizzes.js";
+import * as subjectsApi from "./dataApi/subjects.js";
 import * as topicsApi from "./dataApi/topics.js";
 import { toStudyView } from "./quizStudyView.js";
 
@@ -52,6 +56,15 @@ function readOptionalTitle(raw) {
   return title;
 }
 
+function readOptionalModel(raw) {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== "string") {
+    throw createHttpError(400, "model must be a string");
+  }
+  const model = raw.trim();
+  return model || null;
+}
+
 function readQueryInteger(raw, name, min, max, fallback) {
   if (raw === undefined) return fallback;
   if (typeof raw !== "string" || !/^\d+$/.test(raw)) {
@@ -84,6 +97,14 @@ function readListTopicIds(raw) {
   return topicIds;
 }
 
+function readListSubjectId(raw) {
+  if (raw === undefined) return undefined;
+  if (typeof raw !== "string" || !raw.trim() || !/^[a-f\d]{24}$/i.test(raw.trim())) {
+    throw createHttpError(400, "subjectId must be a subject id");
+  }
+  return raw.trim().toLowerCase();
+}
+
 function readListQuery(query = {}) {
   const page = readQueryInteger(query.page, "page", 1, Number.MAX_SAFE_INTEGER, 1);
   const limit = readQueryInteger(query.limit, "limit", 1, 25, 25);
@@ -91,6 +112,7 @@ function readListQuery(query = {}) {
   if (typeof sort !== "string" || !QUIZ_SORTS.includes(sort)) {
     throw createHttpError(400, `sort must be one of ${QUIZ_SORTS.join(", ")}`);
   }
+  const subjectId = readListSubjectId(query.subjectId);
   const topicIds = readListTopicIds(query.topicIds);
   const questionCount = readQueryInteger(
     query.questionCount,
@@ -133,6 +155,7 @@ function readListQuery(query = {}) {
     page,
     limit,
     sort,
+    subjectId,
     topicIds,
     questionCount,
     multipleChoiceCount,
@@ -176,6 +199,7 @@ function readGenerateInput(body) {
     shortAnswerCount,
     difficulty = "medium",
     contextMode = DEFAULT_CONTEXT_MODE,
+    model: rawModel,
   } = body || {};
 
   if (typeof subjectId !== "string" || !subjectId) {
@@ -207,6 +231,9 @@ function readGenerateInput(body) {
   if (!CONTEXT_MODES.includes(contextMode)) {
     throw createHttpError(400, `contextMode must be one of ${CONTEXT_MODES.join(", ")}`);
   }
+  const requestedModel = readOptionalModel(rawModel);
+  // Resolve early so unknown explicit models fail before context assembly.
+  const model = resolveModel({ requestedModel });
   return {
     subjectId,
     topicId: topicIds ? null : topicId || null,
@@ -216,6 +243,8 @@ function readGenerateInput(body) {
     shortAnswerCount: sa,
     difficulty,
     contextMode,
+    requestedModel,
+    model,
   };
 }
 
@@ -296,6 +325,12 @@ async function prepareGeneration(userId, body) {
       { errorCode: "CONTEXT_INSUFFICIENT" },
     );
   }
+  if (context.text.length > QUIZ_SNAPSHOT_MAX) {
+    throw createHttpError(
+      400,
+      `Assembled source context is too large to save as a quiz snapshot (${context.text.length} characters; max ${QUIZ_SNAPSHOT_MAX}). Reduce the selection or the context budget.`,
+    );
+  }
 
   const input = prompt.buildInput({
     selectionType: context.selection.type,
@@ -317,6 +352,9 @@ async function prepareGeneration(userId, body) {
     sourcesIncluded: countStatus(context.manifest, "included"),
     sourcesTruncated: countStatus(context.manifest, "truncated"),
     sourcesExcluded: countStatus(context.manifest, "excluded"),
+    multipleChoiceCount: settings.multipleChoiceCount,
+    shortAnswerCount: settings.shortAnswerCount,
+    shortAnswerAiCount: null,
   };
   const runScope = {
     subjectId: settings.subjectId,
@@ -336,10 +374,23 @@ async function prepareGeneration(userId, body) {
 
 export async function previewQuiz(userId, body) {
   const prepared = await prepareGeneration(userId, body);
+  const maxOutputTokens = getAiConfig().quizMaxOutputTokens;
+  const contextMaxChars = getContextConfig().maxChars;
+  const estimates = estimateQuizPreviewCost(prepared.settings.model, {
+    inputChars: prepared.input.length,
+    instructionsChars: prompt.INSTRUCTIONS.length,
+    maxOutputTokens,
+  });
   return {
     selectionName: prepared.context.selection.name,
     inputChars: prepared.input.length,
-    maxOutputTokens: prompt.MAX_OUTPUT_TOKENS,
+    maxOutputTokens,
+    contextMaxChars,
+    model: prepared.settings.model,
+    estimatedInputTokens: estimates.estimatedInputTokens,
+    estimatedInputCostUsd: estimates.estimatedInputCostUsd,
+    estimatedOutputCostUsd: estimates.estimatedOutputCostUsd,
+    estimatedTotalCostUsd: estimates.estimatedTotalCostUsd,
     context: prepared.runContext,
     sources: {
       topics: sourceCounts(prepared.context.manifest, "topic"),
@@ -352,7 +403,7 @@ export async function generateQuiz(userId, body) {
   const requestedTitle = readOptionalTitle(body?.title);
   const { settings, context, input, allowedSourceIds, runContext, runScope } =
     await prepareGeneration(userId, body);
-  const { quizTimeoutMs } = getAiConfig();
+  const { quizTimeoutMs, quizMaxOutputTokens, reasoningEffort } = getAiConfig();
 
   const result = await runAiOperation({
     userId,
@@ -369,8 +420,11 @@ export async function generateQuiz(userId, body) {
         shortAnswerCount: settings.shortAnswerCount,
         allowedSourceIds,
       }),
-    maxOutputTokens: prompt.MAX_OUTPUT_TOKENS,
+    maxOutputTokens: quizMaxOutputTokens,
     timeoutMs: quizTimeoutMs,
+    reasoningEffort,
+    // Pass the request value (or omit) so empty still uses experiment default without re-gating.
+    ...(settings.requestedModel ? { model: settings.requestedModel } : {}),
   });
 
   const title = requestedTitle || context.selection.name.slice(0, CONTENT_NAME_MAX);
@@ -413,8 +467,13 @@ export async function renameQuiz(userId, quizId, body) {
   return toStudyView(await quizzesApi.updateQuizTitle(userId, quizId, title));
 }
 
-export function listQuizzes(userId, query) {
-  return quizzesApi.listQuizzes(userId, readListQuery(query));
+export async function listQuizzes(userId, query) {
+  const filters = readListQuery(query);
+  if (filters.subjectId) {
+    // Unknown or another user's subject is a 404 from the data API.
+    await subjectsApi.getSubject(userId, filters.subjectId);
+  }
+  return quizzesApi.listQuizzes(userId, filters);
 }
 
 export function listQuizAttempts(userId, quizId) {

@@ -36,5 +36,7 @@ export function toSubject(doc, stats) {
     ...contentFacts(doc, stats.documentCount),
     topicCount: stats.topicCount,
     contentCompleteTopicCount: stats.contentCompleteTopicCount,
+    ownContentChars: stats.ownContentChars,
+    subtreeContentChars: stats.subtreeContentChars,
   };
 }

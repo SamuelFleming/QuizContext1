@@ -105,6 +105,16 @@ export const components = {
           description:
             "Own notes are non-empty after trim, or documentCount is at least 1. Child content does not count.",
         },
+        ownContentChars: {
+          type: "integer",
+          description:
+            "Character length of own notes (as stored) plus content lengths of documents on this topic only. Description excluded.",
+        },
+        subtreeContentChars: {
+          type: "integer",
+          description:
+            "ownContentChars plus the same measure for every nested descendant topic. Equals ownContentChars when there are no descendants.",
+        },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -166,6 +176,16 @@ export const components = {
         },
         topicCount: { type: "integer" },
         contentCompleteTopicCount: { type: "integer" },
+        ownContentChars: {
+          type: "integer",
+          description:
+            "Character length of subject notes (as stored) plus content lengths of subject-level documents (topicId null). Description excluded.",
+        },
+        subtreeContentChars: {
+          type: "integer",
+          description:
+            "ownContentChars plus the same measure for every topic under this subject. Equals ownContentChars when there are no topics.",
+        },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -212,7 +232,11 @@ export const components = {
         promptVersion: { type: "string" },
         questions: { type: "array", items: { $ref: "#/components/schemas/QuizQuestion" } },
         sourceManifest: { type: "array", items: { $ref: "#/components/schemas/ContextManifestEntry" } },
-        sourceSnapshot: { type: "string" },
+        sourceSnapshot: {
+          type: "string",
+          maxLength: 250000,
+          description: "Frozen labelled context text used for later evaluation (max 250000).",
+        },
       },
     },
     QuizQuestion: {
@@ -404,6 +428,27 @@ export const components = {
         sourcesIncluded: { type: "integer" },
         sourcesTruncated: { type: "integer" },
         sourcesExcluded: { type: "integer" },
+        multipleChoiceCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "Quiz multiple-choice total for quiz_generation (requested) or answer_evaluation (stored on the quiz). Null when unknown or not applicable.",
+        },
+        shortAnswerCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "Quiz short-answer total for quiz_generation (requested) or answer_evaluation (stored on the quiz). Null when unknown or not applicable.",
+        },
+        shortAnswerAiCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "On answer_evaluation only: number of non-blank short answers sent to the model. Null on other operations and on pre-8001 rows. Distinct from shortAnswerCount.",
+        },
       },
     },
     AiUsageScope: {

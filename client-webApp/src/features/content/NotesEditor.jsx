@@ -1,18 +1,27 @@
 import { useEffect, useState } from "react";
 import MarkdownEditor from "../../components/markdown/MarkdownEditor.jsx";
-import DescriptionSuggestion from "./DescriptionSuggestion.jsx";
+import DescriptionSuggestion, { initialSuggestionState } from "./DescriptionSuggestion.jsx";
 
 const DESCRIPTION_MAX = 2000;
 const NOTES_MAX = 50000;
 
 // Description and notes for the selected subject or topic, saved together. An accepted AI
 // suggestion saves the description alone and leaves unsaved notes in place.
-export default function NotesEditor({ node, onSave, onDirtyChange, suggestionScope, onOpenProfile }) {
+export default function NotesEditor({
+  node,
+  onSave,
+  onDirtyChange,
+  suggestionScope,
+  onOpenProfile,
+  midContent,
+  extraActions,
+}) {
   const [description, setDescription] = useState(node.description || "");
   const [notes, setNotes] = useState(node.notes || "");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [suggestionPending, setSuggestionPending] = useState(false);
+  const suggestionShared = useState(initialSuggestionState);
 
   const dirty = description !== (node.description || "") || notes !== (node.notes || "");
 
@@ -49,6 +58,16 @@ export default function NotesEditor({ node, onSave, onDirtyChange, suggestionSco
     setMessage({ type: "success", text: "Description saved." });
   }
 
+  const suggestionProps = suggestionScope
+    ? {
+        ...suggestionScope,
+        shared: suggestionShared,
+        onAccept: acceptSuggestion,
+        onPendingChange: setSuggestionPending,
+        onOpenProfile,
+      }
+    : null;
+
   return (
     <form className="notes-form" onSubmit={handleSubmit} noValidate>
       <MarkdownEditor
@@ -57,15 +76,12 @@ export default function NotesEditor({ node, onSave, onDirtyChange, suggestionSco
         onChange={setDescription}
         maxLength={DESCRIPTION_MAX}
         rows={3}
+        headActions={
+          suggestionProps ? <DescriptionSuggestion {...suggestionProps} triggerOnly /> : null
+        }
       />
-      {suggestionScope ? (
-        <DescriptionSuggestion
-          {...suggestionScope}
-          onAccept={acceptSuggestion}
-          onPendingChange={setSuggestionPending}
-          onOpenProfile={onOpenProfile}
-        />
-      ) : null}
+      {suggestionProps ? <DescriptionSuggestion {...suggestionProps} panelOnly /> : null}
+      {midContent}
       <MarkdownEditor
         label="Notes"
         value={notes}
@@ -81,10 +97,11 @@ export default function NotesEditor({ node, onSave, onDirtyChange, suggestionSco
           {message.text}
         </p>
       ) : null}
-      <div className="button-row">
+      <div className="button-row notes-actions">
         <button type="submit" disabled={saving || !dirty}>
           {saving ? "Saving…" : "Save notes"}
         </button>
+        {extraActions}
         {dirty ? <span className="usage-meta">Unsaved changes</span> : null}
       </div>
     </form>

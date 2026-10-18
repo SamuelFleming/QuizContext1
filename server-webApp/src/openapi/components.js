@@ -13,7 +13,7 @@ export const components = {
     },
     AiError: {
       description:
-        "Typed AI failure: AI_KEY_MISSING 400, AI_INVALID_OUTPUT 422, AI_RATE_LIMITED or AI_LIMIT_REACHED 429, AI_AUTH_FAILED or AI_PROVIDER_ERROR 502, AI_DISABLED 503, AI_TIMEOUT 504",
+        "Typed AI failure: AI_KEY_MISSING or AI_UNKNOWN_MODEL 400, AI_INVALID_OUTPUT 422, AI_RATE_LIMITED or AI_LIMIT_REACHED 429, AI_AUTH_FAILED or AI_PROVIDER_ERROR 502, AI_DISABLED 503, AI_TIMEOUT 504",
       content: {
         "application/json": {
           schema: {
@@ -25,6 +25,7 @@ export const components = {
                 enum: [
                   "AI_DISABLED",
                   "AI_KEY_MISSING",
+                  "AI_UNKNOWN_MODEL",
                   "AI_AUTH_FAILED",
                   "AI_TIMEOUT",
                   "AI_RATE_LIMITED",
@@ -130,6 +131,16 @@ export const components = {
           description:
             "Own notes are non-empty after trim, or documentCount is at least 1. Child content does not count.",
         },
+        ownContentChars: {
+          type: "integer",
+          description:
+            "Character length of own notes (as stored) plus content lengths of documents on this topic only. Description excluded.",
+        },
+        subtreeContentChars: {
+          type: "integer",
+          description:
+            "ownContentChars plus the same measure for every nested descendant topic. Equals ownContentChars when there are no descendants.",
+        },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -201,6 +212,16 @@ export const components = {
         },
         topicCount: { type: "integer" },
         contentCompleteTopicCount: { type: "integer" },
+        ownContentChars: {
+          type: "integer",
+          description:
+            "Character length of subject notes (as stored) plus content lengths of subject-level documents (topicId null). Description excluded.",
+        },
+        subtreeContentChars: {
+          type: "integer",
+          description:
+            "ownContentChars plus the same measure for every topic under this subject. Equals ownContentChars when there are no topics.",
+        },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
       },
@@ -312,6 +333,27 @@ export const components = {
         sourcesIncluded: { type: "integer" },
         sourcesTruncated: { type: "integer" },
         sourcesExcluded: { type: "integer" },
+        multipleChoiceCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "Quiz multiple-choice total for quiz_generation (requested) or answer_evaluation (stored on the quiz). Null when unknown or not applicable.",
+        },
+        shortAnswerCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "Quiz short-answer total for quiz_generation (requested) or answer_evaluation (stored on the quiz). Null when unknown or not applicable.",
+        },
+        shortAnswerAiCount: {
+          type: "integer",
+          nullable: true,
+          minimum: 0,
+          description:
+            "On answer_evaluation only: number of non-blank short answers sent to the model. Null on other operations and on pre-8001 rows. Distinct from shortAnswerCount.",
+        },
       },
     },
     AiUsageScope: {
@@ -408,6 +450,12 @@ export const components = {
           enum: ["very_strict", "targeted", "loose"],
           default: "targeted",
         },
+        model: {
+          type: "string",
+          nullable: true,
+          description:
+            "Optional OpenAI model id from the catalogue (GET /ai/models). Omitted or blank uses the active experiment run model. Unknown ids return AI_UNKNOWN_MODEL.",
+        },
       },
     },
     QuizGenerateInput: {
@@ -457,12 +505,64 @@ export const components = {
         pagination: { $ref: "#/components/schemas/Pagination" },
       },
     },
+    AiModel: {
+      type: "object",
+      required: ["id", "displayName", "priceInputPer1M", "priceOutputPer1M"],
+      properties: {
+        id: { type: "string", description: "OpenAI model id used in generate/preview requests." },
+        displayName: { type: "string" },
+        priceInputPer1M: {
+          type: "number",
+          description: "Catalogue USD per 1M input tokens (estimates only).",
+        },
+        priceOutputPer1M: {
+          type: "number",
+          description: "Catalogue USD per 1M output tokens (estimates only).",
+        },
+      },
+    },
     QuizPreview: {
       type: "object",
       properties: {
         selectionName: { type: "string" },
-        inputChars: { type: "integer", minimum: 0 },
+        inputChars: {
+          type: "integer",
+          minimum: 0,
+          description: "Character length of the assembled user input channel (excludes system instructions).",
+        },
         maxOutputTokens: { type: "integer", minimum: 1 },
+        contextMaxChars: {
+          type: "integer",
+          minimum: 1,
+          description: "Active experiment context character budget (source packing cap).",
+        },
+        model: {
+          type: "string",
+          description: "Resolved model id that would be used for generation.",
+        },
+        estimatedInputTokens: {
+          type: "integer",
+          minimum: 0,
+          nullable: true,
+          description:
+            "Approximation only: ceil((inputChars + instructions chars) / 4). Not provider billing tokens.",
+        },
+        estimatedInputCostUsd: {
+          type: "number",
+          nullable: true,
+          description: "Approximation from estimatedInputTokens × catalogue input rate.",
+        },
+        estimatedOutputCostUsd: {
+          type: "number",
+          nullable: true,
+          description:
+            "Upper-bound approximation: maxOutputTokens × catalogue output rate (actual output is usually lower).",
+        },
+        estimatedTotalCostUsd: {
+          type: "number",
+          nullable: true,
+          description: "estimatedInputCostUsd + estimatedOutputCostUsd (output is a ceiling).",
+        },
         context: { $ref: "#/components/schemas/AiUsageContext" },
         sources: {
           type: "object",

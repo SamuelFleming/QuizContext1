@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AiRunDetails from "../../components/ai/AiRunDetails.jsx";
 import { useAuth } from "../../context/useAuth.js";
 import { getAiUsage } from "../../services/settingsService.js";
+import { formatQuestionTypeCounts } from "../../utils/questionTypeCounts.js";
 
 const formatCost = (value) => `$${(value ?? 0).toFixed(4)}`;
 const formatNumber = (value) => (value ?? 0).toLocaleString();
@@ -27,6 +28,7 @@ function TotalsRow({ label, totals }) {
 
 function UsageItem({ item }) {
   const statusText = item.status === "succeeded" ? "OK" : item.errorCode || "Failed";
+  const questionCounts = formatQuestionTypeCounts(item);
   return (
     <li>
       <details className="usage-disclosure">
@@ -41,7 +43,8 @@ function UsageItem({ item }) {
             <span className="usage-meta">
               {item.model || "Model unavailable"} · Input {formatAiMetric(item.inputTokens)} tokens · Output{" "}
               {formatAiMetric(item.outputTokens)} tokens
-              {item.inputChars == null ? "" : ` · ${formatAiMetric(item.inputChars)} input characters`} · Cost{" "}
+              {item.inputChars == null ? "" : ` · ${formatAiMetric(item.inputChars)} input characters`}
+              {questionCounts ? ` · ${questionCounts}` : ""} · Cost{" "}
               {item.estimatedCostUsd == null ? "—" : formatCost(item.estimatedCostUsd)} ·{" "}
               {formatTime(item.createdAt)}
             </span>

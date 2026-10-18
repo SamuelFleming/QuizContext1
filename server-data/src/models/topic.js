@@ -26,7 +26,7 @@ const topicSchema = new mongoose.Schema(
 
 export const Topic = mongoose.models.Topic || mongoose.model("Topic", topicSchema);
 
-export function toTopic(doc, documentCount) {
+export function toTopic(doc, stats) {
   if (!doc) {
     return null;
   }
@@ -40,6 +40,11 @@ export function toTopic(doc, documentCount) {
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   };
-  if (documentCount === undefined) return topic;
-  return { ...topic, ...contentFacts(doc, documentCount) };
+  if (!stats) return topic;
+  return {
+    ...topic,
+    ...contentFacts(doc, stats.documentCount),
+    ownContentChars: stats.ownContentChars,
+    subtreeContentChars: stats.subtreeContentChars,
+  };
 }

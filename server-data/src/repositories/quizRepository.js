@@ -16,9 +16,13 @@ const SUMMARY_FIELDS = "title subjectName topicPath contextMode difficulty multi
 
 export async function listQuizzes(
   userId,
-  { page, limit, sort, topicIds, questionCount, multipleChoiceCount, shortAnswerCount },
+  { page, limit, sort, subjectId, topicIds, questionCount, multipleChoiceCount, shortAnswerCount },
 ) {
   const match = { userId: new mongoose.Types.ObjectId(userId) };
+  // subjectId is stored as a string on Quiz (same as topicId / topicIds).
+  if (subjectId) {
+    match.subjectId = subjectId;
+  }
   if (topicIds.length) {
     match.$or = [{ topicId: { $in: topicIds } }, { topicIds: { $in: topicIds } }];
   }

@@ -17,12 +17,14 @@ export const listQuizzes = ({
   page = 1,
   limit = 25,
   sort = "newest",
+  subjectId,
   topicIds = [],
   questionCount,
   multipleChoiceCount,
   shortAnswerCount,
 } = {}) => {
   const query = new URLSearchParams({ page: String(page), limit: String(limit), sort });
+  if (subjectId) query.set("subjectId", subjectId);
   for (const topicId of topicIds) query.append("topicIds", topicId);
   for (const [name, value] of Object.entries({
     questionCount,

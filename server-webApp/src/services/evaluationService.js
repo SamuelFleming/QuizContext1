@@ -19,7 +19,7 @@ function allowedSourceIds(quiz) {
   );
 }
 
-function contextCounts(quiz) {
+function contextCounts(quiz, { shortAnswerAiCount = null } = {}) {
   const manifest = quiz.sourceManifest || [];
   return {
     contextMode: quiz.contextMode,
@@ -27,6 +27,9 @@ function contextCounts(quiz) {
     sourcesIncluded: manifest.filter((entry) => entry.status === "included").length,
     sourcesTruncated: manifest.filter((entry) => entry.status === "truncated").length,
     sourcesExcluded: manifest.filter((entry) => entry.status === "excluded").length,
+    multipleChoiceCount: quiz.multipleChoiceCount ?? null,
+    shortAnswerCount: quiz.shortAnswerCount ?? null,
+    shortAnswerAiCount,
   };
 }
 
@@ -95,7 +98,7 @@ export async function buildEvaluation(userId, quiz, attempt) {
       userId,
       operation: prompt.OPERATION,
       promptVersion: prompt.PROMPT_VERSION,
-      context: contextCounts(quiz),
+      context: contextCounts(quiz, { shortAnswerAiCount: pending.length }),
       scope: { quizId: quiz.id, attemptId: attempt.id },
       instructions: prompt.INSTRUCTIONS,
       input: prompt.buildInput({

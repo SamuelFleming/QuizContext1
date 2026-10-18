@@ -1,4 +1,31 @@
 export const aiPaths = {
+  "/ai/models": {
+    get: {
+      summary: "List AI models available for quiz generation",
+      description:
+        "Returns the server-webApp model catalogue (id, display name, and USD per 1M input/output rates). Rates are estimates only. Authenticated callers use these ids in quiz preview and generate.",
+      security: [{ bearerAuth: [] }],
+      responses: {
+        200: {
+          description: "Catalogue models",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "array",
+                    items: { $ref: "#/components/schemas/AiModel" },
+                  },
+                },
+              },
+            },
+          },
+        },
+        401: { $ref: "#/components/responses/Unauthorized" },
+      },
+    },
+  },
   "/ai/description-suggestions": {
     post: {
       summary: "Suggest a description for a subject or topic from the user's own content",

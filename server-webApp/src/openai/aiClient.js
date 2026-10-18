@@ -41,6 +41,30 @@ function parseOutput(response) {
   }
 }
 
+export function buildStructuredRequest({
+  model,
+  instructions,
+  input,
+  jsonSchema,
+  maxOutputTokens,
+  reasoningEffort = null,
+}) {
+  const request = {
+    model,
+    instructions,
+    input,
+    max_output_tokens: maxOutputTokens,
+    store: false,
+    text: {
+      format: { type: "json_schema", name: jsonSchema.name, schema: jsonSchema.schema, strict: true },
+    },
+  };
+  if (typeof reasoningEffort === "string") {
+    request.reasoning = { effort: reasoningEffort };
+  }
+  return request;
+}
+
 // One schema-constrained request. A new SDK client is built per call so a per-user key is
 // never served from a cache built for another key.
 export async function createStructuredResponse({
@@ -51,21 +75,22 @@ export async function createStructuredResponse({
   input,
   jsonSchema,
   maxOutputTokens = 1000,
+  reasoningEffort = null,
 }) {
   const client = new OpenAI({ apiKey, maxRetries: 0, timeout: timeoutMs });
   const startedAt = Date.now();
   let response;
   try {
-    response = await client.responses.create({
-      model,
-      instructions,
-      input,
-      max_output_tokens: maxOutputTokens,
-      store: false,
-      text: {
-        format: { type: "json_schema", name: jsonSchema.name, schema: jsonSchema.schema, strict: true },
-      },
-    });
+    response = await client.responses.create(
+      buildStructuredRequest({
+        model,
+        instructions,
+        input,
+        jsonSchema,
+        maxOutputTokens,
+        reasoningEffort,
+      }),
+    );
     return {
       data: parseOutput(response),
       model: response?.model || model,

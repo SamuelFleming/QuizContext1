@@ -342,6 +342,14 @@ function readListTopicIds(raw) {
   return { value: topicIds };
 }
 
+function readListSubjectId(raw) {
+  if (raw === undefined) return { value: undefined };
+  if (typeof raw !== "string" || !raw.trim() || !mongoose.isValidObjectId(raw.trim())) {
+    return { error: "subjectId must be a subject id" };
+  }
+  return { value: raw.trim() };
+}
+
 function readListQuery(query) {
   const page = readQueryInteger(query.page, "page", 1, Number.MAX_SAFE_INTEGER, 1);
   if (page.error) return page;
@@ -351,6 +359,8 @@ function readListQuery(query) {
   if (typeof sort !== "string" || !QUIZ_SORTS.includes(sort)) {
     return { error: `sort must be one of ${QUIZ_SORTS.join(", ")}` };
   }
+  const subjectId = readListSubjectId(query.subjectId);
+  if (subjectId.error) return subjectId;
   const topicIds = readListTopicIds(query.topicIds);
   if (topicIds.error) return topicIds;
   const questionCount = readQueryInteger(
@@ -397,6 +407,7 @@ function readListQuery(query) {
       page: page.value,
       limit: limit.value,
       sort,
+      subjectId: subjectId.value,
       topicIds: topicIds.value,
       questionCount: total,
       multipleChoiceCount: mc,
