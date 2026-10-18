@@ -182,6 +182,12 @@ export default function QuizDetailPage({ quizId, navigate }) {
           </li>
           <li>Created {new Date(quiz.createdAt).toLocaleString()}</li>
         </ul>
+        {quiz.quizInstructions ? (
+          <section className="quiz-instructions" aria-labelledby="quiz-instructions-title">
+            <h2 id="quiz-instructions-title">Quiz instructions</h2>
+            <p>{quiz.quizInstructions}</p>
+          </section>
+        ) : null}
         <ContextNotice context={quiz.context} />
         {startError ? (
           <p className="error-text" role="alert">

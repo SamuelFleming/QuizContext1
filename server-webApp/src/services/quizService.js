@@ -6,6 +6,7 @@ import { resolveModel } from "../constants/aiModels.js";
 import {
   CONTENT_NAME_MAX,
   QUIZ_DIFFICULTIES,
+  QUIZ_INSTRUCTIONS_MAX,
   QUIZ_QUESTIONS_MAX,
   QUIZ_QUESTIONS_MIN,
   QUIZ_SNAPSHOT_MAX,
@@ -63,6 +64,22 @@ function readOptionalModel(raw) {
   }
   const model = raw.trim();
   return model || null;
+}
+
+function readOptionalQuizInstructions(raw) {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== "string") {
+    throw createHttpError(400, "quizInstructions must be a string");
+  }
+  const quizInstructions = raw.trim();
+  if (!quizInstructions) return null;
+  if (quizInstructions.length > QUIZ_INSTRUCTIONS_MAX) {
+    throw createHttpError(
+      400,
+      `quizInstructions must be at most ${QUIZ_INSTRUCTIONS_MAX} characters`,
+    );
+  }
+  return quizInstructions;
 }
 
 function readQueryInteger(raw, name, min, max, fallback) {
@@ -200,6 +217,7 @@ function readGenerateInput(body) {
     difficulty = "medium",
     contextMode = DEFAULT_CONTEXT_MODE,
     model: rawModel,
+    quizInstructions: rawQuizInstructions,
   } = body || {};
 
   if (typeof subjectId !== "string" || !subjectId) {
@@ -232,6 +250,7 @@ function readGenerateInput(body) {
     throw createHttpError(400, `contextMode must be one of ${CONTEXT_MODES.join(", ")}`);
   }
   const requestedModel = readOptionalModel(rawModel);
+  const quizInstructions = readOptionalQuizInstructions(rawQuizInstructions);
   // Resolve early so unknown explicit models fail before context assembly.
   const model = resolveModel({ requestedModel });
   return {
@@ -245,6 +264,7 @@ function readGenerateInput(body) {
     contextMode,
     requestedModel,
     model,
+    quizInstructions,
   };
 }
 
@@ -332,6 +352,7 @@ async function prepareGeneration(userId, body) {
     );
   }
 
+  const promptConfig = prompt.resolvePrompt(settings.quizInstructions);
   const input = prompt.buildInput({
     selectionType: context.selection.type,
     selectionName: context.selection.name,
@@ -340,6 +361,7 @@ async function prepareGeneration(userId, body) {
     difficulty: settings.difficulty,
     contextMode: context.contextMode,
     contextText: context.text,
+    quizInstructions: settings.quizInstructions,
   });
   const allowedSourceIds = new Set(
     context.manifest
@@ -369,7 +391,15 @@ async function prepareGeneration(userId, body) {
       status,
     })),
   };
-  return { settings, context, input, allowedSourceIds, runContext, runScope };
+  return {
+    settings,
+    context,
+    input,
+    allowedSourceIds,
+    runContext,
+    runScope,
+    promptConfig,
+  };
 }
 
 export async function previewQuiz(userId, body) {
@@ -378,7 +408,7 @@ export async function previewQuiz(userId, body) {
   const contextMaxChars = getContextConfig().maxChars;
   const estimates = estimateQuizPreviewCost(prepared.settings.model, {
     inputChars: prepared.input.length,
-    instructionsChars: prompt.INSTRUCTIONS.length,
+    instructionsChars: prepared.promptConfig.instructions.length,
     maxOutputTokens,
   });
   return {
@@ -401,17 +431,24 @@ export async function previewQuiz(userId, body) {
 
 export async function generateQuiz(userId, body) {
   const requestedTitle = readOptionalTitle(body?.title);
-  const { settings, context, input, allowedSourceIds, runContext, runScope } =
-    await prepareGeneration(userId, body);
+  const {
+    settings,
+    context,
+    input,
+    allowedSourceIds,
+    runContext,
+    runScope,
+    promptConfig,
+  } = await prepareGeneration(userId, body);
   const { quizTimeoutMs, quizMaxOutputTokens, reasoningEffort } = getAiConfig();
 
   const result = await runAiOperation({
     userId,
     operation: prompt.OPERATION,
-    promptVersion: prompt.PROMPT_VERSION,
+    promptVersion: promptConfig.promptVersion,
     context: runContext,
     scope: runScope,
-    instructions: prompt.INSTRUCTIONS,
+    instructions: promptConfig.instructions,
     input,
     jsonSchema: prompt.JSON_SCHEMA,
     validate: (data) =>
@@ -444,7 +481,8 @@ export async function generateQuiz(userId, body) {
     difficulty: settings.difficulty,
     includeDescendants: settings.includeDescendants,
     contextMode: context.contextMode,
-    promptVersion: prompt.PROMPT_VERSION,
+    quizInstructions: settings.quizInstructions,
+    promptVersion: promptConfig.promptVersion,
     questions: finaliseQuestions(result.data.questions),
     sourceManifest: context.manifest,
     sourceSnapshot: context.text,

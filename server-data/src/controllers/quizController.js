@@ -9,6 +9,7 @@ import {
   QUIZ_CRITERION_MAX,
   QUIZ_DIFFICULTIES,
   QUIZ_EXPECTED_ANSWER_MAX,
+  QUIZ_INSTRUCTIONS_MAX,
   QUIZ_OPTION_MAX,
   QUIZ_PROMPT_MAX,
   QUIZ_QUESTION_TYPES,
@@ -195,6 +196,7 @@ function readQuizInput(body) {
     difficulty,
     includeDescendants,
     contextMode,
+    quizInstructions: rawQuizInstructions,
     promptVersion,
     questions,
     sourceManifest,
@@ -239,6 +241,18 @@ function readQuizInput(body) {
   }
   if (!CONTEXT_MODES.includes(contextMode)) {
     return { error: "contextMode is invalid" };
+  }
+  if (
+    rawQuizInstructions !== undefined &&
+    rawQuizInstructions !== null &&
+    typeof rawQuizInstructions !== "string"
+  ) {
+    return { error: "quizInstructions must be a string or null" };
+  }
+  const quizInstructions =
+    typeof rawQuizInstructions === "string" ? rawQuizInstructions.trim() || null : null;
+  if (quizInstructions && quizInstructions.length > QUIZ_INSTRUCTIONS_MAX) {
+    return { error: `quizInstructions must be at most ${QUIZ_INSTRUCTIONS_MAX} characters` };
   }
   if (typeof promptVersion !== "string" || !promptVersion || promptVersion.length > 80) {
     return { error: "promptVersion is invalid" };
@@ -287,6 +301,7 @@ function readQuizInput(body) {
       difficulty,
       includeDescendants,
       contextMode,
+      quizInstructions,
       promptVersion,
       questions: parsedQuestions,
       sourceManifest: manifest.entries,

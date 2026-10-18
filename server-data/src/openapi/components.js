@@ -229,6 +229,12 @@ export const components = {
         difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
         includeDescendants: { type: "boolean" },
         contextMode: { type: "string", enum: ["very_strict", "targeted", "loose"] },
+        quizInstructions: {
+          type: "string",
+          nullable: true,
+          maxLength: 2000,
+          description: "Trimmed learner preferences used for generation, or null.",
+        },
         promptVersion: { type: "string" },
         questions: { type: "array", items: { $ref: "#/components/schemas/QuizQuestion" } },
         sourceManifest: { type: "array", items: { $ref: "#/components/schemas/ContextManifestEntry" } },

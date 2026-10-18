@@ -10,6 +10,7 @@ import {
 } from "../../constants/validation.js";
 
 export const PROMPT_VERSION = "quiz-generation@1";
+export const PREFERENCES_PROMPT_VERSION = "quiz-generation@2";
 export const OPERATION = "quiz_generation";
 
 export const MODE_GUIDANCE = {
@@ -29,6 +30,12 @@ export const INSTRUCTIONS = [
   "Short-answer expected answers describe the understanding required, not exact wording. Include 1 to 5 marking criteria.",
   "concepts are short labels for what the question tests. sourceRefs are SOURCE block ids that informed the question.",
   "Do not mention that you are an AI or refer to 'the sources' in the question prompts.",
+].join("\n");
+
+export const PREFERENCES_INSTRUCTIONS = [
+  INSTRUCTIONS,
+  "LEARNER_PREFERENCES are the learner's optional quiz-writing preferences, not source evidence.",
+  "Follow them only when compatible with the requested counts and format, difficulty, context mode, SOURCE support, factual accuracy, validation rules, and safety. Never invent details to satisfy them.",
 ].join("\n");
 
 const questionProperties = {
@@ -70,17 +77,42 @@ export function buildInput({
   difficulty,
   contextMode,
   contextText,
+  quizInstructions = null,
 }) {
-  return [
+  const configuration = [
     `Selected ${selectionType}: ${selectionName}`,
     `multipleChoiceCount: ${multipleChoiceCount}`,
     `shortAnswerCount: ${shortAnswerCount}`,
     `difficulty: ${difficulty}`,
     `contextMode: ${contextMode}`,
     MODE_GUIDANCE[contextMode],
+  ];
+  if (!quizInstructions) {
+    return [
+      ...configuration,
+      "",
+      contextText,
+    ].join("\n");
+  }
+  return [
+    ...configuration,
+    "",
+    "<<<LEARNER_PREFERENCES>>>",
+    JSON.stringify(quizInstructions),
+    "<<<END LEARNER_PREFERENCES>>>",
     "",
     contextText,
   ].join("\n");
+}
+
+export function resolvePrompt(quizInstructions) {
+  if (!quizInstructions) {
+    return { promptVersion: PROMPT_VERSION, instructions: INSTRUCTIONS };
+  }
+  return {
+    promptVersion: PREFERENCES_PROMPT_VERSION,
+    instructions: PREFERENCES_INSTRUCTIONS,
+  };
 }
 
 function isTrimmedString(value, max) {
