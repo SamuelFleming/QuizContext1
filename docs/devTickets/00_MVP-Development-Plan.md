@@ -1,6 +1,6 @@
 # QuizContext.io — MVP Development Plan
 
-**Status:** Roadmap approved. Phases 1–9 are implemented; Phase 9 browser and live-provider UAT remain pending.
+**Status:** Roadmap approved. Phases 1–8 and Phase 9 tickets 9000–9001 are implemented; Phase 9 is reopened for scoped study history (9002–9008 Planned). Optional-instructions browser and live-provider UAT remain pending.
 **Date:** 9 October 2026  
 **Role:** Phase sequence for `/plan-phase`. Product behaviour stays in the [Project Ideation Charter](../ProjectIdeationCharter.md) and `docs/core-scope/`. CareerContext notes in `docs/reference/` are advisory.
 
@@ -192,19 +192,19 @@ Later phases reuse these rules. They are not re-decided per entity.
 
 <a id="phase-9"></a>
 
-### Phase 9 — Optional quiz instructions
+### Phase 9 — Optional quiz instructions + scoped study history
 
-**Objective.** Let a learner optionally tell quiz generation what to prioritise or avoid, without treating those preferences as source evidence or allowing them to override enforced quiz constraints.
+**Objective.** (1) Let a learner optionally tell quiz generation what to prioritise or avoid, without treating those preferences as source evidence or allowing them to override enforced quiz constraints. (2) Improve study/results surfaces with one configurable internal study-history data API, use-case business endpoints, and reusable UI primitives on dashboard, subject/topic workspace, and quiz detail.
 
-**Scope.** Add a bounded optional `quizInstructions` field to quiz preview and generation. Empty instructions preserve the existing prompt path. Supplied instructions use a versioned prompt with a distinct learner-preferences section, are stored separately with the saved quiz, and are shown on the generation form and saved-quiz detail.
+**Scope.** Tickets 9000–9001: bounded optional `quizInstructions` on quiz preview and generation; empty path unchanged; non-empty uses a versioned prompt and stored preferences. Tickets 9002–9008: enrich `server-data` `GET /study-history` (filters, pagination, include flags); evolve dashboard `GET /study-history` and add `GET /quizzes/:quizId/history` plus `GET /subjects/:subjectId/history`; shared list/stats primitives; compose quiz detail, workspace, and dashboard. Revises 7013 so aggregation and Mongo-side paging live on `server-data`; business API owns screen DTOs only. `GET /quizzes/:quizId/attempts` remains for player/resume.
 
-**Depends on.** Phase 8 as shipped, including quiz preview, model selection, and saved-quiz study views.
+**Depends on.** Phase 8 as shipped, including quiz preview, model selection, saved-quiz study views, and the workspace study panel (8009/8010).
 
-**Deliverable.** A learner can generate a quiz with optional assessment goals or question-style preferences, see those instructions on the saved quiz, and generate normally with no instructions.
+**Deliverable.** Optional instructions on generate and saved quiz (9000–9001). Then paginated, scoped history/stats across screens with shared UI primitives and live OpenAPI on both APIs (9002–9008).
 
-**Done when.** Tickets 9000–9001 are complete, both APIs document the implemented fields, the client build passes, and manual quality UAT is recorded or explicitly left pending.
+**Done when.** Tickets 9000–9008 are complete (or remaining Planned tickets are explicitly deferred), both APIs document implemented history routes, the client build passes for composed screens, and manual quality UAT is recorded or explicitly left pending.
 
-**Out of phase.** Adaptive oral interviews, presets, profile-level defaults, editing historical instructions, a saved-quiz regeneration endpoint, retries, batching, and question-limit changes.
+**Out of phase.** Adaptive oral interviews, presets, profile-level defaults, editing historical instructions, a saved-quiz regeneration endpoint, retries, batching, question-limit changes, RAG, billing, spaced repetition, and a mandatory mega StudyHistoryWidget.
 
 ## 5. Flow assignment
 
@@ -218,6 +218,7 @@ Later phases reuse these rules. They are not re-decided per entity.
 | F03, F04, F05 refinements from first use | 7 | Upload types, completeness, multi-topic quiz |
 | F05 quiz-generation investigation | 8 | Configurable budgets and a manual comparison protocol |
 | F05 learner preference refinement | 9 | Optional quiz instructions stored with the generated quiz |
+| F08 study history refinement | 9 | Scoped dual-API history + shared stats/list UI (9002–9008) |
 
 ## 6. Sequencing and risks
 
