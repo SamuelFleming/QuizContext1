@@ -9,11 +9,14 @@
 Keep JWT `GET /study-history` as the dashboard use-case endpoint, but stop aggregating from a full owner dump. Call the enriched data API through one shared internal client and preserve 7014-compatible fields while adding real pagination for recent results.
 
 ## In scope
-- Shared `server-webApp` dataApi helper for study-history that maps filters, pagination, and `include` flags to the 9002 contract (reusable by 9004 and 9005).
+- Shared `server-webApp` dataApi helper for the two 9002 paths (reusable by 9004 and 9005):
+  - results: keyed `GET /study-history` (latest-per-quiz rows)
+  - attempts: keyed `GET /study-history/attempts` (every evaluated attempt)
+- This ticket’s public route uses the **results** path only. Do not page dashboard recent results from `/attempts`.
 - Subject ownership check (404 when not owned); `topicId` requires `subjectId` (400 otherwise)—same as today.
 - Public response continues to provide: filter echo, counts (`quizzesSaved`, `quizzesAttempted`, `evaluatedAttempts`), activity buckets, weakest topics, weakest questions, `lastStudiedAt`.
-- Back `recentResults` with paginated data (`page` / `limit`; dashboard default **limit 5**). For one release, map legacy `recent=1|3|5|all` to an equivalent limit/cap (all → 50) so 7014 does not break mid-phase; document the mapping in OpenAPI.
-- Request data API with includes needed for the dashboard DTO (`stats` as required for counts, `activity`, `weakestQuestions`, and whatever backs weakest topics).
+- Back `recentResults` with the data API `items` page (`page` / `limit`; dashboard default **limit 5**). For one release, map legacy `recent=1|3|5|all` to an equivalent limit/cap (all → 50) so 7014 does not break mid-phase; document the mapping in OpenAPI.
+- Request results-path includes: `stats` (counts + `lastStudiedAt`), `activity`, `weakestQuestions`, `weakestTopics`. Aggregates are filter-wide; do not recompute them from the page.
 - Remove dump-then-aggregate logic from `studyHistoryService.js`.
 - Live OpenAPI on `server-webApp` for the evolved path.
 - No answer keys, rubrics, explanations, responses, or snapshots.
@@ -35,4 +38,5 @@ Keep JWT `GET /study-history` as the dashboard use-case endpoint, but stop aggre
 
 ## Implementation notes
 - Primary files: `server-webApp/src/services/studyHistoryService.js`, `server-webApp/src/services/dataApi/studyHistory.js`, `server-webApp/src/openapi/paths/studyHistory.js`.
-- Weakest topics may be derived from data-API stats/rows if 9002 exposes enough; if not, extend 9002 in this ticket only as needed for dashboard parity—prefer extending the data include rather than reintroducing a dump.
+- Map public DTO from the results-path envelope: `items` → `recentResults`; `stats` → counts + `lastStudiedAt`; pass through `activity`, `weakestTopics`, `weakestQuestions`, `pagination`.
+- 9002 already ships `include=weakestTopics`. Do not extend server-data or reintroduce a dump.

@@ -12,7 +12,7 @@ Add JWT `GET /quizzes/:quizId/history` that returns paginated evaluated attempts
 - Route: `GET /quizzes/:quizId/history` on `server-webApp` (REST-consistent with existing quiz routes).
 - Auth: JWT; quiz must be owned by the caller (404 otherwise).
 - Query: `page` (default 1), `limit` (default **5**), optional `n` for series/avgLastN (default **10**).
-- Call internal study-history with `quizId` and `include=stats,weakestQuestions,attemptSeries`.
+- Call keyed `GET /study-history/attempts` (9002 attempts path) with `quizId` and `include=stats,weakestQuestions,attemptSeries`. Do not use the results path — that would return at most one latest-per-quiz row and the wrong `totalItems`.
 - Stable DTO for this screen:
   - Paginated evaluated attempt/result rows (score, percent, submittedAt, attempt id)—no responses or keys.
   - Quiz stats: `avgLastNPercent`, `minPercent`, `maxPercent`, `meanPercent`, `lastPercent`.
@@ -37,5 +37,6 @@ Add JWT `GET /quizzes/:quizId/history` that returns paginated evaluated attempts
 - [ ] Focused smoke passes, or limitations are documented.
 
 ## Implementation notes
-- Reuse the shared study-history dataApi client from 9003; only the public DTO and defaults differ.
+- Reuse the shared study-history dataApi **attempts** helper from 9003; only the public DTO and defaults differ.
+- Map `items` to attempt rows; take `avgLastNPercent` and distribution from filter-wide `stats` (present because `quizId` is set). `attemptSeries` and `weakestQuestions` pass through.
 - Likely areas: `quizRoutes` / quiz or studyHistory controller-service split—prefer existing quiz route mounting if that matches repo style; keep controllers thin.
