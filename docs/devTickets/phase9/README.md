@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9002 done (browser and live-provider UAT pending). Study-history tickets 9003–9008 Planned — phase reopened for that work.
+**Status:** 9000–9003 done (browser and live-provider UAT pending). Study-history tickets 9004–9008 Planned — phase reopened for that work.
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
@@ -12,7 +12,7 @@
 1. [9000](9000-optional-quiz-instructions-api.md) — API validation, versioned prompt integration, persistence, projection, and OpenAPI. Done.
 2. [9001](9001-optional-quiz-instructions-ui.md) — generation textarea, request wiring, retained form state, and saved-quiz visibility. Done. Depends on 9000.
 3. [9002](9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, include flags) + OpenAPI. Done. Two keyed GETs: `/study-history` (latest-per-quiz) and `/study-history/attempts`.
-4. [9003](9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Planned. Depends on 9002.
+4. [9003](9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Done. Depends on 9002.
 5. [9004](9004-quiz-history-api.md) — `GET /quizzes/:quizId/history` + client service. Planned. Depends on 9002, 9003.
 6. [9005](9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Planned. Depends on 9002, 9003.
 7. [9006](9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.

@@ -1,6 +1,6 @@
 # 9003 — Evolve dashboard GET /study-history onto data API
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 9  
 **Depends on:** 9002  
 **Relevant scope:** F08; S02 dashboard; 7013 / 7014
@@ -28,13 +28,13 @@ Keep JWT `GET /study-history` as the dashboard use-case endpoint, but stop aggre
 - Changing `GET /quizzes/:quizId/attempts`.
 
 ## Acceptance checks
-- [ ] Authenticated dashboard call returns 7014-shape fields (counts, activity, weakest lists, lastStudiedAt, recentResults) for the same filter semantics as 7013.
-- [ ] Recent results are paginated (or legacy `recent` maps correctly); response includes pagination meta when using `page`/`limit`.
-- [ ] No token → 401; foreign `subjectId` → 404; `topicId` without `subjectId` → 400.
-- [ ] In-progress / evaluation_failed attempts do not affect counts, activity, weakest, or recent results.
-- [ ] Service no longer depends on an unfiltered full dump from server-data.
-- [ ] OpenAPI matches implemented query/response.
-- [ ] Focused smoke against both APIs passes, or limitations are documented.
+- [x] Authenticated dashboard call returns 7014-shape fields (counts, activity, weakest lists, lastStudiedAt, recentResults) for the same filter semantics as 7013.
+- [x] Recent results are paginated (or legacy `recent` maps correctly); response includes pagination meta when using `page`/`limit`.
+- [x] No token → 401; foreign `subjectId` → 404; `topicId` without `subjectId` → 400.
+- [x] In-progress / evaluation_failed attempts do not affect counts, activity, weakest, or recent results.
+- [x] Service no longer depends on an unfiltered full dump from server-data.
+- [x] OpenAPI matches implemented query/response.
+- [x] Focused smoke against both APIs passes, or limitations are documented.
 
 ## Implementation notes
 - Primary files: `server-webApp/src/services/studyHistoryService.js`, `server-webApp/src/services/dataApi/studyHistory.js`, `server-webApp/src/openapi/paths/studyHistory.js`.
