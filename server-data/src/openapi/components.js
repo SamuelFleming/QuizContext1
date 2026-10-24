@@ -311,6 +311,103 @@ export const components = {
         totalPages: { type: "integer", minimum: 0 },
       },
     },
+    StudyHistoryFilter: {
+      type: "object",
+      properties: {
+        subjectId: { type: "string", nullable: true },
+        topicId: { type: "string", nullable: true },
+        quizId: { type: "string", nullable: true },
+      },
+    },
+    StudyHistoryRow: {
+      type: "object",
+      properties: {
+        attemptId: { type: "string" },
+        quizId: { type: "string" },
+        title: { type: "string" },
+        subjectName: { type: "string" },
+        topicPath: { type: "string", nullable: true },
+        submittedAt: { type: "string", format: "date-time", nullable: true },
+        score: { type: "number", nullable: true },
+        maxScore: { type: "number", nullable: true },
+        percent: { type: "number", nullable: true },
+      },
+    },
+    StudyHistoryStats: {
+      type: "object",
+      description:
+        "Filter-wide, not page-wide. avgPercent is the rounded mean of latest-per-quiz percents when quizId is omitted. avgLastNPercent is the rounded mean of the last ≤n attempt percents when quizId is set. min/max/last stay stored; meanPercent is rounded.",
+      properties: {
+        quizzesSaved: { type: "integer", minimum: 0 },
+        quizzesAttempted: { type: "integer", minimum: 0 },
+        evaluatedAttempts: { type: "integer", minimum: 0 },
+        lastStudiedAt: { type: "string", format: "date-time", nullable: true },
+        avgPercent: { type: "integer", nullable: true },
+        avgLastNPercent: { type: "integer", nullable: true },
+        minPercent: { type: "number", nullable: true },
+        maxPercent: { type: "number", nullable: true },
+        meanPercent: { type: "integer", nullable: true },
+        lastPercent: { type: "number", nullable: true },
+      },
+    },
+    StudyHistoryWeakestQuestion: {
+      type: "object",
+      properties: {
+        prompt: { type: "string" },
+        quizId: { type: "string" },
+        quizTitle: { type: "string" },
+        subjectName: { type: "string" },
+        topicPath: { type: "string", nullable: true },
+        averageScore: { type: "number" },
+        timesAnswered: { type: "integer", minimum: 0 },
+        attemptId: { type: "string" },
+      },
+    },
+    StudyHistoryWeakestTopic: {
+      type: "object",
+      properties: {
+        subjectName: { type: "string" },
+        topicPath: { type: "string" },
+        averagePercent: { type: "integer" },
+        quizCount: { type: "integer", minimum: 0 },
+      },
+    },
+    StudyHistoryActivity: {
+      type: "object",
+      properties: {
+        days: { type: "integer", enum: [7, 30, 90] },
+        interval: { type: "string", enum: ["day", "week"] },
+        buckets: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              start: { type: "string", format: "date" },
+              count: { type: "integer", minimum: 0 },
+            },
+          },
+        },
+      },
+    },
+    StudyHistoryResult: {
+      type: "object",
+      properties: {
+        filter: { $ref: "#/components/schemas/StudyHistoryFilter" },
+        items: { type: "array", items: { $ref: "#/components/schemas/StudyHistoryRow" } },
+        pagination: { $ref: "#/components/schemas/QuizPagination" },
+        stats: { $ref: "#/components/schemas/StudyHistoryStats" },
+        attemptSeries: { type: "array", items: { type: "number" } },
+        weakestQuestions: {
+          type: "array",
+          items: { $ref: "#/components/schemas/StudyHistoryWeakestQuestion" },
+        },
+        weakestTopics: {
+          type: "array",
+          items: { $ref: "#/components/schemas/StudyHistoryWeakestTopic" },
+        },
+        activity: { $ref: "#/components/schemas/StudyHistoryActivity" },
+      },
+    },
     Attempt: {
       type: "object",
       properties: {
