@@ -1,17 +1,17 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9001 done (browser and live-provider UAT pending). Study-history tickets 9002–9008 Planned — phase reopened for that work.
+**Status:** 9000–9002 done (browser and live-provider UAT pending). Study-history tickets 9003–9008 Planned — phase reopened for that work.
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
-**Deliverable.** Optional quiz instructions API and UI as in 9000–9001. Then: one enriched `server-data` study-history endpoint; dashboard / quiz / subject-topic business DTOs on `server-webApp`; shared list and stats primitives; composed screens without a mega-widget.
+**Deliverable.** Optional quiz instructions API and UI as in 9000–9001. Then: two enriched `server-data` study-history GETs (latest-per-quiz results and evaluated attempts); dashboard / quiz / subject-topic business DTOs on `server-webApp`; shared list and stats primitives; composed screens without a mega-widget.
 
 **Depends on.** Phase 8 as shipped (including workspace study panel 8009/8010). Study-history work revises the 7013 split (aggregation moves to `server-data`; public dashboard route stays `GET /study-history`).
 
 **Tickets.**
 1. [9000](9000-optional-quiz-instructions-api.md) — API validation, versioned prompt integration, persistence, projection, and OpenAPI. Done.
 2. [9001](9001-optional-quiz-instructions-ui.md) — generation textarea, request wiring, retained form state, and saved-quiz visibility. Done. Depends on 9000.
-3. [9002](9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, include flags) + OpenAPI. Planned.
+3. [9002](9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, include flags) + OpenAPI. Done. Two keyed GETs: `/study-history` (latest-per-quiz) and `/study-history/attempts`.
 4. [9003](9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Planned. Depends on 9002.
 5. [9004](9004-quiz-history-api.md) — `GET /quizzes/:quizId/history` + client service. Planned. Depends on 9002, 9003.
 6. [9005](9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Planned. Depends on 9002, 9003.
@@ -29,6 +29,7 @@
 
 **Planning decisions (scoped study history — 9002–9008).**
 - **7013 revision:** Aggregation and Mongo-side filter/pagination live on `server-data`. `server-webApp` owns JWT validation and screen-specific DTOs via one shared dataApi client. This intentionally changes 7013’s “aggregate on webApp from a dump” rule.
+- Data API is two keyed GETs, not one overloaded path: `GET /study-history` pages latest-per-quiz results; `GET /study-history/attempts` pages evaluated attempts. `quizId` is a filter on both. Includes are opt-in and filter-wide.
 - Public dashboard endpoint remains `GET /study-history` (evolved), not `/dashboard/history`.
 - `GET /quizzes/:quizId/attempts` stays for player/resume; `GET /quizzes/:quizId/history` is study/stats only.
 - Workspace scope uses `GET /subjects/:subjectId/history?topicId=`. Quiz list stays on `GET /quizzes`.
