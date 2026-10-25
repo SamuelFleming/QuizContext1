@@ -33,6 +33,7 @@ None queued for implement until a Planned ticket is approved. Next in Phase 9 st
 7. [9006](phase9/9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.
 8. [9007](phase9/9007-quiz-detail-history-ui.md) — compose quiz detail history/stats/weakest. Planned. Depends on 9004, 9006.
 9. [9008](phase9/9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
+10. [9010](phase9/9010-int-deployment-scaffold.md) — INT deploy scaffold (`Release-2` → `dev-deploy` → merge into this branch; host A: VM + Compose + Atlas). Planned. Parallel to 9004–9008.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.

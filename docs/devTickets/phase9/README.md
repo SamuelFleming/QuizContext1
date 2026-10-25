@@ -18,6 +18,7 @@
 7. [9006](9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.
 8. [9007](9007-quiz-detail-history-ui.md) — compose quiz detail (stats, weakest, paginated attempts). Planned. Depends on 9004, 9006.
 9. [9008](9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
+10. [9010](9010-int-deployment-scaffold.md) — INT deploy scaffold from `Release-2` onto `dev-deploy` (host A: VM + Compose + Atlas), then merge into this branch. Planned. Parallel to 9004–9008.
 
 **Planning decisions (optional instructions — 9000–9001).**
 - The API/storage field is `quizInstructions`; the UI label is **Quiz instructions (optional)**.
@@ -40,4 +41,11 @@
 - Activity buckets remain dashboard-only (7013 UTC rules).
 - UI: compose small shared primitives; no mandatory StudyHistoryWidget. SVG/CSS only (no chart library). Design tokens from Light Mint & Indigo.
 
-**Out of phase.** Adaptive or live oral interviews, reusable presets, profile-level preferences, editing historical generation metadata, a saved-quiz regeneration endpoint, automatic instruction rewriting/moderation, retries, batching, question-limit changes, RAG, billing, spaced repetition, and rewriting unrelated dashboard subject cards.
+**Planning decisions (INT deploy — 9010, parallel).**
+- First hosted environment is INT, not prod. Host A: one VM + Docker Compose + Atlas. `Release-2` stays a frozen artefact; tag `8583124` as `first-use-9001` before that branch gains the 9010 file.
+- Implement scaffold on `dev-deploy` cut from `Release-2`, then merge into `Phase9-historyEnhance`. Do not treat `main` as the deploy source until 9000+ is on `main`.
+- Keep three processes; `server-data` is not public. Hosted shape: `server-webApp` serves the Vite build (one public URL). Local three-terminal Vite flow stays as it is.
+- 9002–9008 can reuse the same Atlas database (read-path / index only). Local first-usage Mongo is not copied unless someone dumps it.
+- Do not add, rename, or split environment variables, or change the three-process / private data-API hosted shape. If a ticket truly needs that, update [9010](9010-int-deployment-scaffold.md) first.
+
+**Out of phase.** Adaptive or live oral interviews, reusable presets, profile-level preferences, editing historical generation metadata, a saved-quiz regeneration endpoint, automatic instruction rewriting/moderation, retries, batching, question-limit changes, RAG, billing, spaced repetition, rewriting unrelated dashboard subject cards, production hosting, and merging Phase 9 into `main`.
