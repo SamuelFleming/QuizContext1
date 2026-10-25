@@ -13,7 +13,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
 | 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker; workspace quiz visibility + content size | 8000–8010 done |
-| 9 | Optional quiz-generation instructions + scoped study history | 9000–9003 done (UAT pending); 9004–9008 Planned — phase reopened |
+| 9 | Optional quiz-generation instructions + scoped study history | 9000–9003 done (UAT pending); 9004–9008 Planned — phase reopened. Parallel: [9010](phase9/9010-int-deployment-scaffold.md) INT deploy scaffold (Planned) |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.

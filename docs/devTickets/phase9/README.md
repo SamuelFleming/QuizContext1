@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9003 done (browser and live-provider UAT pending). Study-history tickets 9004–9008 Planned — phase reopened for that work.
+**Status:** 9000–9003 done (browser and live-provider UAT pending). Study-history tickets 9004–9008 Planned — phase reopened for that work. Parallel ops: [9010](9010-int-deployment-scaffold.md) Planned (does not block 9004–9008).
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
