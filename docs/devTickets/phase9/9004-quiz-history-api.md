@@ -1,6 +1,6 @@
 # 9004 — Quiz history business API
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 9  
 **Depends on:** 9002, 9003 (shared dataApi client)  
 **Relevant scope:** F08; S05/S06 quiz detail; study/stats vs player resume
@@ -29,14 +29,16 @@ Add JWT `GET /quizzes/:quizId/history` that returns paginated evaluated attempts
 - Answer keys or marking criteria in the response.
 
 ## Acceptance checks
-- [ ] Owner receives paginated evaluated attempts and quiz stats for that quiz; foreign quiz id is 404; no token is 401.
-- [ ] Stats use locked definitions (avgLastN, distribution over all evaluated attempts for the quiz, series length n).
-- [ ] Weakest questions are quiz-scoped and contain no keys, rubrics, explanations, responses, or snapshots.
-- [ ] In-progress attempts do not appear in history rows or affect stats.
-- [ ] Client service method can call the route; OpenAPI matches.
-- [ ] Focused smoke passes, or limitations are documented.
+- [x] Owner receives paginated evaluated attempts and quiz stats for that quiz; foreign quiz id is 404; no token is 401.
+- [x] Stats use locked definitions (avgLastN, distribution over all evaluated attempts for the quiz, series length n).
+- [x] Weakest questions are quiz-scoped and contain no keys, rubrics, explanations, responses, or snapshots.
+- [x] In-progress attempts do not appear in history rows or affect stats.
+- [x] Client service method can call the route; OpenAPI matches.
+- [x] Focused smoke passes, or limitations are documented.
 
 ## Implementation notes
 - Reuse the shared study-history dataApi **attempts** helper from 9003; only the public DTO and defaults differ.
 - Map `items` to attempt rows; take `avgLastNPercent` and distribution from filter-wide `stats` (present because `quizId` is set). `attemptSeries` and `weakestQuestions` pass through.
-- Likely areas: `quizRoutes` / quiz or studyHistory controller-service split—prefer existing quiz route mounting if that matches repo style; keep controllers thin.
+- Mounted on existing JWT `quizRoutes` (`GET /:quizId/history`). Thin `quizController.getHistory` calls `studyHistoryService.getQuizHistory`. Ownership 404 comes from `quizzesApi.getQuiz` first — the attempts path returns an empty 200 for unknown/foreign `quizId`.
+- Public DTO is slim: attempt rows are `attemptId`, `score`, `percent`, `submittedAt`; stats are the five quiz fields; weakest rows are `prompt`, `averageScore`, `timesAnswered`.
+- Client: `getQuizHistory` on `client-webApp/src/services/quizService.js` (no UI).
