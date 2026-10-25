@@ -21,7 +21,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None queued for implement until a Planned ticket is approved. Next in Phase 9 study-history sequence: [9004](phase9/9004-quiz-history-api.md). Optional-instructions browser and live-provider UAT remain pending.
+None queued for implement until a Planned ticket is approved. Next in Phase 9 study-history sequence: [9004](phase9/9004-quiz-history-api.md). Optional-instructions browser and live-provider UAT remain pending. Parallel ops (does not block 9004): [9010](phase9/9010-int-deployment-scaffold.md) — host A locked; still Planned until approved to implement.
 
 ## Phase 9 proposed order
 1. [9000](phase9/9000-optional-quiz-instructions-api.md) — API validation, versioned prompt integration, persistence, projection, and OpenAPI. Done.
