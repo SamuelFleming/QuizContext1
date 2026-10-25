@@ -13,6 +13,7 @@ subjectRoutes.post("/", subjectController.create);
 subjectRoutes.get("/:subjectId", subjectController.get);
 subjectRoutes.patch("/:subjectId", subjectController.update);
 subjectRoutes.delete("/:subjectId", subjectController.remove);
+subjectRoutes.get("/:subjectId/history", subjectController.getHistory);
 subjectRoutes.get("/:subjectId/topics", topicController.listForSubject);
 subjectRoutes.post("/:subjectId/topics", topicController.createForSubject);
 subjectRoutes.get("/:subjectId/documents", documentController.listForSubject);

@@ -2,15 +2,18 @@ import { createHttpError } from "../utils/httpError.js";
 import * as quizzesApi from "./dataApi/quizzes.js";
 import * as studyHistoryApi from "./dataApi/studyHistory.js";
 import * as subjectsApi from "./dataApi/subjects.js";
+import * as topicsApi from "./dataApi/topics.js";
 
 const RECENT_CHOICES = ["1", "3", "5", "all"];
 const ACTIVITY_CHOICES = ["7", "30", "90"];
 const RECENT_ALL_CAP = 50;
 const DEFAULT_LIMIT = 5;
+const SUBJECT_HISTORY_DEFAULT_LIMIT = 3;
 const DEFAULT_SERIES_N = 10;
 const MAX_LIMIT = 100;
 const DASHBOARD_INCLUDES = ["stats", "activity", "weakestQuestions", "weakestTopics"];
 const QUIZ_HISTORY_INCLUDES = ["stats", "weakestQuestions", "attemptSeries"];
+const SUBJECT_HISTORY_INCLUDES = ["stats", "weakestQuestions", "weakestTopics"];
 
 function readQueryInteger(raw, name, min, max, fallback) {
   if (raw === undefined) return fallback;
@@ -162,4 +165,94 @@ export async function getQuizHistory(userId, quizId, query) {
   });
 
   return toQuizHistoryDto(filters, source);
+}
+
+function readSubjectHistoryQuery(query) {
+  const { topicId, page, limit } = query || {};
+  if (topicId !== undefined && (typeof topicId !== "string" || !topicId.trim())) {
+    throw createHttpError(400, "topicId must be a topic id");
+  }
+  return {
+    topicId: topicId?.trim() || null,
+    page: readQueryInteger(page, "page", 1, Number.MAX_SAFE_INTEGER, 1),
+    limit: readQueryInteger(limit, "limit", 1, MAX_LIMIT, SUBJECT_HISTORY_DEFAULT_LIMIT),
+  };
+}
+
+function toRecentResult(row) {
+  return {
+    attemptId: row.attemptId,
+    quizId: row.quizId,
+    title: row.title,
+    subjectName: row.subjectName,
+    topicPath: row.topicPath ?? null,
+    submittedAt: row.submittedAt,
+    score: row.score,
+    maxScore: row.maxScore,
+    percent: row.percent,
+  };
+}
+
+function toSubjectHistoryDto(subjectId, query, source) {
+  const pagination = source?.pagination || {
+    page: query.page,
+    limit: query.limit,
+    totalItems: 0,
+    totalPages: 0,
+  };
+  const stats = source?.stats || {};
+  return {
+    filter: { subjectId, topicId: query.topicId },
+    counts: {
+      quizzesSaved: stats.quizzesSaved ?? 0,
+      quizzesAttempted: stats.quizzesAttempted ?? 0,
+      evaluatedAttempts: stats.evaluatedAttempts ?? 0,
+    },
+    lastStudiedAt: stats.lastStudiedAt ?? null,
+    stats: {
+      avgPercent: stats.avgPercent ?? null,
+      minPercent: stats.minPercent ?? null,
+      maxPercent: stats.maxPercent ?? null,
+      meanPercent: stats.meanPercent ?? null,
+      lastPercent: stats.lastPercent ?? null,
+    },
+    recentResults: (source?.items || []).map(toRecentResult),
+    weakestQuestions: (source?.weakestQuestions || []).map((row) => ({
+      prompt: row.prompt,
+      quizId: row.quizId,
+      quizTitle: row.quizTitle,
+      topicPath: row.topicPath ?? null,
+      averageScore: row.averageScore,
+      timesAnswered: row.timesAnswered,
+    })),
+    weakestTopics: (source?.weakestTopics || []).map((row) => ({
+      subjectName: row.subjectName,
+      topicPath: row.topicPath,
+      averagePercent: row.averagePercent,
+      quizCount: row.quizCount,
+    })),
+    pagination,
+  };
+}
+
+export async function getSubjectHistory(userId, subjectId, query) {
+  const filters = readSubjectHistoryQuery(query);
+  await subjectsApi.getSubject(userId, subjectId);
+
+  if (filters.topicId) {
+    const topic = await topicsApi.getTopic(userId, filters.topicId);
+    if (topic.subjectId !== subjectId) {
+      throw createHttpError(404, "Topic not found");
+    }
+  }
+
+  const source = await studyHistoryApi.getStudyHistoryResults(userId, {
+    subjectId,
+    topicId: filters.topicId || undefined,
+    page: filters.page,
+    limit: filters.limit,
+    include: SUBJECT_HISTORY_INCLUDES,
+  });
+
+  return toSubjectHistoryDto(subjectId, filters, source);
 }
