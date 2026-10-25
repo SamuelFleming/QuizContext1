@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9004 done (browser and live-provider UAT pending). Study-history tickets 9005–9008 Planned — phase reopened for that work. Parallel ops: [9010](9010-int-deployment-scaffold.md) Planned (does not block 9005–9008).
+**Status:** 9000–9005 done (browser and live-provider UAT pending). Study-history tickets 9006–9008 Planned — phase reopened for that work. Parallel ops: [9010](9010-int-deployment-scaffold.md) Planned (does not block 9006–9008).
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
@@ -14,7 +14,7 @@
 3. [9002](9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, include flags) + OpenAPI. Done. Two keyed GETs: `/study-history` (latest-per-quiz) and `/study-history/attempts`.
 4. [9003](9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Done. Depends on 9002.
 5. [9004](9004-quiz-history-api.md) — `GET /quizzes/:quizId/history` + client service. Done. Depends on 9002, 9003.
-6. [9005](9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Planned. Depends on 9002, 9003.
+6. [9005](9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Done. Depends on 9002, 9003.
 7. [9006](9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.
 8. [9007](9007-quiz-detail-history-ui.md) — compose quiz detail (stats, weakest, paginated attempts). Planned. Depends on 9004, 9006.
 9. [9008](9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
