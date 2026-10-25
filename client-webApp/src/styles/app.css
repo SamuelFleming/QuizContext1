@@ -1546,6 +1546,36 @@ button.secondary {
   width: 100%;
 }
 
+.quiz-detail-history {
+  display: grid;
+  grid-template-columns: minmax(12rem, 16rem) 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.quiz-detail-history-main {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.quiz-detail-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.quiz-detail-stats .score-distribution,
+.quiz-detail-stats .attempt-series {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.quiz-detail-history .query-list-row {
+  padding: var(--space-2) var(--space-3);
+}
+
 /* History primitives */
 .query-list {
   max-width: 100%;
@@ -1725,7 +1755,8 @@ button.secondary {
   .history-filters,
   .history-counts,
   .weakness-grid,
-  .generation-facts {
+  .generation-facts,
+  .quiz-detail-history {
     grid-template-columns: 1fr;
   }
 
