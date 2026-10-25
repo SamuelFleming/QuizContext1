@@ -207,10 +207,109 @@ export const quizPaths = {
       },
     },
   },
+  "/quizzes/{quizId}/history": {
+    get: {
+      summary: "Quiz study history",
+      description:
+        "Paginated evaluated attempts and quiz-level stats for the quiz-detail study surface. In-progress and evaluation_failed attempts are omitted and do not affect stats. GET /quizzes/{quizId}/attempts remains the player/resume list (all statuses, no aggregates). No answer keys, marking criteria, explanations, responses, or snapshots.",
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        quizId,
+        {
+          in: "query",
+          name: "page",
+          schema: { type: "integer", minimum: 1, default: 1 },
+          description: "Evaluated-attempt page. Default 1.",
+        },
+        {
+          in: "query",
+          name: "limit",
+          schema: { type: "integer", minimum: 1, maximum: 100, default: 5 },
+          description: "Evaluated-attempt page size. Default 5.",
+        },
+        {
+          in: "query",
+          name: "n",
+          schema: { type: "integer", minimum: 1, maximum: 100, default: 10 },
+          description: "Window for avgLastNPercent and attemptSeries. Default 10.",
+        },
+      ],
+      responses: {
+        200: {
+          description: "Evaluated attempt history and quiz stats",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "object",
+                    properties: {
+                      items: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            attemptId: { type: "string" },
+                            score: { type: "number" },
+                            percent: { type: "number" },
+                            submittedAt: { type: "string", format: "date-time" },
+                          },
+                        },
+                      },
+                      stats: {
+                        type: "object",
+                        properties: {
+                          avgLastNPercent: { type: "number", nullable: true },
+                          minPercent: { type: "number", nullable: true },
+                          maxPercent: { type: "number", nullable: true },
+                          meanPercent: { type: "number", nullable: true },
+                          lastPercent: { type: "number", nullable: true },
+                        },
+                      },
+                      attemptSeries: {
+                        type: "array",
+                        items: { type: "number" },
+                        description: "Last ≤n percents, oldest to newest.",
+                      },
+                      weakestQuestions: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            prompt: { type: "string" },
+                            averageScore: { type: "number" },
+                            timesAnswered: { type: "integer" },
+                          },
+                        },
+                      },
+                      pagination: {
+                        type: "object",
+                        properties: {
+                          page: { type: "integer", minimum: 1 },
+                          limit: { type: "integer", minimum: 1, maximum: 100 },
+                          totalItems: { type: "integer", minimum: 0 },
+                          totalPages: { type: "integer", minimum: 0 },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        400: { $ref: "#/components/responses/BadRequest" },
+        401: { $ref: "#/components/responses/Unauthorized" },
+        404: { $ref: "#/components/responses/NotFound" },
+      },
+    },
+  },
   "/quizzes/{quizId}/attempts": {
     get: {
       summary: "List attempts for a saved quiz",
-      description: "Each attempt's id, status, dates, and score. An in-progress attempt can be resumed.",
+      description:
+        "Player/resume list: each attempt's id, status, dates, and score, including in-progress. No stats aggregates. Use GET /quizzes/{quizId}/history for evaluated study history.",
       security: [{ bearerAuth: [] }],
       parameters: [quizId],
       responses: {

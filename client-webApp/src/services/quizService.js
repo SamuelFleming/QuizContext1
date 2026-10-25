@@ -51,6 +51,18 @@ export const exportQuiz = (quizId) => request(`/quizzes/${encodeURIComponent(qui
 export const listQuizAttempts = (quizId) =>
   request(`/quizzes/${encodeURIComponent(quizId)}/attempts`, { auth: true });
 
+export const getQuizHistory = (quizId, { page, limit, n } = {}) => {
+  const params = new URLSearchParams();
+  if (page) params.set("page", String(page));
+  if (limit) params.set("limit", String(limit));
+  if (n) params.set("n", String(n));
+  const query = params.toString();
+  return request(
+    `/quizzes/${encodeURIComponent(quizId)}/history${query ? `?${query}` : ""}`,
+    { auth: true },
+  );
+};
+
 export const listAttempts = (limit) => {
   const query = limit ? `?limit=${encodeURIComponent(limit)}` : "";
   return request(`/attempts${query}`, { auth: true });

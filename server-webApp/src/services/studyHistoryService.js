@@ -1,4 +1,5 @@
 import { createHttpError } from "../utils/httpError.js";
+import * as quizzesApi from "./dataApi/quizzes.js";
 import * as studyHistoryApi from "./dataApi/studyHistory.js";
 import * as subjectsApi from "./dataApi/subjects.js";
 
@@ -6,8 +7,10 @@ const RECENT_CHOICES = ["1", "3", "5", "all"];
 const ACTIVITY_CHOICES = ["7", "30", "90"];
 const RECENT_ALL_CAP = 50;
 const DEFAULT_LIMIT = 5;
+const DEFAULT_SERIES_N = 10;
 const MAX_LIMIT = 100;
 const DASHBOARD_INCLUDES = ["stats", "activity", "weakestQuestions", "weakestTopics"];
+const QUIZ_HISTORY_INCLUDES = ["stats", "weakestQuestions", "attemptSeries"];
 
 function readQueryInteger(raw, name, min, max, fallback) {
   if (raw === undefined) return fallback;
@@ -103,4 +106,60 @@ export async function getStudyHistory(userId, query) {
   });
 
   return toPublicSummary(filters, source);
+}
+
+function readQuizHistoryQuery(query) {
+  const { page, limit, n } = query || {};
+  return {
+    page: readQueryInteger(page, "page", 1, Number.MAX_SAFE_INTEGER, 1),
+    limit: readQueryInteger(limit, "limit", 1, MAX_LIMIT, DEFAULT_LIMIT),
+    n: readQueryInteger(n, "n", 1, MAX_LIMIT, DEFAULT_SERIES_N),
+  };
+}
+
+function toQuizHistoryDto(query, source) {
+  const pagination = source?.pagination || {
+    page: query.page,
+    limit: query.limit,
+    totalItems: 0,
+    totalPages: 0,
+  };
+  const stats = source?.stats || {};
+  return {
+    items: (source?.items || []).map((row) => ({
+      attemptId: row.attemptId,
+      score: row.score,
+      percent: row.percent,
+      submittedAt: row.submittedAt,
+    })),
+    stats: {
+      avgLastNPercent: stats.avgLastNPercent ?? null,
+      minPercent: stats.minPercent ?? null,
+      maxPercent: stats.maxPercent ?? null,
+      meanPercent: stats.meanPercent ?? null,
+      lastPercent: stats.lastPercent ?? null,
+    },
+    attemptSeries: source?.attemptSeries || [],
+    weakestQuestions: (source?.weakestQuestions || []).map((row) => ({
+      prompt: row.prompt,
+      averageScore: row.averageScore,
+      timesAnswered: row.timesAnswered,
+    })),
+    pagination,
+  };
+}
+
+export async function getQuizHistory(userId, quizId, query) {
+  const filters = readQuizHistoryQuery(query);
+  await quizzesApi.getQuiz(userId, quizId);
+
+  const source = await studyHistoryApi.getStudyHistoryAttempts(userId, {
+    quizId,
+    page: filters.page,
+    limit: filters.limit,
+    n: filters.n,
+    include: QUIZ_HISTORY_INCLUDES,
+  });
+
+  return toQuizHistoryDto(filters, source);
 }
