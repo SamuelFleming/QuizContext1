@@ -149,7 +149,12 @@ export default function NodeDetails({
       />
 
       <section className="quiz-history-scaffold" aria-label="Study history">
-        <ScopeStudySummary subjectId={subjectId} topicId={topicId} navigate={navigate} />
+        <ScopeStudySummary
+          key={topicId || `subject:${subjectId}`}
+          subjectId={subjectId}
+          topicId={topicId}
+          navigate={navigate}
+        />
       </section>
 
       <div className="danger-row">

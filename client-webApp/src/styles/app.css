@@ -1167,6 +1167,22 @@ button.secondary {
   gap: var(--space-2);
 }
 
+.scope-study-summary .history-counts {
+  margin: var(--space-2) 0;
+}
+
+.scope-study-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.scope-study-stats .score-distribution {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
 .workspace-side .scope-quiz-list {
   margin: 0;
   padding-top: var(--space-3);
@@ -1588,6 +1604,10 @@ button.secondary {
 
 .query-list-head .pagination {
   margin-left: auto;
+}
+
+.query-list-head .subheading {
+  margin: 0;
 }
 
 .query-list-row {
