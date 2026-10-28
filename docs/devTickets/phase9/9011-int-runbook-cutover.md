@@ -2,64 +2,103 @@
 
 **Status:** Planned  
 **Phase:** 9 (ops, parallel to 9002–9008)  
-**Depends on:** [9010](9010-int-deployment-scaffold.md) compose scaffold on `dev-deploy`; human preconditions below.  
-**Relevant scope:** First non-prod host; charter dual-API boundary
+**Depends on:** [9010](9010-int-deployment-scaffold.md) Compose scaffold on `dev-deploy`; operator Droplet + DNS + Atlas from [deployment-operator-checklist.md](../../deployment-operator-checklist.md).  
+**Relevant scope:** D1 live host; charter dual-API boundary  
+**Companion:** [Evolution plan](../../deployment-evolution-plan.md) (D2–D6, including D2 data migration). Do not implement those here.
 
 ## Objective
-Put Release-2 on a long-lived INT URL that testers can open from any device, with HTTPS and a private gate in front of the existing login. Do not invent a production environment.
+Document and execute the first INT cutover so `https://int.quizcontext.app` serves Release-2 with HTTPS, the existing register/login flow, and `server-data` unreachable from the internet. Do not invent production, CI, or extra auth gates.
+
+## External prerequisites (human)
+The operator checklist is the chronological source. 9011 cannot pass without:
+
+1. Cloudflare zone **`quizcontext.app`** (already registered).
+2. DigitalOcean Droplet: Ubuntu LTS, ≥2 GB RAM, SSH key login, public IPv4.
+3. Cloudflare **unproxied** (grey-cloud) `A` record `int` → that IPv4, so Caddy can obtain certificates with HTTP-01.
+4. Atlas cluster, database **`quizcontext-int`**, dedicated user, IP allowlist = Droplet IPv4 (not `0.0.0.0/0` for normal operation), `MONGODB_URI` stored off git.
+5. INT secrets generated and stored in a password manager (see checklist). New `AI_KEY_ENCRYPTION_KEY` for INT; keep it for the life of this database.
+
+Cursor does not create cloud accounts, pay invoices, or click Cloudflare/Atlas/DigitalOcean consoles.
 
 ## Planning decisions (locked)
 
-1. **Compute is a Linux VPS, not Vercel.** Vercel, Cloudflare Pages, and similar PaaS hosts do not run the two Express processes and the dual-API boundary. The app server is a **DigitalOcean Droplet** (default): Ubuntu LTS, at least **2 GB RAM**, Docker Engine + Compose plugin. An equivalent 2 GB VPS (Hetzner, Lightsail) is acceptable if already preferred.
-2. **Cloudflare is DNS + the private gate, not the app host.** The zone already lives on Cloudflare. Apex (`quizcontext.app`) stays parked. INT is `https://int.quizcontext.app`.
-3. **Confirm the zone spelling before DNS.** The purchase note read `quizconmtext.app` (extra `m`). The intended apex is `quizcontext.app`. If the Cloudflare zone is the misspelling, fix or repurchase before cutover.
-4. **Caddy on the VM, outside Compose.** Caddy terminates HTTPS (or presents a Cloudflare origin cert) and reverse-proxies to `127.0.0.1:4017`. Public website ports are **80 and 443** only. SSH is restricted. Neither Express port is published on a public interface.
-5. **Private INT, removable without an app change.** First cutover uses **Cloudflare Access** (Zero Trust) on `int.quizcontext.app`, limited to named tester emails. QuizContext register/login stays as-is. Going public later means disabling or bypassing that Access policy — not a product ticket. Caddy basic auth is an acceptable substitute if Access is delayed.
-6. **Atlas is the INT database.** Dedicated DB name `quizcontext-int`, dedicated DB user, `MONGODB_URI` only. Network access: the Droplet’s outbound public IP (not `0.0.0.0/0` for normal operation). First INT database starts empty. Local Mongo stays the personal/dev database.
-7. **Secrets stay off git.** VM env or an untracked override file, plus a password-manager copy. Same `AI_KEY_ENCRYPTION_KEY` for the life of this INT database.
-8. **Redeploy is a newer git SHA on the same VM and Atlas database.** Record the deployed SHA. Rolling back application code does not roll back Mongo. Atlas free-tier backup is limited; keep a periodic `mongodump` of `quizcontext-int` somewhere off the Droplet if study content matters.
-
-## Human preconditions (agent cannot finish these)
-
-Do these in parallel with 9010. 9011 acceptance cannot pass without them.
-
-1. Confirm the Cloudflare zone is exactly `quizcontext.app` (not `quizconmtext.app`).
-2. Create a DigitalOcean account, SSH key, and Droplet (Ubuntu LTS, ≥2 GB). Restrict SSH to your IP or key-only login. Note the Droplet public IPv4.
-3. In Cloudflare DNS, add `int` as an **A** record to that IPv4. Decide proxy status with the runbook (Access needs the hostname proxied; Caddy HTTP-01 needs grey-cloud or a DNS challenge).
-4. Create a Cloudflare Access application on `int.quizcontext.app` for named testers. Keep the policy off or bypassed only while debugging DNS.
-5. Create a MongoDB Atlas project/cluster, database `quizcontext-int`, a dedicated user, and an IP allowlist that includes only the Droplet IPv4 for normal operation.
-6. Generate and store (password manager + VM only): `INTERNAL_API_KEY`, `JWT_SECRET`, `AI_KEY_ENCRYPTION_KEY`, and `OPENAI_API_KEY` only if you intentionally enable app-key AI. Leave `AI_ENABLED=false` until that is deliberate.
-7. Keep a copy of the VM env file off the Droplet.
+1. **Compute:** DigitalOcean Droplet, Ubuntu LTS, ~2 GB. Not Vercel, App Platform, AWS, or another VPS unless DigitalOcean is unavailable.
+2. **Public URL:** `https://int.quizcontext.app`. Apex stays parked. Cloudflare is **DNS only** for D1.
+3. **Caddy on the VM, outside Compose.** Reverse-proxy to `127.0.0.1:4017`. Public website ports **80 and 443** only. Caddy manages Let’s Encrypt. This is intentional hands-on hosting practice.
+4. **Do not use** Cloudflare Tunnel, Cloudflare Access, email allowlists, invitation-only registration, Caddy basic auth, or any extra gate. Anyone with the URL can register, subject to existing QuizContext auth and ownership.
+5. **Do not use** Kubernetes, ECS, DigitalOcean App Platform, or Vercel.
+6. **Atlas** is `MONGODB_URI` only. Empty database at first cutover. Local Mongo unchanged. Migration is a D2 activity, not this ticket.
+7. **Secrets off git.** Untracked env file on the VM plus a password-manager copy. `INTERNAL_API_KEY` must match in both containers. Changing `AI_KEY_ENCRYPTION_KEY` later orphans encrypted user keys on INT.
+8. **Deploy source:** git ref on `dev-deploy` (then `Phase9-historyEnhance` after merge). Not `origin/main`. Record the deployed SHA. Redeploy = newer SHA, same VM, same Atlas. Rolling back **code** does not roll back Mongo.
+9. **Same git motion as 9010:** add runbook + Caddyfile on `dev-deploy`; merge into `Phase9-historyEnhance`. Do not retag `first-use-9001`.
 
 ## In scope
-- One runbook page: `docs/getting-started-hosted.md` (no `docs/deploy/` tree).
-- A tracked Caddyfile (or equivalent snippet in the runbook) that proxies to loopback `4017` and does not route to `server-data`.
-- Runbook sections: Droplet create + Docker install + firewall; Caddy; Cloudflare DNS + Access; Atlas; secrets; first deploy from `dev-deploy`; `GET /health` and Diagnostics; reboot restart (`restart: unless-stopped` / Caddy as a system service); redeploy by git SHA; rollback of **code only**; optional later `mongodump`.
-- First cutover executed from that runbook.
-- How to drop the private gate later (one Access/Caddy change).
+- `docs/getting-started-hosted.md` — the D1 runbook (write it during **implement**, not during this planning pass). One page-scale guide, no `docs/deploy/` tree.
+- Tracked `Caddyfile` at the repo root (or an equivalent snippet **only** if a file cannot work with host Caddy). Proxy `int.quizcontext.app` → `127.0.0.1:4017`. Do not reverse-proxy `server-data`.
+- Runbook coverage (commands the operator will run; keep them copyable):
+  - Ubuntu packages: Docker Engine + Compose plugin, Caddy as a system service
+  - DigitalOcean / `ufw` firewall: 22 restricted, 80/443 open, Express ports not public
+  - SSH key-only
+  - Place secrets, clone/pull the deploy ref, `docker compose up --build -d`
+  - Caddy reload; certificate issuance
+  - Health: `GET https://int.quizcontext.app/health` and in-app **Diagnostics**
+  - Smoke: register, sign in, one subject/topic path, optional quiz if AI is enabled
+  - Confirm `server-data` is not reachable on the Droplet public IP (no published port)
+  - Reboot: Compose `restart: unless-stopped` + Caddy systemd come back
+  - Redeploy by SHA; rollback of images/git ref only
+  - Logs: `docker compose logs`, Caddy journal
+  - Atlas IP + URI troubleshooting
+  - OpenAI: document **actual** D1 spend control before inviting a classmate (see constraints)
+  - Backup: Atlas tier limits + a practical off-Droplet `mongodump` of `quizcontext-int` if study data matters
+  - One paragraph: local Mongo migration is **D2**, INT data may already be valuable, do not restore over classmate data
+- Joint first cutover: operator follows the runbook; agent may assist via SSH **only if the operator provides access during implement** — default is operator-executed commands from the runbook.
 
 ## Out of scope
-- Compose images, lockfiles, static serve, SPA fallback (9010).
-- Production on the apex, a second environment, CI, preview apps.
-- Merging into `main`.
-- Migrating local Mongo into Atlas (one optional paragraph is enough).
-- Changing QuizContext registration, JWT, or OpenAI key product behaviour.
-- Rate limiting, Helmet, WAF, secrets managers, key rotation UI.
-- Kubernetes, extra logging platforms, or moving the app onto Vercel/Cloudflare Pages.
+- Dockerfiles, lockfiles, static/SPA code (9010).
+- Production on the apex; CI; AWS; extra environments.
+- Cloudflare Access / Tunnel.
+- Changing `/auth/register`, JWT, ownership, quiz generation, or evaluation.
+- Local→Atlas migration scripts.
+- Helmet/WAF/secrets manager/rate-limit product/IaC.
+
+## Expected artefacts
+- `docs/getting-started-hosted.md`
+- `Caddyfile` (tracked)
+- Operator checklist already exists; update it only if implement discovers a wrong port/hostname (should not)
+
+## Implementation sequence
+1. Confirm 9010 acceptance on `dev-deploy` (images + loopback 4017).
+2. Write `Caddyfile` for `int.quizcontext.app` → `127.0.0.1:4017`.
+3. Write `docs/getting-started-hosted.md` covering the bullets above, pointing at the operator checklist for console clicks.
+4. Operator: Droplet software + DNS grey-cloud + Atlas allowlist + secrets (checklist).
+5. Deploy the chosen git SHA; start Compose; reload Caddy.
+6. Verify acceptance checks together.
+7. Merge `dev-deploy` into `Phase9-historyEnhance` if not already done after 9010.
 
 ## Acceptance checks
-- [ ] Human preconditions above are done (zone spelling confirmed).
-- [ ] `https://int.quizcontext.app` reaches the QuizContext login/register screen through the private gate.
-- [ ] After the gate, register, sign in, and Diagnostics show webApp + data API + database ok.
-- [ ] Browser cannot reach `server-data`. `INTERNAL_API_KEY` is not in the client bundle.
-- [ ] Ports 80/443 are the only public website ports; Express ports are loopback-only.
-- [ ] Redeploy-by-SHA and “rollback does not undo Mongo” are written.
-- [ ] The runbook states how to remove Cloudflare Access (or Caddy basic auth) without an application change.
-- [ ] `.env` / keys / `ket.txt` are not committed.
+- [ ] Runbook exists at `docs/getting-started-hosted.md` and a tracked Caddyfile matches loopback **4017**.
+- [ ] `https://int.quizcontext.app` shows QuizContext login/register **without** an extra SSO/Access screen.
+- [ ] Register, sign in, Diagnostics (webApp + data API + database ok).
+- [ ] Refresh of a client route (e.g. `/profile`) still serves the SPA over HTTPS.
+- [ ] From a network that is not the Droplet: `server-data` port **4007** is closed on the public IP; `/health` on 4017 is not publicly open (only 80/443).
+- [ ] `INTERNAL_API_KEY` is not in the client bundle. No secrets committed.
+- [ ] Deployed git SHA is recorded (runbook says where — for example a file on the VM or a compose label).
+- [ ] Reboot test or equivalent: Compose + Caddy recover without a manual `docker compose up`.
+- [ ] Runbook states how to deploy a newer SHA to the **same** Atlas DB, and that rollback does not undo Mongo.
+- [ ] OpenAI spend control as actually implemented is written before the classmate is invited (`AI_ENABLED`, user vs application key, 100k-token experiment cap).
+- [ ] `.env` / keys / `ket.txt` not committed.
 
-## Implementation notes
-- Same git motion as 9010: add the runbook and Caddyfile on `dev-deploy`.
-- `CLIENT_ORIGIN` on the VM is `https://int.quizcontext.app`.
-- Prefer Cloudflare Access over changing `/auth/register`.
-- If Cloudflare is proxied (orange cloud), do not use Caddy’s default HTTP-01 against the public hostname; use a Cloudflare origin certificate (Full/Strict) or a DNS-01 challenge. Grey-cloud + Caddy Let’s Encrypt is the simpler first path if Access can be added immediately after the cert works — or enable Access first and use an origin cert.
-- Generate `AI_KEY_ENCRYPTION_KEY` once for INT and keep it.
+## Verification approach
+- Operator (or shared session): browser on a **phone or second network** to `https://int.quizcontext.app`.
+- `curl -I https://int.quizcontext.app/health` and `curl -I https://int.quizcontext.app/profile`.
+- From the operator laptop: attempt `http://<droplet-ip>:4007/health` and `http://<droplet-ip>:4017/health` — both should fail. `https://int.quizcontext.app/health` should succeed.
+- Diagnostics screen in the app.
+- Optional quiz generate/evaluate only if AI is intentionally enabled.
+
+## Technical constraints
+- Caddy HTTP-01 requires port 80 reachable on the hostname. **Grey-cloud DNS.** Orange-cloud + HTTP-01 will fail; do not “fix” that with Tunnel.
+- Hosted `CLIENT_ORIGIN=https://int.quizcontext.app`.
+- Compose `DATA_API_BASE_URL` stays on the Docker network (`http://<service>:4007`).
+- Application-key monthly cap: Phase 8 `getAiConfig()` uses experiment baseline **100000** tokens, not `AI_APP_MONTHLY_TOKEN_LIMIT` from env. User-provided keys are not limited by that cap. Default `AI_ENABLED=false` until the operator chooses otherwise.
+- Atlas free-tier cloud backup is limited; do not document a fake enterprise restore.
+- Classmate data on INT is real; D2 migration must not assume INT is disposable.
