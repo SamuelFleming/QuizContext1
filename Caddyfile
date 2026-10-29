@@ -1,0 +1,7 @@
+# QuizContext INT. Caddy runs on the Ubuntu host, outside Docker Compose.
+# Cloudflare DNS for this name stays grey-cloud (DNS only) so HTTP-01 can issue the certificate.
+# Proxy only the public site. server-data has no site block and no published host port.
+
+int.quizcontext.app {
+	reverse_proxy 127.0.0.1:4017
+}

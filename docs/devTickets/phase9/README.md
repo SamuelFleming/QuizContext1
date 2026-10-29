@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9001 done (browser and live-provider UAT pending). Study-history tickets 9002–9008 Planned — phase reopened for that work. Ops 9010 Done (Compose scaffold; image build on the implement PC unrun — no Docker Desktop); 9011 Planned (INT host; parallel, not in the product Done-when).
+**Status:** 9000–9001 done (browser and live-provider UAT pending). Study-history tickets 9002–9008 Planned — phase reopened for that work. Ops 9010 Done (Compose scaffold; image build on the implement PC unrun — no Docker Desktop); 9011 In progress (runbook + Caddyfile written; live INT cutover pending; parallel, not in the product Done-when).
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
@@ -19,7 +19,7 @@
 8. [9007](9007-quiz-detail-history-ui.md) — compose quiz detail (stats, weakest, paginated attempts). Planned. Depends on 9004, 9006.
 9. [9008](9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
 10. [9010](9010-int-deployment-scaffold.md) — Docker Compose + hosted static/SPA serve. Done. Parallel to 9002–9008; does not depend on them. Compose `build`/`up` on this PC unrun (no Docker Desktop).
-11. [9011](9011-int-runbook-cutover.md) — hosted runbook, Caddy, first INT cutover. Planned. Depends on 9010 and human Droplet/DNS/Atlas steps.
+11. [9011](9011-int-runbook-cutover.md) — hosted runbook, Caddy, first INT cutover. In progress. Runbook and Caddyfile written; Droplet cutover still with the operator. Depends on 9010 and human Droplet/DNS/Atlas steps.
 
 **Planning decisions (optional instructions — 9000–9001).**
 - The API/storage field is `quizInstructions`; the UI label is **Quiz instructions (optional)**.

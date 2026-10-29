@@ -13,7 +13,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
 | 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker; workspace quiz visibility + content size | 8000–8010 done |
-| 9 | Optional quiz-generation instructions + scoped study history | 9000–9001 done (UAT pending); 9002–9008 Planned — phase reopened |
+| 9 | Optional quiz-generation instructions + scoped study history | 9000–9001 done (UAT pending); 9002–9008 Planned — phase reopened. Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; live cutover pending) |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -21,7 +21,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None queued for implement until a Planned ticket is approved. Next in Phase 9 study-history sequence: [9002](phase9/9002-study-history-data-api.md). Optional-instructions browser and live-provider UAT remain pending.
+None queued for a new implement until a Planned ticket is approved. Next in Phase 9 study-history sequence: [9002](phase9/9002-study-history-data-api.md). Ops sequence (parallel): [9010](phase9/9010-int-deployment-scaffold.md) Done; [9011](phase9/9011-int-runbook-cutover.md) In progress (runbook + Caddyfile written on `dev-deploy`; operator cutover still open). Optional-instructions browser and live-provider UAT remain pending.
 
 ## Phase 9 proposed order
 1. [9000](phase9/9000-optional-quiz-instructions-api.md) — API validation, versioned prompt integration, persistence, projection, and OpenAPI. Done.
@@ -33,6 +33,10 @@ None queued for implement until a Planned ticket is approved. Next in Phase 9 st
 7. [9006](phase9/9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.
 8. [9007](phase9/9007-quiz-detail-history-ui.md) — compose quiz detail history/stats/weakest. Planned. Depends on 9004, 9006.
 9. [9008](phase9/9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
+
+## Phase 9 ops order (parallel to 9002–9008)
+1. [9010](phase9/9010-int-deployment-scaffold.md) — Docker Compose + hosted static/SPA serve. Done. Compose image build on this PC unrun (no Docker Desktop).
+2. [9011](phase9/9011-int-runbook-cutover.md) — runbook, Caddy, first INT cutover to `https://int.quizcontext.app`. In progress. `Caddyfile` and `docs/getting-started-hosted.md` are written; live Droplet cutover remains. Public registration (no Cloudflare Access).
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -118,6 +122,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-Next implement: none until a Planned ticket is approved; Phase 9 study-history starts at 9002 when approved. Phase 9 optional-instructions browser and live-provider UAT remain pending, alongside 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click where noted.
+Next implement: none until a Planned ticket is approved; Phase 9 study-history starts at 9002 when approved. Ops INT host [9011](phase9/9011-int-runbook-cutover.md) is in progress: runbook and Caddyfile are written on `dev-deploy`; the operator still runs the Droplet cutover (Compose `build`/`up` included — no Docker Desktop on the implement PC). Phase 9 optional-instructions browser and live-provider UAT remain pending, alongside 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click where noted.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.

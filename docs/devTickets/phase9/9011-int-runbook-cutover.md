@@ -1,6 +1,6 @@
 # 9011 — INT runbook and first cutover
 
-**Status:** Planned  
+**Status:** In progress — `Caddyfile` and `docs/getting-started-hosted.md` are written on `dev-deploy`. Live HTTPS, register, Diagnostics, closed public Express ports, and reboot are not done. The operator runs that cutover from the runbook. Do not merge into `Phase9-historyEnhance` until explicitly asked. Commit and push this branch before a Droplet clone can see the new files.  
 **Phase:** 9 (ops, parallel to 9002–9008)  
 **Depends on:** [9010](9010-int-deployment-scaffold.md) Compose scaffold on `dev-deploy`; operator Droplet + DNS + Atlas from [deployment-operator-checklist.md](../../reference/Deployment/deployment-operator-checklist.md).  
 **Relevant scope:** D1 live host; charter dual-API boundary  
@@ -76,7 +76,7 @@ Cursor does not create cloud accounts, pay invoices, or click Cloudflare/Atlas/D
 7. Merge `dev-deploy` into `Phase9-historyEnhance` only when the operator explicitly asks (after 9010 and 9011 artefacts exist). Do not merge as part of 9010.
 
 ## Acceptance checks
-- [ ] Runbook exists at `docs/getting-started-hosted.md` and a tracked Caddyfile matches loopback **4017**.
+- [x] Runbook exists at `docs/getting-started-hosted.md` and a tracked Caddyfile matches loopback **4017**. Files are in the working tree (not gitignored) and are not committed yet. Live checks below stay open.
 - [ ] `https://int.quizcontext.app` shows QuizContext login/register **without** an extra SSO/Access screen.
 - [ ] Register, sign in, Diagnostics (webApp + data API + database ok).
 - [ ] Refresh of a client route (e.g. `/profile`) still serves the SPA over HTTPS.
@@ -84,8 +84,8 @@ Cursor does not create cloud accounts, pay invoices, or click Cloudflare/Atlas/D
 - [ ] `INTERNAL_API_KEY` is not in the client bundle. No secrets committed.
 - [ ] Deployed git SHA is recorded (runbook says where — for example a file on the VM or a compose label).
 - [ ] Reboot test or equivalent: Compose + Caddy recover without a manual `docker compose up`.
-- [ ] Runbook states how to deploy a newer SHA to the **same** Atlas DB, and that rollback does not undo Mongo.
-- [ ] OpenAI spend control as actually implemented is written before the classmate is invited (`AI_ENABLED`, user vs application key, 100k-token experiment cap).
+- [x] Runbook states how to deploy a newer SHA to the **same** Atlas DB, and that rollback does not undo Mongo.
+- [x] OpenAI spend control as actually implemented is written before the classmate is invited (`AI_ENABLED`, user vs application key, 100k-token experiment cap).
 - [ ] `.env` / keys / `ket.txt` not committed.
 
 ## Verification approach
