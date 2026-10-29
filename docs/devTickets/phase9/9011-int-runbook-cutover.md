@@ -2,9 +2,9 @@
 
 **Status:** Planned  
 **Phase:** 9 (ops, parallel to 9002–9008)  
-**Depends on:** [9010](9010-int-deployment-scaffold.md) Compose scaffold on `dev-deploy`; operator Droplet + DNS + Atlas from [deployment-operator-checklist.md](../../deployment-operator-checklist.md).  
+**Depends on:** [9010](9010-int-deployment-scaffold.md) Compose scaffold on `dev-deploy`; operator Droplet + DNS + Atlas from [deployment-operator-checklist.md](../../reference/Deployment/deployment-operator-checklist.md).  
 **Relevant scope:** D1 live host; charter dual-API boundary  
-**Companion:** [Evolution plan](../../deployment-evolution-plan.md) (D2–D6, including D2 data migration). Do not implement those here.
+**Companion:** [Evolution plan](../../reference/Deployment/deployment-evolution-plan.md) (D2–D6, including D2 data migration). Do not implement those here.
 
 ## Objective
 Document and execute the first INT cutover so `https://int.quizcontext.app` serves Release-2 with HTTPS, the existing register/login flow, and `server-data` unreachable from the internet. Do not invent production, CI, or extra auth gates.
@@ -73,7 +73,7 @@ Cursor does not create cloud accounts, pay invoices, or click Cloudflare/Atlas/D
 4. Operator: Droplet software + DNS grey-cloud + Atlas allowlist + secrets (checklist).
 5. Deploy the chosen git SHA; start Compose; reload Caddy.
 6. Verify acceptance checks together.
-7. Merge `dev-deploy` into `Phase9-historyEnhance` if not already done after 9010.
+7. Merge `dev-deploy` into `Phase9-historyEnhance` only when the operator explicitly asks (after 9010 and 9011 artefacts exist). Do not merge as part of 9010.
 
 ## Acceptance checks
 - [ ] Runbook exists at `docs/getting-started-hosted.md` and a tracked Caddyfile matches loopback **4017**.

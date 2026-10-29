@@ -1,6 +1,6 @@
 # D1 operator checklist (outside Cursor)
 
-Tasks **you** perform in Cloudflare, DigitalOcean, MongoDB Atlas, and on the Droplet over SSH. Cursor implements repository artefacts on [9010](devTickets/phase9/9010-int-deployment-scaffold.md) and [9011](devTickets/phase9/9011-int-runbook-cutover.md). The copy-paste Linux commands for Docker/Caddy live in `docs/getting-started-hosted.md` **after 9011 is implemented** — do not invent a second runbook here.
+Tasks **you** perform in Cloudflare, DigitalOcean, MongoDB Atlas, and on the Droplet over SSH. Cursor implements repository artefacts on [9010](../../devTickets/phase9/9010-int-deployment-scaffold.md) and [9011](../../devTickets/phase9/9011-int-runbook-cutover.md). The copy-paste Linux commands for Docker/Caddy live in `docs/getting-started-hosted.md` **after 9011 is implemented** — do not invent a second runbook here.
 
 **Locked D1 facts (from the repo, not from chat):**
 
@@ -50,12 +50,12 @@ When a step depends on Cursor artefacts, skip it until that ticket is done.
 
 | Step | Action | Owner | Depends on | Related ticket | Completion evidence |
 | --- | --- | --- | --- | --- | --- |
-| C1 | 9010 merged/available on `dev-deploy`: `docker-compose.yml`, Dockerfiles, lockfiles, static/SPA. You do not need to write these. | Cursor | — | 9010 | Ticket 9010 acceptance checked |
+| C1 | 9010 artefacts on `dev-deploy`: `docker-compose.yml`, Dockerfiles, lockfiles, static/SPA. You do not need to write these. Compose `build`/`up` was not run on the implement Windows PC (no Docker Desktop); prove it on the Droplet in 9011 or after installing Docker locally. | Cursor | — | 9010 | Dockerfiles + Compose present on `dev-deploy`; ticket 9010 Done with Compose checks still unrun |
 | C2 | 9011 writes `docs/getting-started-hosted.md` and a tracked `Caddyfile`. Stop using this checklist as a substitute for those commands. | Cursor | C1 | 9011 | Those files exist on `dev-deploy` |
 | C3 | SSH to the Droplet (`ssh -i <private-key> root@<ipv4>` or the user the image created). | You | A6 | 9011 | Interactive shell |
 | C4 | Follow the runbook: install Docker Engine + Compose plugin, install Caddy, enable both to start on boot. | You | C2, C3 | 9011 | `docker compose version`; `caddy version`; Caddy systemd enabled |
 | C5 | Clone or pull the **deploy git ref** (`dev-deploy` until `Phase9-historyEnhance` is the agreed source). Not `main`. Record `git rev-parse HEAD`. | You | C3, GitHub access on the VM (deploy key or HTTPS) | 9011 | SHA written down (password manager or a root-only file) |
-| C6 | Create the untracked Compose env file on the VM from the committed example. Fill A4 + B2 values. `CLIENT_ORIGIN=https://int.quizcontext.app`. `DATA_API_BASE_URL` = Compose service URL on port 4007 (runbook will name the service). `PORT=4017` / `4007` as today. Do not commit this file. Keep a copy in the password manager. | You | C2, A4, B2 | 9011 | Compose starts without missing-env errors |
+| C6 | Create the untracked Compose env file on the VM from `.env.example` (`chmod 600`). Fill A4 + B2 values. `CLIENT_ORIGIN=https://int.quizcontext.app`. Do **not** set `PORT` or `DATA_API_BASE_URL` — Compose injects `4017`/`4007` and `http://server-data:4007`. Do not commit this file. Keep a copy in the password manager. | You | C2, A4, B2 | 9011 | Compose starts without missing-env errors |
 | C7 | Runbook: `docker compose up --build -d`. Confirm `server-webApp` is published only on loopback 4017 and `server-data` is not published. | You | C1, C6 | 9010+9011 | `curl http://127.0.0.1:4017/health` on the VM succeeds |
 | C8 | Install the tracked Caddyfile; reload Caddy. Confirm certificate for `int.quizcontext.app`. | You | B1, C4, C7 | 9011 | `https://int.quizcontext.app/health` from your laptop |
 
