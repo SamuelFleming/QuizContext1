@@ -88,6 +88,9 @@ Swagger (implemented routes only):
 ## Other docs
 
 - [docs/getting-started-local.md](docs/getting-started-local.md) — install dependencies and run locally from scratch
+- Root `docker-compose.yml` and `.env.example` — optional Compose packaging (SPA on 4017; see [Run from scratch](#run-from-scratch))
+- [docs/reference/Deployment/deployment-evolution-plan.md](docs/reference/Deployment/deployment-evolution-plan.md) — INT host now (D1) and later ops milestones
+- [docs/reference/Deployment/deployment-operator-checklist.md](docs/reference/Deployment/deployment-operator-checklist.md) — cloud-account steps for the first INT cutover
 - `docs/devTickets/` — implementation tickets and queue
 - `CLAUDE.md` — agent/engineering guide for this repo
 

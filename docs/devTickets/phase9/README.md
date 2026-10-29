@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9001 done (browser and live-provider UAT pending). Study-history tickets 9002–9008 Planned — phase reopened for that work.
+**Status:** 9000–9001 done (browser and live-provider UAT pending). Study-history tickets 9002–9008 Planned — phase reopened for that work. Ops 9010 Done (Compose scaffold; image build on the implement PC unrun — no Docker Desktop); 9011 Planned (INT host; parallel, not in the product Done-when).
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
@@ -18,6 +18,8 @@
 7. [9006](9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.
 8. [9007](9007-quiz-detail-history-ui.md) — compose quiz detail (stats, weakest, paginated attempts). Planned. Depends on 9004, 9006.
 9. [9008](9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
+10. [9010](9010-int-deployment-scaffold.md) — Docker Compose + hosted static/SPA serve. Done. Parallel to 9002–9008; does not depend on them. Compose `build`/`up` on this PC unrun (no Docker Desktop).
+11. [9011](9011-int-runbook-cutover.md) — hosted runbook, Caddy, first INT cutover. Planned. Depends on 9010 and human Droplet/DNS/Atlas steps.
 
 **Planning decisions (optional instructions — 9000–9001).**
 - The API/storage field is `quizInstructions`; the UI label is **Quiz instructions (optional)**.
@@ -38,5 +40,11 @@
 - Weakest questions: top 5; prompt + score metadata only—never keys, rubrics, explanations, responses, or snapshots.
 - Activity buckets remain dashboard-only (7013 UTC rules).
 - UI: compose small shared primitives; no mandatory StudyHistoryWidget. SVG/CSS only (no chart library). Design tokens from Light Mint & Indigo.
+
+**Planning decisions (INT host — 9010–9011).**
+- One long-lived INT, not production: `https://int.quizcontext.app`. Compute is a DigitalOcean Droplet (~2 GB Ubuntu + Docker Compose + host Caddy). Not Vercel, App Platform, Tunnel, or Kubernetes.
+- Cloudflare is **DNS only** (grey-cloud `int` A record). No Access, no extra registration gate. Existing QuizContext auth is enough.
+- Two Compose services. `server-webApp` serves the SPA on loopback **4017**; Caddy terminates HTTPS. `server-data` stays on the Compose network. Atlas `quizcontext-int` starts empty. Local Mongo is not migrated in D1 (D2 activity).
+- 9010 is locally verifiable compose/scaffold. 9011 is the runbook and live cutover. Roadmap: [deployment-evolution-plan.md](../../reference/Deployment/deployment-evolution-plan.md). Operator clicks: [deployment-operator-checklist.md](../../reference/Deployment/deployment-operator-checklist.md).
 
 **Out of phase.** Adaptive or live oral interviews, reusable presets, profile-level preferences, editing historical generation metadata, a saved-quiz regeneration endpoint, automatic instruction rewriting/moderation, retries, batching, question-limit changes, RAG, billing, spaced repetition, and rewriting unrelated dashboard subject cards.

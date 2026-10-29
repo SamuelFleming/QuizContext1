@@ -4,7 +4,7 @@
 **INT URL:** `https://int.quizcontext.app`  
 **Not production.** Apex `quizcontext.app` stays parked until a later, separate production decision.
 
-This document records **where hosting is going**, not how to provision D1. D1 execution is [9010](devTickets/phase9/9010-int-deployment-scaffold.md), [9011](devTickets/phase9/9011-int-runbook-cutover.md), and [deployment-operator-checklist.md](deployment-operator-checklist.md).
+This document records **where hosting is going**, not how to provision D1. D1 execution is [9010](../../devTickets/phase9/9010-int-deployment-scaffold.md), [9011](../../devTickets/phase9/9011-int-runbook-cutover.md), and [deployment-operator-checklist.md](deployment-operator-checklist.md).
 
 Do not treat D2–D6 as a backlog to implement now.
 
