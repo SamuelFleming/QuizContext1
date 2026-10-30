@@ -13,6 +13,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
 | 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker; workspace quiz visibility + content size | 8000–8010 done |
+| 9 | Optional quiz-generation instructions + scoped study history | 9000–9001 done (UAT pending); 9002–9008 Planned — phase reopened |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -20,7 +21,18 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None queued. Phase 8 build complete (8000–8010). Manual UAT and later follow-ons remain outside this queue.
+None queued for implement until a Planned ticket is approved. Next in Phase 9 study-history sequence: [9002](phase9/9002-study-history-data-api.md). Optional-instructions browser and live-provider UAT remain pending.
+
+## Phase 9 proposed order
+1. [9000](phase9/9000-optional-quiz-instructions-api.md) — API validation, versioned prompt integration, persistence, projection, and OpenAPI. Done.
+2. [9001](phase9/9001-optional-quiz-instructions-ui.md) — generation textarea, request wiring, retained state, and saved-quiz visibility. Done. Depends on 9000.
+3. [9002](phase9/9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, includes) + OpenAPI. Planned. Revises 7013 dump/aggregation split.
+4. [9003](phase9/9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Planned. Depends on 9002.
+5. [9004](phase9/9004-quiz-history-api.md) — `GET /quizzes/:quizId/history` + client service. Planned. Depends on 9002, 9003.
+6. [9005](phase9/9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Planned. Depends on 9002, 9003.
+7. [9006](phase9/9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.
+8. [9007](phase9/9007-quiz-detail-history-ui.md) — compose quiz detail history/stats/weakest. Planned. Depends on 9004, 9006.
+9. [9008](phase9/9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -106,6 +118,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-Next implement: none queued. 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click remain pending manual UAT where noted.
+Next implement: none until a Planned ticket is approved; Phase 9 study-history starts at 9002 when approved. Phase 9 optional-instructions browser and live-provider UAT remain pending, alongside 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click where noted.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.

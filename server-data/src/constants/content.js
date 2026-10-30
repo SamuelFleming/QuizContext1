@@ -21,6 +21,7 @@ export const QUIZ_CRITERIA_MIN = 1;
 export const QUIZ_CRITERIA_MAX = 5;
 export const QUIZ_CONCEPTS_MAX = 5;
 export const QUIZ_CONCEPT_MAX = 80;
+export const QUIZ_INSTRUCTIONS_MAX = 2000;
 // Must cover the largest experiment context budget (source text) plus labelled block headers.
 export const QUIZ_SNAPSHOT_MAX = 250000;
 export const QUIZ_TOPIC_IDS_MAX = 30;
