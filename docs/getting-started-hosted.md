@@ -1,12 +1,12 @@
 # Getting started hosted (INT)
 
-This guide is the D1 cutover for `https://int.quizcontext.app`. When you finish, the Droplet serves Release-2 over HTTPS, registration works with the existing QuizContext login, and `server-data` is not reachable from the internet.
+This is the **living** how-to for the current INT host at `https://int.quizcontext.app`: install/redeploy, health checks, logs, rollback. Update this page when the host procedure changes.
 
-Console clicks in Cloudflare, DigitalOcean, and Atlas are already listed in [deployment-operator-checklist.md](reference/Deployment/deployment-operator-checklist.md). Do those there. This page is the copy-paste sequence on the Droplet and the checks from your laptop. Later milestones (CI, local Mongo migration, AWS) stay in [deployment-evolution-plan.md](reference/Deployment/deployment-evolution-plan.md).
+What D1 actually chose and which SSH commands ran the first cutover: [reference/Deployment/D1/as-built.md](reference/Deployment/D1/as-built.md). Verbatim PowerShell/SSH I/O from that cutover: [reference/Deployment/D1/getting-started-hosted_1-5.txt](reference/Deployment/D1/getting-started-hosted_1-5.txt). Later milestones (CI, local Mongo migration, AWS): [reference/Deployment/deployment-evolution-plan.md](reference/Deployment/deployment-evolution-plan.md).
 
 The app is one INT environment, not production. Apex `quizcontext.app` stays parked. Anyone with the URL can register. There is no Cloudflare Access screen, Tunnel, email allowlist, or extra password gate.
 
-Commands below assume the **root** shell from the checklist (`ssh -i <private-key> root@<droplet-ipv4>`). Secrets stay in your password manager and in the VM `.env`. Do not paste them into chat, git, or the handoff log.
+Commands below assume the **root** shell (`ssh -o IdentitiesOnly=yes -i <private-key> root@<droplet-ipv4>`). Secrets stay in your password manager and in the VM `.env`. Do not paste them into chat or git.
 
 The Droplet clone only contains this file and the root `Caddyfile` after that commit is on GitHub `dev-deploy`. If a fresh clone has no `Caddyfile`, stop and push this branch before continuing.
 
@@ -50,7 +50,7 @@ Keep the existing root key login. Do not add another user in this cutover.
 
 ## 2. Host firewall
 
-The DigitalOcean cloud firewall stays as in the checklist: 22 restricted to your IP, 80 and 443 open, 4007 and 4017 not inbound. `ufw` is the second layer on the VM. Allow SSH **before** you enable it, using the same public IPv4 as the cloud firewall. A wrong address here locks SSH; DigitalOcean’s recovery console is the way back.
+The DigitalOcean cloud firewall stays: 22 restricted to your IP, 80 and 443 open, 4007 and 4017 not inbound. `ufw` is the second layer on the VM. Allow SSH **before** you enable it, using the same public IPv4 as the cloud firewall. A wrong address here locks SSH; DigitalOcean’s recovery console is the way back. The IPv4 used at first cutover is recorded in the [as-built](reference/Deployment/D1/as-built.md) (it may have changed).
 
 ```bash
 ufw default deny incoming
@@ -442,6 +442,6 @@ Copying that laptop database into Atlas is a D2 decision in [deployment-evolutio
 
 ## 16. As-built record
 
-After the smoke checks, append one row to section 7 of [QuizContext-D1-Infrastructure-Handoff.md](devTickets/phase9/QuizContext-D1-Infrastructure-Handoff.md). Include the date, `docker --version`, `docker compose version`, `caddy version`, the Ubuntu version, the SHA in `/root/quizcontext/deployed-sha`, what you tested, and any problem plus the fix. Redact every secret. Do not paste `.env`, the Atlas URI, or keys into that log or into git.
+The first cutover is recorded in [reference/Deployment/D1/as-built.md](reference/Deployment/D1/as-built.md). After a later redeploy or smoke check, update that file (or add a short dated note there): `docker --version`, `docker compose version`, `caddy version`, Ubuntu version, SHA in `/root/quizcontext/deployed-sha`, what you tested, and any problem plus the fix. Redact every secret. Do not paste `.env`, the Atlas URI, or keys into that record or into git.
 
 Do not commit `.env`, `ket.txt`, SSH private keys, or dump archives.

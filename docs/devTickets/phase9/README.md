@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9001 done (browser and live-provider UAT pending). Study-history tickets 9002–9008 Planned — phase reopened for that work. Ops 9010 Done (Compose scaffold; image build on the implement PC unrun — no Docker Desktop); 9011 In progress (runbook + Caddyfile written; live INT cutover pending; parallel, not in the product Done-when).
+**Status:** 9000–9001 done (browser and live-provider UAT pending). Study-history tickets 9002–9008 Planned — phase reopened for that work. Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs). Parallel, not in the product Done-when.
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
@@ -19,7 +19,8 @@
 8. [9007](9007-quiz-detail-history-ui.md) — compose quiz detail (stats, weakest, paginated attempts). Planned. Depends on 9004, 9006.
 9. [9008](9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
 10. [9010](9010-int-deployment-scaffold.md) — Docker Compose + hosted static/SPA serve. Done. Parallel to 9002–9008; does not depend on them. Compose `build`/`up` on this PC unrun (no Docker Desktop).
-11. [9011](9011-int-runbook-cutover.md) — hosted runbook, Caddy, first INT cutover. In progress. Runbook and Caddyfile written; Droplet cutover still with the operator. Depends on 9010 and human Droplet/DNS/Atlas steps.
+11. [9011](9011-int-runbook-cutover.md) — hosted runbook, Caddy, first INT cutover. In progress. Runbook and Caddyfile written; some live checks still open. Depends on 9010 and human Droplet/DNS/Atlas steps.
+12. [9012](9012-d1-deployment-docs.md) — D1 as-built documentation cleanup. Done. Depends on 9010/9011 artefacts.
 
 **Planning decisions (optional instructions — 9000–9001).**
 - The API/storage field is `quizInstructions`; the UI label is **Quiz instructions (optional)**.
@@ -45,6 +46,6 @@
 - One long-lived INT, not production: `https://int.quizcontext.app`. Compute is a DigitalOcean Droplet (~2 GB Ubuntu + Docker Compose + host Caddy). Not Vercel, App Platform, Tunnel, or Kubernetes.
 - Cloudflare is **DNS only** (grey-cloud `int` A record). No Access, no extra registration gate. Existing QuizContext auth is enough.
 - Two Compose services. `server-webApp` serves the SPA on loopback **4017**; Caddy terminates HTTPS. `server-data` stays on the Compose network. Atlas `quizcontext-int` starts empty. Local Mongo is not migrated in D1 (D2 activity).
-- 9010 is locally verifiable compose/scaffold. 9011 is the runbook and live cutover. Roadmap: [deployment-evolution-plan.md](../../reference/Deployment/deployment-evolution-plan.md). Operator clicks: [deployment-operator-checklist.md](../../reference/Deployment/deployment-operator-checklist.md).
+- 9010 is Compose/SPA packaging. 9011 is the runbook and live cutover. 9012 is the as-built record. Roadmap: [deployment-evolution-plan.md](../../reference/Deployment/deployment-evolution-plan.md). What shipped: [D1/as-built.md](../../reference/Deployment/D1/as-built.md). How to operate INT now: [getting-started-hosted.md](../../getting-started-hosted.md).
 
 **Out of phase.** Adaptive or live oral interviews, reusable presets, profile-level preferences, editing historical generation metadata, a saved-quiz regeneration endpoint, automatic instruction rewriting/moderation, retries, batching, question-limit changes, RAG, billing, spaced repetition, and rewriting unrelated dashboard subject cards.

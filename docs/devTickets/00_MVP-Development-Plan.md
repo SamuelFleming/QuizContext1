@@ -1,6 +1,6 @@
 # QuizContext.io — MVP Development Plan
 
-**Status:** Roadmap approved. Phases 1–8 and Phase 9 tickets 9000–9001 are implemented; Phase 9 is reopened for scoped study history (9002–9008 Planned). Parallel ops 9010 Done; 9011 In progress (INT host runbook written; live cutover pending). Optional-instructions browser and live-provider UAT remain pending.
+**Status:** Roadmap approved. Phases 1–8 and Phase 9 tickets 9000–9001 are implemented; Phase 9 is reopened for scoped study history (9002–9008 Planned). Parallel ops 9010 Done; 9011 In progress; 9012 Done (D1 as-built docs). Optional-instructions browser and live-provider UAT remain pending.
 **Date:** 9 October 2026  
 **Role:** Phase sequence for `/plan-phase`. Product behaviour stays in the [Project Ideation Charter](../ProjectIdeationCharter.md) and `docs/core-scope/`. CareerContext notes in `docs/reference/` are advisory.
 
@@ -206,7 +206,7 @@ Later phases reuse these rules. They are not re-decided per entity.
 
 **Out of phase.** Adaptive oral interviews, presets, profile-level defaults, editing historical instructions, a saved-quiz regeneration endpoint, retries, batching, question-limit changes, RAG, billing, spaced repetition, and a mandatory mega StudyHistoryWidget.
 
-**Parallel ops (not in this phase’s Done-when).** Ticket 9010 packaged Compose/SPA on `dev-deploy`. Ticket 9011 has the hosted runbook and Caddyfile; the first INT cutover (`int.quizcontext.app` on a DigitalOcean Droplet + Atlas) is still the operator’s. They do not change 9000–9008 product scope.
+**Parallel ops (not in this phase’s Done-when).** Ticket 9010 packaged Compose/SPA. Ticket 9011 wrote the hosted runbook and Caddyfile (some live checks still open). Ticket 9012 recorded the D1 as-built. They do not change 9000–9008 product scope.
 
 ## 5. Flow assignment
 

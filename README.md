@@ -48,7 +48,7 @@ docker compose up --build
 
 Then open http://127.0.0.1:4017 (not 5017). Health: http://127.0.0.1:4017/health. Stop with `docker compose down`. Do not commit `.env`.
 
-Internet INT (`https://int.quizcontext.app`, Caddy, Atlas) is a later cutover; see [docs/reference/Deployment/deployment-operator-checklist.md](docs/reference/Deployment/deployment-operator-checklist.md).
+Internet INT is `https://int.quizcontext.app` (Caddy, Atlas). Operate it with [docs/getting-started-hosted.md](docs/getting-started-hosted.md). What D1 shipped: [docs/reference/Deployment/D1/as-built.md](docs/reference/Deployment/D1/as-built.md).
 
 ## Architecture
 
@@ -89,8 +89,9 @@ Swagger (implemented routes only):
 
 - [docs/getting-started-local.md](docs/getting-started-local.md) — install dependencies and run locally from scratch
 - Root `docker-compose.yml` and `.env.example` — optional Compose packaging (SPA on 4017; see [Run from scratch](#run-from-scratch))
-- [docs/reference/Deployment/deployment-evolution-plan.md](docs/reference/Deployment/deployment-evolution-plan.md) — INT host now (D1) and later ops milestones
-- [docs/reference/Deployment/deployment-operator-checklist.md](docs/reference/Deployment/deployment-operator-checklist.md) — cloud-account steps for the first INT cutover
+- [docs/getting-started-hosted.md](docs/getting-started-hosted.md) — operate or redeploy INT
+- [docs/reference/Deployment/D1/as-built.md](docs/reference/Deployment/D1/as-built.md) — what D1 chose and which cutover commands ran
+- [docs/reference/Deployment/deployment-evolution-plan.md](docs/reference/Deployment/deployment-evolution-plan.md) — D1–D6 hosting direction
 - `docs/devTickets/` — implementation tickets and queue
 - `CLAUDE.md` — agent/engineering guide for this repo
 

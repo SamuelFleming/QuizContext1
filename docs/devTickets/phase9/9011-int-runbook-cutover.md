@@ -2,21 +2,21 @@
 
 **Status:** In progress — `Caddyfile` and `docs/getting-started-hosted.md` are written on `dev-deploy`. Live HTTPS, register, Diagnostics, closed public Express ports, and reboot are not done. The operator runs that cutover from the runbook. Do not merge into `Phase9-historyEnhance` until explicitly asked. Commit and push this branch before a Droplet clone can see the new files.  
 **Phase:** 9 (ops, parallel to 9002–9008)  
-**Depends on:** [9010](9010-int-deployment-scaffold.md) Compose scaffold on `dev-deploy`; operator Droplet + DNS + Atlas from [deployment-operator-checklist.md](../../reference/Deployment/deployment-operator-checklist.md).  
+**Depends on:** [9010](9010-int-deployment-scaffold.md) Compose scaffold on `dev-deploy`; operator Droplet + DNS + Atlas (see [D1/as-built.md](../../reference/Deployment/D1/as-built.md)).  
 **Relevant scope:** D1 live host; charter dual-API boundary  
-**Companion:** [Evolution plan](../../reference/Deployment/deployment-evolution-plan.md) (D2–D6, including D2 data migration). Do not implement those here.
+**Companion:** [Evolution plan](../../reference/Deployment/deployment-evolution-plan.md) (D2–D6, including D2 data migration). Do not implement those here. As-built cutover: [D1/as-built.md](../../reference/Deployment/D1/as-built.md).
 
 ## Objective
 Document and execute the first INT cutover so `https://int.quizcontext.app` serves Release-2 with HTTPS, the existing register/login flow, and `server-data` unreachable from the internet. Do not invent production, CI, or extra auth gates.
 
 ## External prerequisites (human)
-The operator checklist is the chronological source. 9011 cannot pass without:
+External account work is recorded in [D1/as-built.md](../../reference/Deployment/D1/as-built.md). 9011 cannot pass without:
 
 1. Cloudflare zone **`quizcontext.app`** (already registered).
 2. DigitalOcean Droplet: Ubuntu LTS, ≥2 GB RAM, SSH key login, public IPv4.
 3. Cloudflare **unproxied** (grey-cloud) `A` record `int` → that IPv4, so Caddy can obtain certificates with HTTP-01.
 4. Atlas cluster, database **`quizcontext-int`**, dedicated user, IP allowlist = Droplet IPv4 (not `0.0.0.0/0` for normal operation), `MONGODB_URI` stored off git.
-5. INT secrets generated and stored in a password manager (see checklist). New `AI_KEY_ENCRYPTION_KEY` for INT; keep it for the life of this database.
+5. INT secrets generated and stored in a password manager (see as-built ledger). New `AI_KEY_ENCRYPTION_KEY` for INT; keep it for the life of this database.
 
 Cursor does not create cloud accounts, pay invoices, or click Cloudflare/Atlas/DigitalOcean consoles.
 
@@ -64,13 +64,13 @@ Cursor does not create cloud accounts, pay invoices, or click Cloudflare/Atlas/D
 ## Expected artefacts
 - `docs/getting-started-hosted.md`
 - `Caddyfile` (tracked)
-- Operator checklist already exists; update it only if implement discovers a wrong port/hostname (should not)
+- Operator checklist retired (9012); as-built + hosted runbook are the operator docs.
 
 ## Implementation sequence
 1. Confirm 9010 acceptance on `dev-deploy` (images + loopback 4017).
 2. Write `Caddyfile` for `int.quizcontext.app` → `127.0.0.1:4017`.
-3. Write `docs/getting-started-hosted.md` covering the bullets above, pointing at the operator checklist for console clicks.
-4. Operator: Droplet software + DNS grey-cloud + Atlas allowlist + secrets (checklist).
+3. Write `docs/getting-started-hosted.md` covering the bullets above.
+4. Operator: Droplet software + DNS grey-cloud + Atlas allowlist + secrets (as-built §4.1).
 5. Deploy the chosen git SHA; start Compose; reload Caddy.
 6. Verify acceptance checks together.
 7. Merge `dev-deploy` into `Phase9-historyEnhance` only when the operator explicitly asks (after 9010 and 9011 artefacts exist). Do not merge as part of 9010.

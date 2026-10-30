@@ -4,13 +4,13 @@
 **Phase:** 9 (ops, parallel to 9002–9008)  
 **Depends on:** Release-2 artefact tagged `first-use-9001` (`8583124`, includes 9000–9001). Does not depend on 9002–9008, a live Droplet, or DNS.  
 **Relevant scope:** Charter dual-API boundary; Phase 1 local process model; D1 packaging only  
-**Companion:** [9011](9011-int-runbook-cutover.md) owns Caddy, the hosted runbook, and live cutover. [Operator checklist](../../reference/Deployment/deployment-operator-checklist.md) owns human cloud-account work. [Evolution plan](../../reference/Deployment/deployment-evolution-plan.md) owns D2–D6.
+**Companion:** [9011](9011-int-runbook-cutover.md) owns Caddy, the hosted runbook, and live cutover. As-built INT: [D1/as-built.md](../../reference/Deployment/D1/as-built.md). [Evolution plan](../../reference/Deployment/deployment-evolution-plan.md) owns D2–D6.
 
 ## Objective
 Package Release-2 so `docker compose` starts `server-data` and `server-webApp`, with the compiled React app served from `server-webApp`, without changing product behaviour or the local Vite workflow. Do not provision INT or write the full hosted runbook in this ticket.
 
 ## External prerequisites
-None required to finish 9010. An Atlas URI (or local Mongo reachable from Docker) is only needed for the optional full Diagnostics check. Operator cloud work can proceed in parallel using the operator checklist.
+None required to finish 9010. An Atlas URI (or local Mongo reachable from Docker) is only needed for the optional full Diagnostics check. Operator cloud work is recorded in [D1/as-built.md](../../reference/Deployment/D1/as-built.md).
 
 ## Planning decisions (locked)
 
