@@ -6,6 +6,10 @@ Inspired by CareerContext-style content management and AI outcomes, personal exa
 
 ## Run from scratch
 
+Two ways to start the apps. Do **not** run both at once: Compose and local `npm start` both need port **4017**.
+
+### Local Node (Vite on 5017)
+
 If you have an IDE but are new to Node apps, use the full walkthrough (install Node, MongoDB, create `.env` files, start all three processes):
 
 **→ [docs/getting-started-local.md](docs/getting-started-local.md)**
@@ -26,6 +30,25 @@ cd client-webApp && npm install && npm start
 ```
 
 Then open http://localhost:5017 and register a user. AI is optional; see the getting-started guide to enable it.
+
+### Docker Compose (built SPA on 4017)
+
+Needs Docker Desktop (or Docker Engine + Compose). This is the hosted packaging: two containers, React served from `server-webApp`. The data API stays on the Compose network (no public 4007). Stop the three local `npm start` processes first.
+
+```bash
+# From the repo root (PowerShell: Copy-Item .env.example .env)
+cp .env.example .env
+# Edit .env: INTERNAL_API_KEY, JWT_SECRET, AI_KEY_ENCRYPTION_KEY.
+# For Mongo on this machine: MONGODB_URI=mongodb://host.docker.internal:27017/quizcontext
+# For a browser on this machine: CLIENT_ORIGIN=http://127.0.0.1:4017
+# Leave OPENAI_API_KEY empty and AI_ENABLED=false unless you want the application key.
+
+docker compose up --build
+```
+
+Then open http://127.0.0.1:4017 (not 5017). Health: http://127.0.0.1:4017/health. Stop with `docker compose down`. Do not commit `.env`.
+
+Internet INT (`https://int.quizcontext.app`, Caddy, Atlas) is a later cutover; see [docs/reference/Deployment/deployment-operator-checklist.md](docs/reference/Deployment/deployment-operator-checklist.md).
 
 ## Architecture
 
@@ -65,6 +88,9 @@ Swagger (implemented routes only):
 ## Other docs
 
 - [docs/getting-started-local.md](docs/getting-started-local.md) — install dependencies and run locally from scratch
+- Root `docker-compose.yml` and `.env.example` — optional Compose packaging (SPA on 4017; see [Run from scratch](#run-from-scratch))
+- [docs/reference/Deployment/deployment-evolution-plan.md](docs/reference/Deployment/deployment-evolution-plan.md) — INT host now (D1) and later ops milestones
+- [docs/reference/Deployment/deployment-operator-checklist.md](docs/reference/Deployment/deployment-operator-checklist.md) — cloud-account steps for the first INT cutover
 - `docs/devTickets/` — implementation tickets and queue
 - `CLAUDE.md` — agent/engineering guide for this repo
 

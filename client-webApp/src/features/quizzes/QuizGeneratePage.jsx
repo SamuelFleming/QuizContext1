@@ -18,6 +18,7 @@ const DIFFICULTIES = [
 
 const DEFAULT_MODEL = "gpt-6-luna";
 const LIVE_PREVIEW_DEBOUNCE_MS = 400;
+const QUIZ_INSTRUCTIONS_MAX = 2000;
 
 function initialQuery() {
   const params = new URLSearchParams(window.location.search);
@@ -59,6 +60,7 @@ function buildQuizBody({
   difficulty,
   contextMode,
   model,
+  quizInstructions = "",
 }) {
   const body = {
     subjectId,
@@ -68,6 +70,10 @@ function buildQuizBody({
     contextMode,
     model,
   };
+  const trimmedInstructions = quizInstructions.trim();
+  if (trimmedInstructions) {
+    body.quizInstructions = trimmedInstructions;
+  }
   if (!wholeSubject) {
     body.topicIds = completeTopicIds(topics, selectedIds);
   }
@@ -235,6 +241,7 @@ export default function QuizGeneratePage({ navigate }) {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const prefillTopicRef = useRef(prefill.topicId);
   const [title, setTitle] = useState("");
+  const [quizInstructions, setQuizInstructions] = useState("");
   const [multipleChoiceCount, setMultipleChoiceCount] = useState("6");
   const [shortAnswerCount, setShortAnswerCount] = useState("4");
   const [difficulty, setDifficulty] = useState("medium");
@@ -356,6 +363,7 @@ export default function QuizGeneratePage({ navigate }) {
         difficulty,
         contextMode,
         model,
+        quizInstructions,
       });
       previewQuiz(body)
         .then((data) => {
@@ -394,6 +402,7 @@ export default function QuizGeneratePage({ navigate }) {
     difficulty,
     contextMode,
     model,
+    quizInstructions,
     signOut,
   ]);
 
@@ -424,6 +433,10 @@ export default function QuizGeneratePage({ navigate }) {
       setFormError("Choose a model.");
       return;
     }
+    if (quizInstructions.length > QUIZ_INSTRUCTIONS_MAX) {
+      setFormError(`Quiz instructions must be at most ${QUIZ_INSTRUCTIONS_MAX} characters.`);
+      return;
+    }
     setPhase("preparing");
     try {
       const body = buildQuizBody({
@@ -436,6 +449,7 @@ export default function QuizGeneratePage({ navigate }) {
         difficulty,
         contextMode,
         model,
+        quizInstructions,
       });
       const nextPreview = await previewQuiz(body);
       setPreview(nextPreview);
@@ -538,6 +552,25 @@ export default function QuizGeneratePage({ navigate }) {
           />
           <span className="usage-meta">
             Leave blank to use a label based on the selected subject or topics.
+          </span>
+        </label>
+        <label className="field">
+          <span>Quiz instructions (optional)</span>
+          <textarea
+            rows={5}
+            value={quizInstructions}
+            maxLength={QUIZ_INSTRUCTIONS_MAX}
+            aria-describedby="quiz-instructions-help quiz-instructions-count"
+            onChange={(event) => setQuizInstructions(event.target.value)}
+            disabled={loading}
+          />
+          <span id="quiz-instructions-help" className="usage-meta">
+            Tell QuizContext what to prioritise or avoid, or what you are preparing for
+            (for example, “test code understanding, not memorisation”).
+          </span>
+          <span id="quiz-instructions-count" className="usage-meta">
+            {quizInstructions.length.toLocaleString()} /{" "}
+            {QUIZ_INSTRUCTIONS_MAX.toLocaleString()} characters
           </span>
         </label>
         <label className="field">

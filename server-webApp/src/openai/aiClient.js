@@ -1,11 +1,17 @@
-import OpenAI from "openai";
+import OpenAI, { APIConnectionTimeoutError, APIUserAbortError } from "openai";
 import { createAiError } from "./aiErrors.js";
 
 function classifyProviderError(error) {
   if (error?.aiErrorCode) {
     return error;
   }
-  if (error?.name === "APIConnectionTimeoutError" || error?.name === "APIUserAbortError") {
+  // SDK Error subclasses keep .name as "Error"; match by class / constructor.
+  if (
+    error instanceof APIConnectionTimeoutError ||
+    error instanceof APIUserAbortError ||
+    error?.constructor?.name === "APIConnectionTimeoutError" ||
+    error?.constructor?.name === "APIUserAbortError"
+  ) {
     return createAiError("AI_TIMEOUT");
   }
   if (error?.status === 401 || error?.status === 403) {
