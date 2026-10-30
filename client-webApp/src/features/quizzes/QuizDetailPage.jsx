@@ -9,6 +9,7 @@ import {
 } from "../../services/quizService.js";
 import ContextNotice from "./ContextNotice.jsx";
 import { modeLabel } from "./contextNotice.js";
+import QuizDetailHistory from "./QuizDetailHistory.jsx";
 
 export default function QuizDetailPage({ quizId, navigate }) {
   const { signOut } = useAuth();
@@ -16,7 +17,7 @@ export default function QuizDetailPage({ quizId, navigate }) {
   const [error, setError] = useState("");
   const [starting, setStarting] = useState(false);
   const [startError, setStartError] = useState("");
-  const [attempts, setAttempts] = useState(null);
+  const [inProgress, setInProgress] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState("");
@@ -42,7 +43,10 @@ export default function QuizDetailPage({ quizId, navigate }) {
   useEffect(() => {
     let active = true;
     listQuizAttempts(quizId)
-      .then((data) => active && setAttempts(data))
+      .then((data) => {
+        if (!active) return;
+        setInProgress(Array.isArray(data) && data.some((attempt) => attempt.status === "in_progress"));
+      })
       .catch((err) => {
         if (!active) return;
         if (err.status === 401) signOut();
@@ -196,7 +200,7 @@ export default function QuizDetailPage({ quizId, navigate }) {
         ) : null}
         <div className="button-row">
           <button type="button" onClick={handleStart} disabled={starting}>
-            {starting ? "Starting…" : "Start attempt"}
+            {starting ? (inProgress ? "Resuming…" : "Starting…") : inProgress ? "Resume" : "Start attempt"}
           </button>
           <button type="button" className="secondary" onClick={handleExport} disabled={exporting}>
             {exporting ? "Exporting…" : "Export"}
@@ -206,30 +210,7 @@ export default function QuizDetailPage({ quizId, navigate }) {
           </button>
         </div>
       </section>
-      <section className="card">
-        <h2>Attempts</h2>
-        {attempts === null ? (
-          <p className="status-line">Loading…</p>
-        ) : attempts.length === 0 ? (
-          <p className="status-line">No attempts yet.</p>
-        ) : (
-          <ul className="item-list">
-            {attempts.map((attempt) => (
-              <li key={attempt.id}>
-                <button type="button" className="item-link" onClick={() => navigate(`/attempts/${attempt.id}`)}>
-                  <span>{attempt.status === "in_progress" ? "Resume" : "View results"}</span>
-                  <span className="usage-meta">
-                    {attempt.status.replaceAll("_", " ")}
-                    {attempt.score === null ? "" : ` · ${attempt.score} / ${attempt.maxScore}`}
-                    {" · "}
-                    {new Date(attempt.startedAt).toLocaleString()}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <QuizDetailHistory quizId={quizId} navigate={navigate} />
       <section className="card">
         <h2>Questions</h2>
         <ol className="question-list">

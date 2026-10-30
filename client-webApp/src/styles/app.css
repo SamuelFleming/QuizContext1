@@ -1167,6 +1167,22 @@ button.secondary {
   gap: var(--space-2);
 }
 
+.scope-study-summary .history-counts {
+  margin: var(--space-2) 0;
+}
+
+.scope-study-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.scope-study-stats .score-distribution {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
 .workspace-side .scope-quiz-list {
   margin: 0;
   padding-top: var(--space-3);
@@ -1546,9 +1562,208 @@ button.secondary {
   width: 100%;
 }
 
+.quiz-detail-history {
+  display: grid;
+  grid-template-columns: minmax(12rem, 16rem) 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.quiz-detail-history-main {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.quiz-detail-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.quiz-detail-stats .score-distribution,
+.quiz-detail-stats .attempt-series {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.quiz-detail-history .query-list-row {
+  padding: var(--space-2) var(--space-3);
+}
+
+/* History primitives */
+.query-list {
+  max-width: 100%;
+}
+
+.query-list-head {
+  margin-bottom: 0;
+  align-items: center;
+}
+
+.query-list-head .pagination {
+  margin-left: auto;
+}
+
+.query-list-head .subheading {
+  margin: 0;
+}
+
+.query-list-row {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+  padding-block: 6px;
+}
+
+.score-circle {
+  position: relative;
+  width: 5.5rem;
+  height: 5.5rem;
+  margin: 0;
+}
+
+.score-circle svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.score-circle-track,
+.score-circle-progress {
+  fill: none;
+  stroke-width: 3;
+}
+
+.score-circle-track {
+  stroke: var(--color-border);
+}
+
+.score-circle-progress {
+  stroke: var(--color-primary-accent);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.score-circle-value {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-distribution {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  max-width: 100%;
+}
+
+.score-distribution-scale {
+  position: relative;
+  height: 1.5rem;
+}
+
+.score-distribution-track {
+  position: absolute;
+  inset-block: calc(50% - 2px);
+  inset-inline: 0;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+
+.score-distribution-marker {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+  transform: translate(-50%, -50%);
+}
+
+.score-distribution-marker.min,
+.score-distribution-marker.max {
+  background: var(--color-text-secondary);
+}
+
+.score-distribution-marker.mean {
+  background: var(--color-secondary-accent);
+}
+
+.score-distribution-marker.last {
+  background: var(--color-primary-accent);
+}
+
+.score-distribution-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.score-distribution-legend strong {
+  margin-left: 4px;
+  color: var(--color-text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.attempt-series {
+  margin: 0;
+  max-width: 100%;
+}
+
+.attempt-series-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.attempt-series-baseline {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.attempt-series-line {
+  fill: none;
+  stroke: var(--color-primary-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: attempt-series-draw 240ms ease-out forwards;
+}
+
+.attempt-series-point {
+  fill: var(--color-primary-accent);
+}
+
+@keyframes attempt-series-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav-link {
     transition: none;
+  }
+
+  .attempt-series-line {
+    animation: none;
+    stroke-dashoffset: 0;
   }
 }
 
@@ -1560,7 +1775,8 @@ button.secondary {
   .history-filters,
   .history-counts,
   .weakness-grid,
-  .generation-facts {
+  .generation-facts,
+  .quiz-detail-history {
     grid-template-columns: 1fr;
   }
 

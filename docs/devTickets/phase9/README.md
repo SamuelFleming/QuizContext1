@@ -1,23 +1,23 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9001 done (browser and live-provider UAT pending). Study-history tickets 9002–9008 Planned — phase reopened for that work. Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs). Parallel, not in the product Done-when.
+**Status:** 9000–9008 done (browser and live-provider UAT pending). Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs). Parallel, not in the product Done-when.
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
-**Deliverable.** Optional quiz instructions API and UI as in 9000–9001. Then: one enriched `server-data` study-history endpoint; dashboard / quiz / subject-topic business DTOs on `server-webApp`; shared list and stats primitives; composed screens without a mega-widget.
+**Deliverable.** Optional quiz instructions API and UI as in 9000–9001. Then: two enriched `server-data` study-history GETs (latest-per-quiz results and evaluated attempts); dashboard / quiz / subject-topic business DTOs on `server-webApp`; shared list and stats primitives; composed screens without a mega-widget.
 
 **Depends on.** Phase 8 as shipped (including workspace study panel 8009/8010). Study-history work revises the 7013 split (aggregation moves to `server-data`; public dashboard route stays `GET /study-history`).
 
 **Tickets.**
 1. [9000](9000-optional-quiz-instructions-api.md) — API validation, versioned prompt integration, persistence, projection, and OpenAPI. Done.
 2. [9001](9001-optional-quiz-instructions-ui.md) — generation textarea, request wiring, retained form state, and saved-quiz visibility. Done. Depends on 9000.
-3. [9002](9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, include flags) + OpenAPI. Planned.
-4. [9003](9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Planned. Depends on 9002.
-5. [9004](9004-quiz-history-api.md) — `GET /quizzes/:quizId/history` + client service. Planned. Depends on 9002, 9003.
-6. [9005](9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Planned. Depends on 9002, 9003.
-7. [9006](9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.
-8. [9007](9007-quiz-detail-history-ui.md) — compose quiz detail (stats, weakest, paginated attempts). Planned. Depends on 9004, 9006.
-9. [9008](9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
+3. [9002](9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, include flags) + OpenAPI. Done. Two keyed GETs: `/study-history` (latest-per-quiz) and `/study-history/attempts`.
+4. [9003](9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Done. Depends on 9002.
+5. [9004](9004-quiz-history-api.md) — `GET /quizzes/:quizId/history` + client service. Done. Depends on 9002, 9003.
+6. [9005](9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Done. Depends on 9002, 9003.
+7. [9006](9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Done. Depends on 9004, 9005.
+8. [9007](9007-quiz-detail-history-ui.md) — compose quiz detail (stats, weakest, paginated attempts). Done. Depends on 9004, 9006.
+9. [9008](9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Done. Depends on 9003, 9005, 9006.
 10. [9010](9010-int-deployment-scaffold.md) — Docker Compose + hosted static/SPA serve. Done. Parallel to 9002–9008; does not depend on them. Compose `build`/`up` on this PC unrun (no Docker Desktop).
 11. [9011](9011-int-runbook-cutover.md) — hosted runbook, Caddy, first INT cutover. In progress. Runbook and Caddyfile written; some live checks still open. Depends on 9010 and human Droplet/DNS/Atlas steps.
 12. [9012](9012-d1-deployment-docs.md) — D1 as-built documentation cleanup. Done. Depends on 9010/9011 artefacts.
@@ -32,6 +32,7 @@
 
 **Planning decisions (scoped study history — 9002–9008).**
 - **7013 revision:** Aggregation and Mongo-side filter/pagination live on `server-data`. `server-webApp` owns JWT validation and screen-specific DTOs via one shared dataApi client. This intentionally changes 7013’s “aggregate on webApp from a dump” rule.
+- Data API is two keyed GETs, not one overloaded path: `GET /study-history` pages latest-per-quiz results; `GET /study-history/attempts` pages evaluated attempts. `quizId` is a filter on both. Includes are opt-in and filter-wide.
 - Public dashboard endpoint remains `GET /study-history` (evolved), not `/dashboard/history`.
 - `GET /quizzes/:quizId/attempts` stays for player/resume; `GET /quizzes/:quizId/history` is study/stats only.
 - Workspace scope uses `GET /subjects/:subjectId/history?topicId=`. Quiz list stays on `GET /quizzes`.
@@ -49,3 +50,11 @@
 - 9010 is Compose/SPA packaging. 9011 is the runbook and live cutover. 9012 is the as-built record. Roadmap: [deployment-evolution-plan.md](../../reference/Deployment/deployment-evolution-plan.md). What shipped: [D1/as-built.md](../../reference/Deployment/D1/as-built.md). How to operate INT now: [getting-started-hosted.md](../../getting-started-hosted.md).
 
 **Out of phase.** Adaptive or live oral interviews, reusable presets, profile-level preferences, editing historical generation metadata, a saved-quiz regeneration endpoint, automatic instruction rewriting/moderation, retries, batching, question-limit changes, RAG, billing, spaced repetition, and rewriting unrelated dashboard subject cards.
+**Planning decisions (INT deploy — 9010, parallel).**
+- First hosted environment is INT, not prod. Host A: one VM + Docker Compose + Atlas. `Release-2` stays a frozen artefact; tag `8583124` as `first-use-9001` before that branch gains the 9010 file.
+- Implement scaffold on `dev-deploy` cut from `Release-2`, then merge into `Phase9-historyEnhance`. Do not treat `main` as the deploy source until 9000+ is on `main`.
+- Keep three processes; `server-data` is not public. Hosted shape: `server-webApp` serves the Vite build (one public URL). Local three-terminal Vite flow stays as it is.
+- 9002–9008 can reuse the same Atlas database (read-path / index only). Local first-usage Mongo is not copied unless someone dumps it.
+- Do not add, rename, or split environment variables, or change the three-process / private data-API hosted shape. If a ticket truly needs that, update [9010](9010-int-deployment-scaffold.md) first.
+
+**Out of phase.** Adaptive or live oral interviews, reusable presets, profile-level preferences, editing historical generation metadata, a saved-quiz regeneration endpoint, automatic instruction rewriting/moderation, retries, batching, question-limit changes, RAG, billing, spaced repetition, rewriting unrelated dashboard subject cards, production hosting, and merging Phase 9 into `main`.

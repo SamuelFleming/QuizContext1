@@ -1,6 +1,6 @@
 # 9008 — Compose workspace and dashboard history UI
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 9  
 **Depends on:** 9003, 9005, 9006  
 **Relevant scope:** F08; S02 Dashboard; S03 Content Workspace; 7014 / 8009 / 8010
@@ -23,12 +23,14 @@ Wire shared list and stats primitives into the dashboard study section and the s
 - New API shapes (use 9003 / 9005 as shipped).
 
 ## Acceptance checks
-- [ ] Dashboard study section still filters by subject/topic/activity and shows counts, activity, recent results (paginated), and weakest lists.
-- [ ] Workspace subject/topic summary shows counts, paginated recent results (page size 3), and shared stats visuals when data exists; no duplicated recent-result component markup with the dashboard.
-- [ ] ScopeQuizList pagination behaviour remains (page size 3).
-- [ ] Empty and error states are explicit; payloads/UI expose no keys or snapshots.
-- [ ] Client lint and production build pass. ~390px layout remains usable.
+- [x] Dashboard study section still filters by subject/topic/activity and shows counts, activity, recent results (paginated), and weakest lists.
+- [x] Workspace subject/topic summary shows counts, paginated recent results (page size 3), and shared stats visuals when data exists; no duplicated recent-result component markup with the dashboard.
+- [x] ScopeQuizList pagination behaviour remains (page size 3).
+- [x] Empty and error states are explicit; payloads/UI expose no keys or snapshots.
+- [x] Client lint and production build pass. ~390px layout remains usable.
 
 ## Implementation notes
 - Deduplicate by extracting shared presentational usage of 9006 primitives; delete or thin `ScopeStudySummary` / local `RecentResults` copies once unused.
 - Dashboard may still own filter chrome and activity chart locally.
+- Shared presentational pieces live in `components/history/`: `HistoryCounts` and `RecentResultsList` (wraps `PaginatingQueryList`). Features still own fetch.
+- 9003 public DTO has counts, activity, weakest lists, paginated `recentResults` — not `avgPercent`, distribution, or `attemptSeries`. Dashboard therefore does not mount circle/distribution/series. Workspace 9005 DTO has those stats (no series), so the workspace panel shows the circle and distribution only.

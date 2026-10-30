@@ -24,6 +24,7 @@ const attemptSchema = new mongoose.Schema(
 );
 
 attemptSchema.index({ userId: 1, quizId: 1, status: 1 });
+attemptSchema.index({ userId: 1, status: 1, submittedAt: -1 });
 
 export const Attempt = mongoose.models.Attempt || mongoose.model("Attempt", attemptSchema);
 
@@ -41,24 +42,6 @@ export function toAttemptSummary(doc, quizTitle) {
     maxScore: evaluation?.maxScore ?? null,
     percent: evaluation?.percent ?? null,
     createdAt: doc.createdAt,
-  };
-}
-
-// Study-history source row: scores and dates only. No responses, explanations, or concepts.
-export function toAttemptHistorySource(doc) {
-  if (!doc) return null;
-  const evaluation = doc.evaluation || {};
-  return {
-    id: doc._id.toString(),
-    quizId: doc.quizId.toString(),
-    submittedAt: doc.submittedAt,
-    score: evaluation.score ?? null,
-    maxScore: evaluation.maxScore ?? null,
-    percent: evaluation.percent ?? null,
-    questionScores: (evaluation.questions || []).map((item) => ({
-      questionId: item.questionId,
-      score: item.score,
-    })),
   };
 }
 

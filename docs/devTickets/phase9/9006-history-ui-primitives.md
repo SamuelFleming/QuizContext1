@@ -1,6 +1,6 @@
 # 9006 — Shared study-history UI primitives
 
-**Status:** Planned  
+**Status:** Done  
 **Phase:** 9  
 **Depends on:** 9004, 9005 (props should match business DTOs)  
 **Relevant scope:** S02, S03, S05/S06; `docs/design/01_design-concept.md` Light Mint & Indigo
@@ -25,11 +25,11 @@ Ship general-purpose presentational components for compact paginated lists and s
 - Activity bar chart rewrite (may stay local to StudyHistorySection until 9008 optionally restyles).
 
 ## Acceptance checks
-- [ ] All four primitives render from props alone in isolation (or a minimal story/demo usage in a feature file if needed for build).
-- [ ] PaginatingQueryList invokes `onPageChange` / `onSelectRow` correctly; controls disable at bounds.
-- [ ] Score visuals expose accessible names/values for the percent or min/max/mean/last figures.
-- [ ] Components reference token names, not hard-coded hex.
-- [ ] Client lint / production build pass for the new modules.
+- [x] All four primitives render from props alone in isolation (or a minimal story/demo usage in a feature file if needed for build).
+- [x] PaginatingQueryList invokes `onPageChange` / `onSelectRow` correctly; controls disable at bounds.
+- [x] Score visuals expose accessible names/values for the percent or min/max/mean/last figures.
+- [x] Components reference token names, not hard-coded hex.
+- [x] Client lint / production build pass for the new modules.
 
 ## Implementation notes
 - Prefer small CSS modules or `app.css` sections consistent with `.compact-item-list` / `.pagination`.
