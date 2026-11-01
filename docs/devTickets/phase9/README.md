@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9008 done (browser and live-provider UAT pending). Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs). Parallel, not in the product Done-when.
+**Status:** 9000–9008 done (browser and live-provider UAT pending). Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs); 9013 Done (interim branding). Parallel, not in the product Done-when.
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
@@ -21,6 +21,7 @@
 10. [9010](9010-int-deployment-scaffold.md) — Docker Compose + hosted static/SPA serve. Done. Parallel to 9002–9008; does not depend on them. Compose `build`/`up` on this PC unrun (no Docker Desktop).
 11. [9011](9011-int-runbook-cutover.md) — hosted runbook, Caddy, first INT cutover. In progress. Runbook and Caddyfile written; some live checks still open. Depends on 9010 and human Droplet/DNS/Atlas steps.
 12. [9012](9012-d1-deployment-docs.md) — D1 as-built documentation cleanup. Done. Depends on 9010/9011 artefacts.
+13. [9013](9013-interim-branding-assets.md) — Interim favicon / apple-touch / in-app mark. Done. Parallel to leftover 9011 checks.
 
 **Planning decisions (optional instructions — 9000–9001).**
 - The API/storage field is `quizInstructions`; the UI label is **Quiz instructions (optional)**.

@@ -1510,6 +1510,27 @@ button.secondary {
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--color-primary-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.brand-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.brand-mark {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.brand-eyebrow .brand-mark {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 .shell-nav {
