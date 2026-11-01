@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9008 done (browser and live-provider UAT pending). Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs); 9013 Done (interim branding). Parallel, not in the product Done-when.
+**Status:** 9000–9008 done (browser and live-provider UAT pending). Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs); 9013 Done (interim branding); 9014 Planned (local post-interview DB snapshot). Parallel, not in the product Done-when. [9015](9015-local-db-snapshot-post-final.md) and [9016](9016-original-user-hosted-migration.md) are filed here for the snapshot/migration chain only — they are **not Phase 9 work**.
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
@@ -22,6 +22,11 @@
 11. [9011](9011-int-runbook-cutover.md) — hosted runbook, Caddy, first INT cutover. In progress. Runbook and Caddyfile written; some live checks still open. Depends on 9010 and human Droplet/DNS/Atlas steps.
 12. [9012](9012-d1-deployment-docs.md) — D1 as-built documentation cleanup. Done. Depends on 9010/9011 artefacts.
 13. [9013](9013-interim-branding-assets.md) — Interim favicon / apple-touch / in-app mark. Done. Parallel to leftover 9011 checks.
+14. [9014](9014-local-db-snapshot-post-interview.md) — Complete local `quizcontext` mongodump after first IFN680 interview use. Planned. No application change.
+
+**Later (not Phase 9; filed here for the chain).**
+- [9015](9015-local-db-snapshot-post-final.md) — Repeat dump after the IFN680 final. Deferred. Preferred source for 9016.
+- [9016](9016-original-user-hosted-migration.md) — Selective original-user import into the hosted database. **TBC.** Do not plan or implement yet. Depends on 9014 and 9015.
 
 **Planning decisions (optional instructions — 9000–9001).**
 - The API/storage field is `quizInstructions`; the UI label is **Quiz instructions (optional)**.
@@ -47,8 +52,16 @@
 **Planning decisions (INT host — 9010–9011).**
 - One long-lived INT, not production: `https://int.quizcontext.app`. Compute is a DigitalOcean Droplet (~2 GB Ubuntu + Docker Compose + host Caddy). Not Vercel, App Platform, Tunnel, or Kubernetes.
 - Cloudflare is **DNS only** (grey-cloud `int` A record). No Access, no extra registration gate. Existing QuizContext auth is enough.
-- Two Compose services. `server-webApp` serves the SPA on loopback **4017**; Caddy terminates HTTPS. `server-data` stays on the Compose network. Atlas `quizcontext-int` starts empty. Local Mongo is not migrated in D1 (D2 activity).
+- Two Compose services. `server-webApp` serves the SPA on loopback **4017**; Caddy terminates HTTPS. `server-data` stays on the Compose network. Atlas `quizcontext-int` starts empty. Local Mongo is not migrated in D1 (D2 activity). 9014/9015 only archive the local database; they do not migrate it.
 - 9010 is Compose/SPA packaging. 9011 is the runbook and live cutover. 9012 is the as-built record. Roadmap: [deployment-evolution-plan.md](../../reference/Deployment/deployment-evolution-plan.md). What shipped: [D1/as-built.md](../../reference/Deployment/D1/as-built.md). How to operate INT now: [getting-started-hosted.md](../../getting-started-hosted.md).
+
+**Planning decisions (local DB snapshots — 9014 in Phase 9; 9015/9016 later).**
+- Complete-database archives (`mongodump --archive --gzip`), not user-only extracts. Selective original-user migration is [9016](9016-original-user-hosted-migration.md) (TBC, not Phase 9).
+- 9014 is the post-interview capture of the current local `quizcontext` DB. It is not required to be the exact interview-day state. `first-use-9001` remains the earlier **code** milestone only.
+- 9015 repeats the dump after the IFN680 final. It is **not** Phase 9 work. It is the preferred 9016 source.
+- Archives stay outside Git and Trello. Record metadata only. `--gzip` is not encryption; keep a second private copy if practical.
+- Keep the local `AI_KEY_ENCRYPTION_KEY` in the password manager separately from the dump. Never attach it to a ticket.
+- No application, INT, or Atlas change from 9014/9015. Optional restore tests use a disposable local database only.
 
 **Out of phase.** Adaptive or live oral interviews, reusable presets, profile-level preferences, editing historical generation metadata, a saved-quiz regeneration endpoint, automatic instruction rewriting/moderation, retries, batching, question-limit changes, RAG, billing, spaced repetition, and rewriting unrelated dashboard subject cards.
 **Planning decisions (INT deploy — 9010, parallel).**
