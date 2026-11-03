@@ -31,7 +31,7 @@
 
 **Planning decisions (optional instructions — 9000–9001).**
 - The API/storage field is `quizInstructions`; the UI label is **Quiz instructions (optional)**.
-- Instructions are trimmed, nullable, and limited to 4,000 characters (raised from 2,000 in 9017).
+- Instructions are trimmed, nullable, and limited to 4,000 characters (raised from 2,000 in 9017). Git tag `audit-example-quiz-instructions-max-4000` on that commit is a future-audit marker for one limit duplicated across API constants, client, and OpenAPI (see 9017 outcome notes).
 - Empty instructions use the unchanged `quiz-generation@1` instructions and input. Non-empty instructions use `quiz-generation@2` and a distinct `LEARNER_PREFERENCES` input section.
 - Learner preferences yield to source grounding, selected format/count/difficulty/context mode, factual accuracy, validation, and safety.
 - The value is stored separately from the frozen source snapshot. It is not copied into AI usage diagnostics, manifests, logs, or quiz-list summaries.

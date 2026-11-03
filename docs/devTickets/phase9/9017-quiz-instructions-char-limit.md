@@ -32,3 +32,4 @@ Raise the optional `quizInstructions` budget from 2,000 to 4,000 characters so l
 - `QUIZ_INSTRUCTIONS_MAX` is 4,000 on both servers and the generation form; Mongoose/service checks pick it up via the constant.
 - OpenAPI: data `QuizInput`, webApp `QuizPreviewInput` / `QuizStudyView`, and generate-path description all say 4000.
 - Boundary script: length 4000 accepted, 4001 rejected, blank → null. OpenAPI assertions and client production build pass. Live HTTP preview/generate smoke not run (servers not required for this constant change).
+- Git tag `audit-example-quiz-instructions-max-4000` (apply on the 9017 commit) marks this as a simple example of one input limit living in multiple places: both API constants, the client form constant, and hard-coded OpenAPI `maxLength` values. Candidate for a later shared-limits / single-source maintainability audit — not a judgment that the current pattern is wrong. List related tags later with `git tag -l "audit-example-*"`.
