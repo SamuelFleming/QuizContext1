@@ -1,0 +1,58 @@
+services:
+  server-data:
+    build:
+      context: ./server-data
+    restart: unless-stopped
+    environment:
+      PORT: "4007"
+      MONGODB_URI: ${MONGODB_URI}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
+    expose:
+      - "4007"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:4007/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  server-webapp:
+    build:
+      context: .
+      dockerfile: server-webApp/Dockerfile
+      args:
+        VITE_WEB_API_BASE_URL: ""
+    restart: unless-stopped
+    depends_on:
+      server-data:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:4017:4017"
+    environment:
+      PORT: "4017"
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN}
+      DATA_API_BASE_URL: http://server-data:4007
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      AI_KEY_ENCRYPTION_KEY: ${AI_KEY_ENCRYPTION_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      AI_ENABLED: ${AI_ENABLED:-false}
+      AI_TIMEOUT_MS: ${AI_TIMEOUT_MS:-20000}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:4017/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s

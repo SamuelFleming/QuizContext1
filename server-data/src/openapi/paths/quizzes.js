@@ -48,7 +48,7 @@ export const quizPaths = {
     post: {
       summary: "Create a generated quiz owned by X-User-Id (keyed, internal only)",
       description:
-        "Persists the full quiz including answer keys, marking criteria, and the frozen source snapshot. The owner is always X-User-Id. A userId in the body is ignored. Does not cascade from subject or topic deletes.",
+        "Persists the full quiz including nullable quizInstructions, answer keys, marking criteria, and the frozen source snapshot. The owner is always X-User-Id. A userId in the body is ignored. Does not cascade from subject or topic deletes.",
       parameters: keyed,
       requestBody: {
         required: true,

@@ -4,6 +4,7 @@ import {
   CONTEXT_MODES,
   QUIZ_DIFFICULTIES,
   QUIZ_EXPECTED_ANSWER_MAX,
+  QUIZ_INSTRUCTIONS_MAX,
   QUIZ_PROMPT_MAX,
   QUIZ_QUESTION_TYPES,
   QUIZ_SNAPSHOT_MAX,
@@ -61,6 +62,12 @@ const quizSchema = new mongoose.Schema(
     difficulty: { type: String, enum: QUIZ_DIFFICULTIES, required: true },
     includeDescendants: { type: Boolean, required: true },
     contextMode: { type: String, enum: CONTEXT_MODES, required: true },
+    quizInstructions: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: QUIZ_INSTRUCTIONS_MAX,
+    },
     promptVersion: { type: String, required: true, maxlength: 80 },
     questions: { type: [questionSchema], required: true },
     sourceManifest: { type: [manifestEntrySchema], required: true },
@@ -147,6 +154,7 @@ export function toQuiz(doc) {
     difficulty: doc.difficulty,
     includeDescendants: doc.includeDescendants,
     contextMode: doc.contextMode,
+    quizInstructions: doc.quizInstructions || null,
     promptVersion: doc.promptVersion,
     questions: (doc.questions || []).map(toQuestion),
     sourceManifest: (doc.sourceManifest || []).map((entry) => ({

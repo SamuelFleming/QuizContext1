@@ -1,5 +1,8 @@
 // Single API client for the business API. The browser calls server-webApp only.
-const baseUrl = import.meta.env.VITE_WEB_API_BASE_URL || "http://localhost:4017";
+// Missing/undefined (local Vite without the env key) → localhost. Empty string
+// (hosted image build-arg) → same-origin relative URLs.
+const configured = import.meta.env.VITE_WEB_API_BASE_URL;
+const baseUrl = configured === undefined ? "http://localhost:4017" : configured;
 const TOKEN_KEY = "quizcontext_auth_token";
 
 export function getToken() {

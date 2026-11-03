@@ -24,6 +24,7 @@ export function toStudyView(quiz) {
     difficulty: quiz.difficulty,
     includeDescendants: quiz.includeDescendants,
     contextMode: quiz.contextMode,
+    quizInstructions: quiz.quizInstructions || null,
     promptVersion: quiz.promptVersion,
     createdAt: quiz.createdAt,
     updatedAt: quiz.updatedAt,

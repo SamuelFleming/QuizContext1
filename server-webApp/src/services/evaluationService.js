@@ -1,3 +1,4 @@
+import { getAiConfig } from "../config/aiConfig.js";
 import { runAiOperation } from "../openai/aiService.js";
 import * as prompt from "../openai/prompts/answerEvaluation.js";
 
@@ -94,6 +95,7 @@ export async function buildEvaluation(userId, quiz, attempt) {
 
   let promptVersion = null;
   if (pending.length > 0) {
+    const { quizTimeoutMs } = getAiConfig();
     const result = await runAiOperation({
       userId,
       operation: prompt.OPERATION,
@@ -113,6 +115,8 @@ export async function buildEvaluation(userId, quiz, attempt) {
           allowedSourceIds: refs,
         }),
       maxOutputTokens: prompt.MAX_OUTPUT_TOKENS,
+      // Same budget as quiz generation; 20s default is too short for multi-SA marking.
+      timeoutMs: quizTimeoutMs,
     });
     promptVersion = prompt.PROMPT_VERSION;
     for (const item of result.data.questions) {

@@ -609,6 +609,29 @@ h2 {
   color: var(--color-text-secondary);
 }
 
+.quiz-instructions {
+  margin: var(--space-3) 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-elevated-surface);
+}
+
+.quiz-instructions h2,
+.quiz-instructions p {
+  margin: 0;
+}
+
+.quiz-instructions h2 {
+  margin-bottom: var(--space-2);
+  font-size: 1rem;
+}
+
+.quiz-instructions p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .question-list {
   display: grid;
   gap: var(--space-3);

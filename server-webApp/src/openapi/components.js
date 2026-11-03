@@ -450,6 +450,13 @@ export const components = {
           enum: ["very_strict", "targeted", "loose"],
           default: "targeted",
         },
+        quizInstructions: {
+          type: "string",
+          nullable: true,
+          maxLength: 2000,
+          description:
+            "Optional learner preferences for how to examine the selected material. Blank values use the unchanged legacy prompt path.",
+        },
         model: {
           type: "string",
           nullable: true,
@@ -648,6 +655,12 @@ export const components = {
         difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
         includeDescendants: { type: "boolean" },
         contextMode: { type: "string", enum: ["very_strict", "targeted", "loose"] },
+        quizInstructions: {
+          type: "string",
+          nullable: true,
+          maxLength: 2000,
+          description: "Historical learner preferences used to generate this quiz, or null.",
+        },
         promptVersion: { type: "string" },
         createdAt: { type: "string", format: "date-time" },
         updatedAt: { type: "string", format: "date-time" },
