@@ -33,7 +33,19 @@ const summarySchema = {
         },
       },
     },
-    recentTotal: { type: "integer" },
+    recentTotal: {
+      type: "integer",
+      description: "Same as pagination.totalItems (latest-per-quiz rows in the filter).",
+    },
+    pagination: {
+      type: "object",
+      properties: {
+        page: { type: "integer", minimum: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100 },
+        totalItems: { type: "integer", minimum: 0 },
+        totalPages: { type: "integer", minimum: 0 },
+      },
+    },
     activity: {
       type: "object",
       properties: {
@@ -88,7 +100,7 @@ export const studyHistoryPaths = {
     get: {
       summary: "Study history summary",
       description:
-        "One summary computed from saved quizzes and evaluated attempts: counts, recent results (latest evaluated attempt per quiz), activity buckets in UTC (daily for 7 days, weekly starting Monday for 30 or 90), the five weakest topics, the five weakest questions, and the last studied time. In-progress and evaluation_failed attempts are ignored. No answer keys, marking criteria, explanations, or snapshots are returned.",
+        "Dashboard summary from the internal latest-per-quiz study-history read. Counts, activity, and weakest lists are filter-wide; recentResults is one page of latest evaluated attempts per quiz. In-progress and evaluation_failed attempts are ignored. No answer keys, marking criteria, explanations, responses, or snapshots are returned.",
       security: [{ bearerAuth: [] }],
       parameters: [
         {
@@ -106,15 +118,29 @@ export const studyHistoryPaths = {
         },
         {
           in: "query",
+          name: "page",
+          schema: { type: "integer", minimum: 1, default: 1 },
+          description: "Recent-results page. Default 1.",
+        },
+        {
+          in: "query",
+          name: "limit",
+          schema: { type: "integer", minimum: 1, maximum: 100, default: 5 },
+          description:
+            "Recent-results page size. Default 5. When omitted, legacy recent maps to this limit.",
+        },
+        {
+          in: "query",
           name: "recent",
           schema: { type: "string", enum: ["1", "3", "5", "all"], default: "5" },
-          description: "Rows in recentResults. all returns at most 50; recentTotal gives the uncapped count.",
+          description:
+            "Legacy page-size alias used when limit is omitted: 1, 3, and 5 map to that limit; all maps to 50. If both recent and limit are sent, limit wins. Invalid recent is still 400. recentTotal remains the uncapped latest-per-quiz count.",
         },
         {
           in: "query",
           name: "activity",
           schema: { type: "string", enum: ["7", "30", "90"], default: "7" },
-          description: "Activity window in days.",
+          description: "Activity window in days. 7 is daily; 30 and 90 are Monday-start weekly.",
         },
       ],
       responses: {

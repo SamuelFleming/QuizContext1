@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import HistoryCounts from "../../components/history/HistoryCounts.jsx";
+import RecentResultsList from "../../components/history/RecentResultsList.jsx";
 import { useAuth } from "../../context/useAuth.js";
 import { getStudyHistory } from "../../services/studyHistoryService.js";
 import { listTopics } from "../../services/topicService.js";
@@ -51,41 +53,6 @@ function ActivityChart({ activity }) {
   );
 }
 
-function RecentResults({ results, recent, recentTotal, navigate }) {
-  return (
-    <>
-      <h3 className="subheading">Recent results</h3>
-      {results.length === 0 ? (
-        <p className="status-line">No evaluated results in this filter.</p>
-      ) : (
-        <ul className="item-list">
-          {results.map((result) => (
-            <li key={result.attemptId}>
-              <button
-                type="button"
-                className="item-link"
-                onClick={() => navigate(`/attempts/${result.attemptId}`)}
-              >
-                <span>{result.title}</span>
-                <span className="usage-meta">{result.topicPath || result.subjectName}</span>
-                <span className="usage-meta">
-                  {formatDate(result.submittedAt)} · {result.score} / {result.maxScore} (
-                  {result.percent}%)
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      {recent === "all" && recentTotal > results.length ? (
-        <p className="status-line">
-          Showing {results.length} of {recentTotal} results. The list is capped.
-        </p>
-      ) : null}
-    </>
-  );
-}
-
 function WeakestLists({ topics, questions, navigate }) {
   return (
     <div className="weakness-grid">
@@ -112,7 +79,7 @@ function WeakestLists({ topics, questions, navigate }) {
         {questions.length === 0 ? (
           <p className="status-line">No question weakness data yet.</p>
         ) : (
-          <ul className="item-list">
+          <ul className="item-list compact-item-list">
             {questions.map((question, index) => (
               <li key={`${question.quizId}-${question.attemptId}-${index}`}>
                 <button
@@ -142,9 +109,11 @@ export default function StudyHistorySection({ subjects, navigate }) {
   const [topicId, setTopicId] = useState("");
   const [recent, setRecent] = useState("5");
   const [activityDays, setActivityDays] = useState("7");
+  const [page, setPage] = useState(1);
   const [topics, setTopics] = useState([]);
   const [topicError, setTopicError] = useState("");
   const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
@@ -169,8 +138,12 @@ export default function StudyHistorySection({ subjects, navigate }) {
 
   useEffect(() => {
     let active = true;
-    getStudyHistory({ subjectId, topicId, recent, activity: activityDays })
-      .then((data) => active && setSummary(data))
+    getStudyHistory({ subjectId, topicId, recent, activity: activityDays, page })
+      .then((data) => {
+        if (!active) return;
+        setSummary(data);
+        setLoadError("");
+      })
       .catch((err) => {
         if (!active) return;
         if (err.status === 401) {
@@ -178,11 +151,21 @@ export default function StudyHistorySection({ subjects, navigate }) {
           return;
         }
         setLoadError(err.message || "Could not load study history.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
     };
-  }, [subjectId, topicId, recent, activityDays, signOut]);
+  }, [subjectId, topicId, recent, activityDays, page, signOut]);
+
+  const resetResults = () => {
+    setPage(1);
+    setSummary(null);
+    setLoading(true);
+    setLoadError("");
+  };
 
   const changeSubject = (event) => {
     const nextSubjectId = event.target.value;
@@ -190,26 +173,28 @@ export default function StudyHistorySection({ subjects, navigate }) {
     setTopicId("");
     setTopics(nextSubjectId ? null : []);
     setTopicError("");
-    setSummary(null);
-    setLoadError("");
+    resetResults();
   };
 
   const changeTopic = (event) => {
     setTopicId(event.target.value);
-    setSummary(null);
-    setLoadError("");
+    resetResults();
   };
 
   const changeRecent = (event) => {
     setRecent(event.target.value);
-    setSummary(null);
-    setLoadError("");
+    resetResults();
   };
 
   const changeActivity = (event) => {
     setActivityDays(event.target.value);
-    setSummary(null);
+    resetResults();
+  };
+
+  const changePage = (nextPage) => {
+    setLoading(true);
     setLoadError("");
+    setPage(nextPage);
   };
 
   return (
@@ -270,32 +255,12 @@ export default function StudyHistorySection({ subjects, navigate }) {
         <p className="error-text" role="alert">
           {loadError}
         </p>
-      ) : summary === null ? (
+      ) : null}
+      {!summary && loading ? (
         <p className="status-line">Loading study history…</p>
-      ) : (
+      ) : summary ? (
         <>
-          <ul className="history-counts">
-            <li>
-              <span>Quizzes saved</span>
-              <strong>{summary.counts.quizzesSaved}</strong>
-            </li>
-            <li>
-              <span>Quizzes attempted</span>
-              <strong>{summary.counts.quizzesAttempted}</strong>
-            </li>
-            <li>
-              <span>Evaluated attempts</span>
-              <strong>{summary.counts.evaluatedAttempts}</strong>
-            </li>
-            <li>
-              <span>Last studied</span>
-              <strong>
-                {summary.lastStudiedAt
-                  ? formatDate(summary.lastStudiedAt)
-                  : "No evaluated attempt yet"}
-              </strong>
-            </li>
-          </ul>
+          <HistoryCounts counts={summary.counts} lastStudiedAt={summary.lastStudiedAt} />
 
           {summary.counts.quizzesSaved === 0 ? (
             <p className="status-line">No quizzes in this filter.</p>
@@ -307,11 +272,12 @@ export default function StudyHistorySection({ subjects, navigate }) {
             <>
               <h3 className="subheading">Activity</h3>
               <ActivityChart activity={summary.activity} />
-              <RecentResults
-                results={summary.recentResults}
-                recent={recent}
-                recentTotal={summary.recentTotal}
-                navigate={navigate}
+              <RecentResultsList
+                items={summary.recentResults}
+                pagination={summary.pagination}
+                loading={loading}
+                onPageChange={changePage}
+                onSelectRow={(result) => navigate(`/attempts/${result.attemptId}`)}
               />
               <WeakestLists
                 topics={summary.weakestTopics}
@@ -321,7 +287,7 @@ export default function StudyHistorySection({ subjects, navigate }) {
             </>
           )}
         </>
-      )}
+      ) : null}
     </section>
   );
 }

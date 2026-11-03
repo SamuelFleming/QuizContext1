@@ -453,7 +453,7 @@ export const components = {
         quizInstructions: {
           type: "string",
           nullable: true,
-          maxLength: 2000,
+          maxLength: 4000,
           description:
             "Optional learner preferences for how to examine the selected material. Blank values use the unchanged legacy prompt path.",
         },
@@ -658,7 +658,7 @@ export const components = {
         quizInstructions: {
           type: "string",
           nullable: true,
-          maxLength: 2000,
+          maxLength: 4000,
           description: "Historical learner preferences used to generate this quiz, or null.",
         },
         promptVersion: { type: "string" },

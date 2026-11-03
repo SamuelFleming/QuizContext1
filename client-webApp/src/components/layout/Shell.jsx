@@ -1,4 +1,5 @@
 import { useAuth } from "../../context/useAuth.js";
+import BrandMark from "./BrandMark.jsx";
 
 const LINKS = [
   ["/", "Dashboard"],
@@ -18,7 +19,7 @@ export default function Shell({ path, navigate, wide = false, children }) {
       <header className="shell-header">
         <div className="shell-bar">
           <button type="button" className="brand" onClick={() => navigate("/")}>
-            QuizContext
+            <BrandMark />
           </button>
           <nav className="shell-nav" aria-label="Primary">
             {LINKS.map(([to, label]) => (

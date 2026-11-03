@@ -1,3 +1,4 @@
+import * as studyHistoryService from "../services/studyHistoryService.js";
 import * as subjectService from "../services/subjectService.js";
 import { sendData } from "../utils/responses.js";
 
@@ -39,6 +40,17 @@ export async function update(req, res, next) {
 export async function remove(req, res, next) {
   try {
     sendData(res, await subjectService.deleteSubject(req.userId, req.params.subjectId));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getHistory(req, res, next) {
+  try {
+    sendData(
+      res,
+      await studyHistoryService.getSubjectHistory(req.userId, req.params.subjectId, req.query),
+    );
   } catch (err) {
     next(err);
   }

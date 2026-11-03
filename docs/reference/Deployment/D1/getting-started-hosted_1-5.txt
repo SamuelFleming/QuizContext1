@@ -1,0 +1,757 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Windows\system32> netstat -ano | findstr :4007
+PS C:\Windows\system32> netstat -ano | findstr :4017
+  TCP    127.0.0.1:4017         0.0.0.0:0              LISTENING       25404
+PS C:\Windows\system32>
+PS C:\Windows\system32> ssh -o IdentitiesOnly=yes -i "$env:USERPROFILE\.ssh\quizcontext_do_ed25519" root@170.64.151.147
+Enter passphrase for key 'C:\Users\flemo\.ssh\quizcontext_do_ed25519':
+Welcome to Ubuntu 24.04.5 LTS (GNU/Linux 6.8.0-142-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Oct 29 14:05:37 UTC 2026
+
+  System load:  0.0               Processes:             101
+  Usage of /:   4.5% of 47.39GB   Users logged in:       0
+  Memory usage: 14%               IPv4 address for eth0: 170.64.151.147
+  Swap usage:   0%                IPv4 address for eth0: 10.49.0.5
+
+Expanded Security Maintenance for Applications is not enabled.
+
+15 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+New release '26.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Wed Oct 28 23:05:43 2026 from 115.186.228.140
+root@quizcontext-int-ubuntu-syd1:~# cat /etc/os-release
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+root@quizcontext-int-ubuntu-syd1:~# sshd -T | grep -E
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+root@quizcontext-int-ubuntu-syd1:~# sshd -T | grep -E '^(passwordauthentication|pubkeyauthentication|permitrootlogin) '
+permitrootlogin yes
+pubkeyauthentication yes
+passwordauthentication no
+root@quizcontext-int-ubuntu-syd1:~# ufw default deny incoming
+Default incoming policy changed to 'deny'
+(be sure to update your rules accordingly)
+root@quizcontext-int-ubuntu-syd1:~# ufw status verbose
+Status: inactive
+root@quizcontext-int-ubuntu-syd1:~# ufw allow from 115.186.228.140 to any port 22 proto tcp comment 'operator ssh'
+Rules updated
+root@quizcontext-int-ubuntu-syd1:~# ufw default allow outgoing
+Default outgoing policy changed to 'allow'
+(be sure to update your rules accordingly)
+root@quizcontext-int-ubuntu-syd1:~# ufw allow 80/tcp
+Rules updated
+Rules updated (v6)
+root@quizcontext-int-ubuntu-syd1:~# ufw allow 443/tcp
+Rules updated
+Rules updated (v6)
+root@quizcontext-int-ubuntu-syd1:~# ufw show added
+Added user rules (see 'ufw status' for running firewall):
+ufw allow from 115.186.228.140 to any port 22 proto tcp comment 'operator ssh'
+ufw allow 80/tcp
+ufw allow 443/tcp
+root@quizcontext-int-ubuntu-syd1:~# ufw enable
+Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
+Firewall is active and enabled on system startup
+root@quizcontext-int-ubuntu-syd1:~# apt update
+Hit:1 http://mirrors.digitalocean.com/ubuntu noble InRelease
+Hit:2 http://mirrors.digitalocean.com/ubuntu noble-updates InRelease
+Hit:3 http://mirrors.digitalocean.com/ubuntu noble-backports InRelease
+Hit:4 https://repos.insights.digitalocean.com/apt/do-agent main InRelease
+Hit:5 https://repos-droplet.digitalocean.com/apt/droplet-agent main InRelease
+Hit:6 http://security.ubuntu.com/ubuntu noble-security InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+15 packages can be upgraded. Run 'apt list --upgradable' to see them.
+root@quizcontext-int-ubuntu-syd1:~# ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), disabled (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW IN    115.186.228.140            # operator ssh
+80/tcp                     ALLOW IN    Anywhere
+443/tcp                    ALLOW IN    Anywhere
+80/tcp (v6)                ALLOW IN    Anywhere (v6)
+443/tcp (v6)               ALLOW IN    Anywhere (v6)
+
+root@quizcontext-int-ubuntu-syd1:~# reboot
+root@quizcontext-int-ubuntu-syd1:~# Connection to 170.64.151.147 closed by remote host.
+Connection to 170.64.151.147 closed.
+PS C:\Windows\system32> ssh -o IdentitiesOnly=yes -i "$env:USERPROFILE\.ssh\quizcontext_do_ed25519" root@170.64.151.147
+ssh: connect to host 170.64.151.147 port 22: Connection refused
+PS C:\Windows\system32> ssh -o IdentitiesOnly=yes -i "$env:USERPROFILE\.ssh\quizcontext_do_ed25519" root@170.64.151.147
+Enter passphrase for key 'C:\Users\flemo\.ssh\quizcontext_do_ed25519':
+Welcome to Ubuntu 24.04.5 LTS (GNU/Linux 6.8.0-147-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Oct 29 14:25:59 UTC 2026
+
+  System load:  0.0               Processes:             102
+  Usage of /:   4.5% of 47.39GB   Users logged in:       1
+  Memory usage: 15%               IPv4 address for eth0: 170.64.151.147
+  Swap usage:   0%                IPv4 address for eth0: 10.49.0.5
+
+Expanded Security Maintenance for Applications is not enabled.
+
+15 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+New release '26.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+Last login: Thu Oct 29 14:25:59 2026 from 115.186.228.140
+root@quizcontext-int-ubuntu-syd1:~# cat /etc/os-release
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+root@quizcontext-int-ubuntu-syd1:~# ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), disabled (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW IN    115.186.228.140            # operator ssh
+80/tcp                     ALLOW IN    Anywhere
+443/tcp                    ALLOW IN    Anywhere
+80/tcp (v6)                ALLOW IN    Anywhere (v6)
+443/tcp (v6)               ALLOW IN    Anywhere (v6)
+
+root@quizcontext-int-ubuntu-syd1:~# apt list --upgradable
+Listing... Done
+apparmor/noble-updates 4.0.1really4.0.1-0ubuntu0.24.04.9 amd64 [upgradable from: 4.0.1really4.0.1-0ubuntu0.24.04.8]
+cloud-init/noble-updates 26.2-0ubuntu1~24.04.2 all [upgradable from: 26.1-0ubuntu1~24.04.1]
+gir1.2-glib-2.0/noble-updates 2.80.0-6ubuntu3.10 amd64 [upgradable from: 2.80.0-6ubuntu3.9]
+libapparmor1/noble-updates 4.0.1really4.0.1-0ubuntu0.24.04.9 amd64 [upgradable from: 4.0.1really4.0.1-0ubuntu0.24.04.8]
+libglib2.0-0t64/noble-updates 2.80.0-6ubuntu3.10 amd64 [upgradable from: 2.80.0-6ubuntu3.9]
+libglib2.0-bin/noble-updates 2.80.0-6ubuntu3.10 amd64 [upgradable from: 2.80.0-6ubuntu3.9]
+libglib2.0-data/noble-updates 2.80.0-6ubuntu3.10 all [upgradable from: 2.80.0-6ubuntu3.9]
+libopeniscsiusr/noble-updates 2.1.9-3ubuntu5.5 amd64 [upgradable from: 2.1.9-3ubuntu5.4]
+open-iscsi/noble-updates 2.1.9-3ubuntu5.5 amd64 [upgradable from: 2.1.9-3ubuntu5.4]
+open-vm-tools/noble-updates 2:13.0.10-0ubuntu0.24.04.2 amd64 [upgradable from: 2:13.0.10-0ubuntu0.24.04.1]
+snapd/noble-updates 2.77.1+ubuntu24.04 amd64 [upgradable from: 2.76.3+ubuntu24.04]
+sosreport/noble-updates 4.11.2-0ubuntu0~24.04.1 amd64 [upgradable from: 4.10.2-0ubuntu0~24.04.1]
+tmux/noble-updates 3.4-1ubuntu0.2 amd64 [upgradable from: 3.4-1ubuntu0.1]
+ubuntu-pro-client-l10n/noble-updates 38ubuntu0~24.04 amd64 [upgradable from: 37.2ubuntu~24.04.1]
+ubuntu-pro-client/noble-updates 38ubuntu0~24.04 amd64 [upgradable from: 37.2ubuntu~24.04.1]
+root@quizcontext-int-ubuntu-syd1:~# apt upgrade
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Calculating upgrade... Done
+The following packages will be upgraded:
+  apparmor cloud-init gir1.2-glib-2.0 libapparmor1 libglib2.0-0t64 libglib2.0-bin libglib2.0-data libopeniscsiusr
+  open-iscsi open-vm-tools snapd sosreport tmux ubuntu-pro-client ubuntu-pro-client-l10n
+15 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Need to get 38.7 MB of archives.
+After this operation, 14.4 MB disk space will be freed.
+Do you want to continue? [Y/n] Y
+Get:1 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 libopeniscsiusr amd64 2.1.9-3ubuntu5.5 [49.5 kB]
+Get:2 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 open-iscsi amd64 2.1.9-3ubuntu5.5 [328 kB]
+Get:3 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 gir1.2-glib-2.0 amd64 2.80.0-6ubuntu3.10 [183 kB]
+Get:4 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 libglib2.0-data all 2.80.0-6ubuntu3.10 [50.2 kB]
+Get:5 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 libglib2.0-bin amd64 2.80.0-6ubuntu3.10 [97.9 kB]
+Get:6 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 libglib2.0-0t64 amd64 2.80.0-6ubuntu3.10 [1548 kB]
+Get:7 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 open-vm-tools amd64 2:13.0.10-0ubuntu0.24.04.2 [724 kB]
+Get:8 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 libapparmor1 amd64 4.0.1really4.0.1-0ubuntu0.24.04.9 [51.5 kB]
+Get:9 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 ubuntu-pro-client-l10n amd64 38ubuntu0~24.04 [19.8 kB]
+Get:10 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 ubuntu-pro-client amd64 38ubuntu0~24.04 [259 kB]
+Get:11 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 apparmor amd64 4.0.1really4.0.1-0ubuntu0.24.04.9 [640 kB]
+Get:12 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 snapd amd64 2.77.1+ubuntu24.04 [33.2 MB]
+Get:13 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 sosreport amd64 4.11.2-0ubuntu0~24.04.1 [407 kB]
+Get:14 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 tmux amd64 3.4-1ubuntu0.2 [480 kB]
+Get:15 http://mirrors.digitalocean.com/ubuntu noble-updates/main amd64 cloud-init all 26.2-0ubuntu1~24.04.2 [634 kB]
+Fetched 38.7 MB in 12s (3320 kB/s)
+Preconfiguring packages ...
+(Reading database ... 106703 files and directories currently installed.)
+Preparing to unpack .../00-libopeniscsiusr_2.1.9-3ubuntu5.5_amd64.deb ...
+Unpacking libopeniscsiusr (2.1.9-3ubuntu5.5) over (2.1.9-3ubuntu5.4) ...
+Preparing to unpack .../01-open-iscsi_2.1.9-3ubuntu5.5_amd64.deb ...
+Unpacking open-iscsi (2.1.9-3ubuntu5.5) over (2.1.9-3ubuntu5.4) ...
+Preparing to unpack .../02-gir1.2-glib-2.0_2.80.0-6ubuntu3.10_amd64.deb ...
+Unpacking gir1.2-glib-2.0:amd64 (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+Preparing to unpack .../03-libglib2.0-data_2.80.0-6ubuntu3.10_all.deb ...
+Unpacking libglib2.0-data (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+Preparing to unpack .../04-libglib2.0-bin_2.80.0-6ubuntu3.10_amd64.deb ...
+Unpacking libglib2.0-bin (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+Preparing to unpack .../05-libglib2.0-0t64_2.80.0-6ubuntu3.10_amd64.deb ...
+Unpacking libglib2.0-0t64:amd64 (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+Preparing to unpack .../06-open-vm-tools_2%3a13.0.10-0ubuntu0.24.04.2_amd64.deb ...
+Unpacking open-vm-tools (2:13.0.10-0ubuntu0.24.04.2) over (2:13.0.10-0ubuntu0.24.04.1) ...
+Preparing to unpack .../07-libapparmor1_4.0.1really4.0.1-0ubuntu0.24.04.9_amd64.deb ...
+Unpacking libapparmor1:amd64 (4.0.1really4.0.1-0ubuntu0.24.04.9) over (4.0.1really4.0.1-0ubuntu0.24.04.8) ...
+Preparing to unpack .../08-ubuntu-pro-client-l10n_38ubuntu0~24.04_amd64.deb ...
+Unpacking ubuntu-pro-client-l10n (38ubuntu0~24.04) over (37.2ubuntu~24.04.1) ...
+Preparing to unpack .../09-ubuntu-pro-client_38ubuntu0~24.04_amd64.deb ...
+Unpacking ubuntu-pro-client (38ubuntu0~24.04) over (37.2ubuntu~24.04.1) ...
+Preparing to unpack .../10-apparmor_4.0.1really4.0.1-0ubuntu0.24.04.9_amd64.deb ...
+Unpacking apparmor (4.0.1really4.0.1-0ubuntu0.24.04.9) over (4.0.1really4.0.1-0ubuntu0.24.04.8) ...
+Preparing to unpack .../11-snapd_2.77.1+ubuntu24.04_amd64.deb ...
+Unpacking snapd (2.77.1+ubuntu24.04) over (2.76.3+ubuntu24.04) ...
+Preparing to unpack .../12-sosreport_4.11.2-0ubuntu0~24.04.1_amd64.deb ...
+Unpacking sosreport (4.11.2-0ubuntu0~24.04.1) over (4.10.2-0ubuntu0~24.04.1) ...
+Preparing to unpack .../13-tmux_3.4-1ubuntu0.2_amd64.deb ...
+Unpacking tmux (3.4-1ubuntu0.2) over (3.4-1ubuntu0.1) ...
+Preparing to unpack .../14-cloud-init_26.2-0ubuntu1~24.04.2_all.deb ...
+Unpacking cloud-init (26.2-0ubuntu1~24.04.2) over (26.1-0ubuntu1~24.04.1) ...
+Setting up libapparmor1:amd64 (4.0.1really4.0.1-0ubuntu0.24.04.9) ...
+Setting up cloud-init (26.2-0ubuntu1~24.04.2) ...
+Installing new version of config file /etc/cloud/templates/hosts.azurelinux.tmpl ...
+Installing new version of config file /etc/cloud/templates/sources.list.debian.tmpl ...
+Installing new version of config file /etc/profile.d/Z99-cloud-locale-test.sh ...
+Installing new version of config file /etc/profile.d/Z99-cloudinit-warnings.sh ...
+Setting up libopeniscsiusr (2.1.9-3ubuntu5.5) ...
+Setting up apparmor (4.0.1really4.0.1-0ubuntu0.24.04.9) ...
+Installing new version of config file /etc/apparmor.d/transmission ...
+/var/lib/dpkg/info/apparmor.postinst: 148: [: Illegal number: yes
+Reloading AppArmor profiles
+Setting up libglib2.0-0t64:amd64 (2.80.0-6ubuntu3.10) ...
+No schema files found: doing nothing.
+Setting up libglib2.0-data (2.80.0-6ubuntu3.10) ...
+Setting up gir1.2-glib-2.0:amd64 (2.80.0-6ubuntu3.10) ...
+Setting up sosreport (4.11.2-0ubuntu0~24.04.1) ...
+Setting up open-vm-tools (2:13.0.10-0ubuntu0.24.04.2) ...
+Setting up tmux (3.4-1ubuntu0.2) ...
+Setting up ubuntu-pro-client (38ubuntu0~24.04) ...
+Installing new version of config file /etc/apparmor.d/ubuntu_pro_esm_cache ...
+Setting up ubuntu-pro-client-l10n (38ubuntu0~24.04) ...
+Setting up snapd (2.77.1+ubuntu24.04) ...
+Installing new version of config file /etc/apparmor.d/usr.lib.snapd.snap-confine.real ...
+snapd.failure.service is a disabled or a static unit not running, not starting it.
+snapd.gpio-chardev-setup.target is a disabled or a static unit not running, not starting it.
+snapd.snap-repair.service is a disabled or a static unit not running, not starting it.
+Setting up libglib2.0-bin (2.80.0-6ubuntu3.10) ...
+Setting up open-iscsi (2.1.9-3ubuntu5.5) ...
+Processing triggers for debianutils (5.17build1) ...
+Processing triggers for initramfs-tools (0.142ubuntu25.8) ...
+update-initramfs: Generating /boot/initrd.img-6.8.0-147-generic
+Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+Processing triggers for rsyslog (8.2312.0-3ubuntu9.4) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for dbus (1.14.10-4ubuntu4.1) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+ /etc/needrestart/restart.d/systemd-manager
+ systemctl restart polkit.service udisks2.service
+
+Service restarts being deferred:
+ systemctl restart ModemManager.service
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ root @ user manager service: systemd[972]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+root@quizcontext-int-ubuntu-syd1:~# test -f /var/run/reboot-required && echo "Reboot required" || echo "No reboot required"
+No reboot required
+root@quizcontext-int-ubuntu-syd1:~# free -h
+               total        used        free      shared  buff/cache   available
+Mem:           1.9Gi       343Mi       1.1Gi       4.0Mi       615Mi       1.6Gi
+Swap:             0B          0B          0B
+root@quizcontext-int-ubuntu-syd1:~# swapon --show
+root@quizcontext-int-ubuntu-syd1:~# ^[[200~if ! swapon --show | grep -q /swapfile; then
+-bash: syntax error near unexpected token `then'
+root@quizcontext-int-ubuntu-syd1:~#   fallocate -l 2G /swapfile
+ /swapfile
+  swapon /swapfile
+  grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstabroot@quizcontext-int-ubuntu-syd1:~#   chmod 600 /swapfile
+root@quizcontext-int-ubuntu-syd1:~#   mkswap /swapfile
+Setting up swapspace version 1, size = 2 GiB (2147479552 bytes)
+no label, UUID=8fef177b-46c2-4ec2-8687-81c9a7ea1864
+root@quizcontext-int-ubuntu-syd1:~#   swapon /swapfile
+root@quizcontext-int-ubuntu-syd1:~#   grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+root@quizcontext-int-ubuntu-syd1:~# fi
+-bash: syntax error near unexpected token `fi'
+root@quizcontext-int-ubuntu-syd1:~# swapon --show
+NAME      TYPE SIZE USED PRIO
+/swapfile file   2G   0B   -2
+root@quizcontext-int-ubuntu-syd1:~# if ! swapon --show | grep -q /swapfile; then
+  fallocate -l 2G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+swapon --show
+free -h
+NAME      TYPE SIZE USED PRIO
+/swapfile file   2G   0B   -2
+               total        used        free      shared  buff/cache   available
+Mem:           1.9Gi       328Mi       1.2Gi       4.0Mi       617Mi       1.6Gi
+Swap:          2.0Gi          0B       2.0Gi
+root@quizcontext-int-ubuntu-syd1:~# apt update
+apt install -y ca-certificates curl
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+chmod a+r /etc/apt/keyrings/docker.asc
+tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+apt update
+apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+systemctl enable --now docker
+docker --version
+docker compose version
+docker run --rm hello-world
+Hit:1 http://mirrors.digitalocean.com/ubuntu noble InRelease
+Hit:2 http://mirrors.digitalocean.com/ubuntu noble-updates InRelease
+Hit:3 http://mirrors.digitalocean.com/ubuntu noble-backports InRelease
+Hit:4 https://repos-droplet.digitalocean.com/apt/droplet-agent main InRelease
+Hit:5 https://repos.insights.digitalocean.com/apt/do-agent main InRelease
+Hit:6 http://security.ubuntu.com/ubuntu noble-security InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+ca-certificates is already the newest version (20260816ubuntu0.24.04.1).
+curl is already the newest version (8.5.0-2ubuntu10.16).
+curl set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: noble
+Components: stable
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/docker.asc
+Get:1 https://download.docker.com/linux/ubuntu noble InRelease [48.5 kB]
+Get:2 https://download.docker.com/linux/ubuntu noble/stable amd64 Packages [72.3 kB]
+Hit:3 http://mirrors.digitalocean.com/ubuntu noble InRelease
+Hit:4 http://mirrors.digitalocean.com/ubuntu noble-updates InRelease
+Hit:5 http://mirrors.digitalocean.com/ubuntu noble-backports InRelease
+Hit:6 https://repos-droplet.digitalocean.com/apt/droplet-agent main InRelease
+Hit:7 https://repos.insights.digitalocean.com/apt/do-agent main InRelease
+Hit:8 http://security.ubuntu.com/ubuntu noble-security InRelease
+Fetched 121 kB in 1s (90.0 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  docker-ce-rootless-extras pigz
+Suggested packages:
+  cgroupfs-mount | cgroup-lite docker-model-plugin
+The following NEW packages will be installed:
+  containerd.io docker-buildx-plugin docker-ce docker-ce-cli docker-ce-rootless-extras docker-compose-plugin pigz
+0 upgraded, 7 newly installed, 0 to remove and 0 not upgraded.
+Need to get 102 MB of archives.
+After this operation, 388 MB of additional disk space will be used.
+Get:1 http://mirrors.digitalocean.com/ubuntu noble/universe amd64 pigz amd64 2.8-1 [65.6 kB]
+Get:2 https://download.docker.com/linux/ubuntu noble/stable amd64 containerd.io amd64 2.4.2-3~ubuntu.24.04~noble [23.3 MB]
+Get:3 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-ce-cli amd64 5:29.9.2-1~ubuntu.24.04~noble [17.6 MB]
+Get:4 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-ce amd64 5:29.9.2-1~ubuntu.24.04~noble [24.6 MB]
+Get:5 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-buildx-plugin amd64 0.38.1-1~ubuntu.24.04~noble [17.8 MB]
+Get:6 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-ce-rootless-extras amd64 5:29.9.2-1~ubuntu.24.04~noble [10.2 MB]
+Get:7 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-compose-plugin amd64 5.6.1-1~ubuntu.24.04~noble [8083 kB]
+Fetched 102 MB in 1s (69.8 MB/s)
+Selecting previously unselected package containerd.io.
+(Reading database ... 106725 files and directories currently installed.)
+Preparing to unpack .../0-containerd.io_2.4.2-3~ubuntu.24.04~noble_amd64.deb ...
+Unpacking containerd.io (2.4.2-3~ubuntu.24.04~noble) ...
+Selecting previously unselected package docker-ce-cli.
+Preparing to unpack .../1-docker-ce-cli_5%3a29.9.2-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-ce-cli (5:29.9.2-1~ubuntu.24.04~noble) ...
+Selecting previously unselected package docker-ce.
+Preparing to unpack .../2-docker-ce_5%3a29.9.2-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-ce (5:29.9.2-1~ubuntu.24.04~noble) ...
+Selecting previously unselected package pigz.
+Preparing to unpack .../3-pigz_2.8-1_amd64.deb ...
+Unpacking pigz (2.8-1) ...
+Selecting previously unselected package docker-buildx-plugin.
+Preparing to unpack .../4-docker-buildx-plugin_0.38.1-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-buildx-plugin (0.38.1-1~ubuntu.24.04~noble) ...
+Selecting previously unselected package docker-ce-rootless-extras.
+Preparing to unpack .../5-docker-ce-rootless-extras_5%3a29.9.2-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-ce-rootless-extras (5:29.9.2-1~ubuntu.24.04~noble) ...
+Selecting previously unselected package docker-compose-plugin.
+Preparing to unpack .../6-docker-compose-plugin_5.6.1-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-compose-plugin (5.6.1-1~ubuntu.24.04~noble) ...
+Setting up docker-buildx-plugin (0.38.1-1~ubuntu.24.04~noble) ...
+Setting up containerd.io (2.4.2-3~ubuntu.24.04~noble) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service → /usr/lib/systemd/system/containerd.service.
+Setting up docker-compose-plugin (5.6.1-1~ubuntu.24.04~noble) ...
+Setting up docker-ce-cli (5:29.9.2-1~ubuntu.24.04~noble) ...
+Setting up pigz (2.8-1) ...
+Setting up docker-ce-rootless-extras (5:29.9.2-1~ubuntu.24.04~noble) ...
+Setting up docker-ce (5:29.9.2-1~ubuntu.24.04~noble) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+Created symlink /etc/systemd/system/sockets.target.wants/docker.socket → /usr/lib/systemd/system/docker.socket.
+Processing triggers for man-db (2.12.0-4build2) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ root @ user manager service: systemd[972]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Synchronizing state of docker.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+Executing: /usr/lib/systemd/systemd-sysv-install enable docker
+Docker version 29.9.2, build a82e528
+Docker Compose version v5.6.1
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+4f55086f7dd0: Pull complete
+d5e71e642bf5: Download complete
+Digest: sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+root@quizcontext-int-ubuntu-syd1:~# apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+rm -f /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
+chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+chmod o+r /etc/apt/sources.list.d/caddy-stable.list
+apt update
+apt install -y caddy
+systemctl enable --now caddy
+caddy version
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+apt-transport-https is already the newest version (2.8.3).
+curl is already the newest version (8.5.0-2ubuntu10.16).
+The following NEW packages will be installed:
+  debian-archive-keyring debian-keyring
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Need to get 31.5 MB of archives.
+After this operation, 33.4 MB of additional disk space will be used.
+Get:1 http://mirrors.digitalocean.com/ubuntu noble/universe amd64 debian-archive-keyring all 2023.4ubuntu1 [168 kB]
+Get:2 http://mirrors.digitalocean.com/ubuntu noble/universe amd64 debian-keyring all 2023.12.24 [31.3 MB]
+Fetched 31.5 MB in 0s (74.4 MB/s)
+Selecting previously unselected package debian-archive-keyring.
+(Reading database ... 106962 files and directories currently installed.)
+Preparing to unpack .../debian-archive-keyring_2023.4ubuntu1_all.deb ...
+Unpacking debian-archive-keyring (2023.4ubuntu1) ...
+Selecting previously unselected package debian-keyring.
+Preparing to unpack .../debian-keyring_2023.12.24_all.deb ...
+Unpacking debian-keyring (2023.12.24) ...
+Setting up debian-archive-keyring (2023.4ubuntu1) ...
+Setting up debian-keyring (2023.12.24) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ root @ user manager service: systemd[972]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+# Source: Caddy
+# Site: https://github.com/caddyserver/caddy
+# Repository: Caddy / stable
+# Description: Fast, multi-platform web server with automatic HTTPS
+
+
+deb [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
+
+deb-src [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
+Hit:1 http://mirrors.digitalocean.com/ubuntu noble InRelease
+Hit:2 http://mirrors.digitalocean.com/ubuntu noble-updates InRelease
+Hit:3 http://mirrors.digitalocean.com/ubuntu noble-backports InRelease
+Hit:4 https://download.docker.com/linux/ubuntu noble InRelease
+Get:5 https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version InRelease [14.8 kB]
+Hit:6 https://repos.insights.digitalocean.com/apt/do-agent main InRelease
+Hit:7 https://repos-droplet.digitalocean.com/apt/droplet-agent main InRelease
+Hit:8 http://security.ubuntu.com/ubuntu noble-security InRelease
+Get:9 https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version/main amd64 Packages [5081 B]
+Fetched 19.9 kB in 1s (16.7 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  caddy
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 18.1 MB of archives.
+After this operation, 52.0 MB of additional disk space will be used.
+Get:1 https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version/main amd64 caddy amd64 2.11.7 [18.1 MB]
+Fetched 18.1 MB in 4s (5044 kB/s)
+Selecting previously unselected package caddy.
+(Reading database ... 106994 files and directories currently installed.)
+Preparing to unpack .../caddy_2.11.7_amd64.deb ...
+Unpacking caddy (2.11.7) ...
+Setting up caddy (2.11.7) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/caddy.service → /usr/lib/systemd/system/caddy.service.
+Processing triggers for man-db (2.12.0-4build2) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ root @ user manager service: systemd[972]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+v2.11.7 h1:yj0Y4fYZGPkSvibBJ1sTWE33xC0fxztVyXEW5iIdUT4=
+root@quizcontext-int-ubuntu-syd1:~# ^[[200~git clone --branch dev-deploy --single-branch https://github.com/SamuelFleming/QuizContext1.git /opt/quizcontext
+git: command not found
+root@quizcontext-int-ubuntu-syd1:~# ~git clone --branch dev-deploy --single-branch https://github.com/SamuelFleming/QuizContext1.git /opt/quizcontext
+Command '~git' not found, did you mean:
+  command 'git' from deb git (1:2.43.0-1ubuntu7.3)
+  command 'qgit' from deb qgit (2.10-2)
+  command 'dgit' from deb dgit (11.5)
+  command 'jgit' from deb jgit-cli (4.11.9-2)
+Try: apt install <deb name>
+root@quizcontext-int-ubuntu-syd1:~# git clone --branch dev-deploy --single-branch https://github.com/SamuelFleming/QuizC
+ontext1.git /opt/quizcontext
+Cloning into '/opt/quizcontext'...
+remote: Enumerating objects: 1904, done.
+remote: Counting objects: 100% (1904/1904), done.
+remote: Compressing objects: 100% (833/833), done.
+remote: Total 1904 (delta 1192), reused 1742 (delta 1032), pack-reused 0 (from 0)
+Receiving objects: 100% (1904/1904), 718.29 KiB | 14.96 MiB/s, done.
+Resolving deltas: 100% (1192/1192), done.
+root@quizcontext-int-ubuntu-syd1:~# cd /opt/quizcontext
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# git rev-parse --abbrev-ref HEAD
+git rev-parse HEAD
+if [ ! -f Caddyfile ]; then
+  echo "STOP: this commit has no Caddyfile. Commit and push dev-deploy, delete /opt/quizcontext, and clone again."
+else
+  install -d -m 700 /root/quizcontext
+  git rev-parse HEAD | tee /root/quizcontext/deployed-sha
+  chmod 600 /root/quizcontext/deployed-sha
+fi
+ls Caddyfile docker-compose.yml .env.example docs/getting-started-hosted.md
+dev-deploy
+b20e173712b20ac6f8258c3347ea1f1bb7d518d9
+b20e173712b20ac6f8258c3347ea1f1bb7d518d9
+.env.example  Caddyfile  docker-compose.yml  docs/getting-started-hosted.md
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# cp .env.example .env~
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# cp .env.example .env
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# chmod 600 .env
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# nano .env
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# nano .env
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# nano .env
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# nano .env
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# stat -c '%a %n' .env
+600 .env
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# grep -E '^(PORT|DATA_API_BASE_URL|VITE_WEB_API_BASE_URL)=' .env || echo "good: those names are not in .env"
+good: those names are not in .env
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# grep -E '^(AI_ENABLED|CLIENT_ORIGIN)=' .env
+AI_ENABLED=false
+CLIENT_ORIGIN=https://int.quizcontext.app
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# cd /opt/quizcontext
+docker compose up --build -d
+docker compose ps
+docker compose port server-webapp 4017
+docker compose port server-data 4007 || echo "expected: server-data has no published port"
+ss -ltn | grep -E ':4007|:4017' || true
+curl -fsS http://127.0.0.1:4017/health
+[+] Building 80.8s (27/27) FINISHED
+ => [internal] load local bake definitions                                                                         0.0s
+ => => reading from stdin 1.04kB                                                                                   0.0s
+ => [server-data internal] load build definition from Dockerfile                                                   0.0s
+ => => transferring dockerfile: 219B                                                                               0.0s
+ => [server-webapp internal] load build definition from Dockerfile                                                 0.0s
+ => => transferring dockerfile: 682B                                                                               0.0s
+ => [server-webapp internal] load metadata for docker.io/library/node:22-bookworm-slim                             2.0s
+ => [server-data internal] load .dockerignore                                                                      0.0s
+ => => transferring context: 104B                                                                                  0.0s
+ => [server-webapp internal] load .dockerignore                                                                    0.0s
+ => => transferring context: 231B                                                                                  0.0s
+ => [server-data 1/5] FROM docker.io/library/node:22-bookworm-slim@sha256:4b150b48b4116e2a22f2c39cc27025fbf4f153e  6.2s
+ => => resolve docker.io/library/node:22-bookworm-slim@sha256:4b150b48b4116e2a22f2c39cc27025fbf4f153e2078fd3b14d1  0.1s
+ => => sha256:0bee45faaffff77eee1e3d151cc650b854df28523ea01e5a2dcc0327da8793a9 448B / 448B                         0.2s
+ => => sha256:d22dd8aef5082b9de7fb037db9c398ee2822c5c81cc5cbb63bb32a46a5decdb1 1.71MB / 1.71MB                     0.5s
+ => => sha256:df736340692d217b57cd447c94f978f9a91ce3e8805b225e78374eae3aff864c 49.89MB / 49.89MB                   1.7s
+ => => sha256:709e8267cebf108d59c4e6e386882a5c79c10bbe11ecd02c6ed9ed4efa5b905d 3.31kB / 3.31kB                     0.6s
+ => => sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 28.25MB / 28.25MB                   1.0s
+ => => extracting sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc                          1.9s
+ => => extracting sha256:709e8267cebf108d59c4e6e386882a5c79c10bbe11ecd02c6ed9ed4efa5b905d                          0.0s
+ => => extracting sha256:df736340692d217b57cd447c94f978f9a91ce3e8805b225e78374eae3aff864c                          2.6s
+ => => extracting sha256:d22dd8aef5082b9de7fb037db9c398ee2822c5c81cc5cbb63bb32a46a5decdb1                          0.1s
+ => => extracting sha256:0bee45faaffff77eee1e3d151cc650b854df28523ea01e5a2dcc0327da8793a9                          0.0s
+ => [server-data internal] load build context                                                                      0.1s
+ => => transferring context: 208.70kB                                                                              0.0s
+ => [server-webapp internal] load build context                                                                    0.1s
+ => => transferring context: 632.08kB                                                                              0.1s
+ => [server-data 2/5] WORKDIR /app                                                                                 0.3s
+ => [server-webapp stage-1 2/6] WORKDIR /app/server-webApp                                                         0.3s
+ => [server-webapp client-build 2/6] WORKDIR /client                                                               0.3s
+ => [server-data 3/5] COPY package.json package-lock.json ./                                                       0.1s
+ => [server-webapp stage-1 3/6] COPY server-webApp/package.json server-webApp/package-lock.json ./                 0.1s
+ => [server-webapp client-build 3/6] COPY client-webApp/package.json client-webApp/package-lock.json ./            0.1s
+ => [server-data 4/5] RUN npm ci --omit=dev                                                                       19.1s
+ => [server-webapp stage-1 4/6] RUN npm ci --omit=dev                                                             40.9s
+ => [server-webapp client-build 4/6] RUN npm ci                                                                   18.9s
+ => [server-webapp client-build 5/6] COPY client-webApp/ ./                                                        0.4s
+ => [server-data 5/5] COPY . .                                                                                     0.3s
+ => [server-webapp client-build 6/6] RUN printf 'VITE_WEB_API_BASE_URL=%s\n' "" > .env.production   && npm run bu  5.6s
+ => [server-data] exporting to image                                                                              19.6s
+ => => exporting layers                                                                                            7.9s
+ => => exporting manifest sha256:fcb57014577b31314e407cca4c379aa43c2d58cc4f233d41d49b867feb4bb9d9                  0.0s
+ => => exporting config sha256:bfb5164045d4550c0c43a0ef9ad9ad29d0c6f3b5516e1d36bf063a175a81f890                    0.0s
+ => => exporting attestation manifest sha256:430fa5445e735271e7f86aa850985b6894dd1d8a0eb281959f156ebd9e16085a      0.0s
+ => => exporting manifest list sha256:746b02640dfeae1fa62fae3b6300e850c01d00f3905db88eb1061828cf8691b3             0.0s
+ => => naming to docker.io/library/quizcontext-server-data:latest                                                  0.0s
+ => => unpacking to docker.io/library/quizcontext-server-data:latest                                              11.5s
+ => [server-data] resolving provenance for metadata file                                                           0.0s
+ => [server-webapp stage-1 5/6] COPY server-webApp/ ./                                                             0.4s
+ => [server-webapp stage-1 6/6] COPY --from=client-build /client/dist /app/client-webApp/dist                      0.1s
+ => [server-webapp] exporting to image                                                                            30.5s
+ => => exporting layers                                                                                           24.7s
+ => => exporting manifest sha256:34317378b80bfc80b377e935ca341f7373b93aed1ffee2b2c9fda9954d543493                  0.0s
+ => => exporting config sha256:11932ec677356573936d4f5796a7648aa2f81eebc13d96ecfb8e60a1024acc6d                    0.0s
+ => => exporting attestation manifest sha256:887032eeca1401474f52b44b3db2b38906f9bc0dbeb23446e32d906d6aa81ce8      0.0s
+ => => exporting manifest list sha256:760a856143d2c423af35b11112d8119c72e769d237c5b6122f544050265778b3             0.0s
+ => => naming to docker.io/library/quizcontext-server-webapp:latest                                                0.0s
+ => => unpacking to docker.io/library/quizcontext-server-webapp:latest                                             5.7s
+ => [server-webapp] resolving provenance for metadata file                                                         0.0s
+[+] up 5/5
+ ✔ Image quizcontext-server-webapp       Built                                                                     81.0s
+ ✔ Image quizcontext-server-data         Built                                                                     80.9s
+ ✔ Network quizcontext_default           Created                                                                    0.1s
+ ✔ Container quizcontext-server-data-1   Healthy                                                                    6.0s
+ ✔ Container quizcontext-server-webapp-1 Started                                                                    6.1s
+NAME                          IMAGE                       COMMAND                  SERVICE         CREATED         STATUS                                     PORTS
+quizcontext-server-data-1     quizcontext-server-data     "docker-entrypoint.s…"   server-data     6 seconds ago   Up 6 seconds (healthy)                     4007/tcp
+quizcontext-server-webapp-1   quizcontext-server-webapp   "docker-entrypoint.s…"   server-webapp   6 seconds ago   Up Less than a second (health: starting)   127.0.0.1:4017->4017/tcp
+127.0.0.1:4017
+:0
+LISTEN 0      4096       127.0.0.1:4017      0.0.0.0:*
+curl: (56) Recv failure: Connection reset by peer
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# cd /opt/quizcontext
+sleep 15
+docker compose ps
+curl -fsS http://127.0.0.1:4017/health
+
+NAME                          IMAGE                       COMMAND                  SERVICE         CREATED              STATUS                        PORTS
+quizcontext-server-data-1     quizcontext-server-data     "docker-entrypoint.s…"   server-data     About a minute ago   Up About a minute (healthy)   4007/tcp
+quizcontext-server-webapp-1   quizcontext-server-webapp   "docker-entrypoint.s…"   server-webapp   About a minute ago   Up About a minute (healthy)   127.0.0.1:4017->4017/tcp
+{"data":{"service":"server-webApp","status":"ok"}}root@quizcontext-int-ubuntu-syd1:/opt/quizcontext#
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext# cp /opt/quizcontext/Caddyfile /etc/caddy/Caddyfile
+caddy validate --config /etc/caddy/Caddyfile
+systemctl reload caddy
+systemctl is-enabled caddy
+systemctl is-active caddy
+2026/10/29 15:11:11.925 INFO    using config from file  {"file": "/etc/caddy/Caddyfile"}
+2026/10/29 15:11:11.928 INFO    adapted config to JSON  {"adapter": "caddyfile"}
+2026/10/29 15:11:11.928 INFO    http.auto_https server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS {"server_name": "srv0", "https_port": 443}
+2026/10/29 15:11:11.929 INFO    http.auto_https enabling automatic HTTP->HTTPS redirects        {"server_name": "srv0"}
+2026/10/29 15:11:11.931 INFO    tls.cache.maintenance   started background certificate maintenance      {"cache": "0x1d7753b25a80"}
+2026/10/29 15:11:11.931 INFO    tls.cache.maintenance   stopped background certificate maintenance      {"cache": "0x1d7753b25a80"}
+2026/10/29 15:11:11.931 INFO    http    servers shutting down with eternal grace period
+Valid configuration
+enabled
+active
+root@quizcontext-int-ubuntu-syd1:/opt/quizcontext#
+

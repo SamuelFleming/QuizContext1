@@ -13,7 +13,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
 | 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker; workspace quiz visibility + content size | 8000–8010 done |
-| 9 | Optional quiz-generation instructions + scoped study history | 9000–9001 done (UAT pending); 9002–9008 Planned — phase reopened. Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; live cutover pending) |
+| 9 | Optional quiz-generation instructions + scoped study history | 9000–9008 done (UAT pending). Ops 9010 Done; 9011 In progress; 9012 Done (D1 as-built docs); 9013 Done (interim branding); 9014 Done (local post-interview DB snapshot). 9017 Done (instructions max 4,000). 9015/9016 are later, not this phase. |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -21,22 +21,31 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None queued for a new implement until a Planned ticket is approved. Next in Phase 9 study-history sequence: [9002](phase9/9002-study-history-data-api.md). Ops sequence (parallel): [9010](phase9/9010-int-deployment-scaffold.md) Done; [9011](phase9/9011-int-runbook-cutover.md) In progress (runbook + Caddyfile written on `dev-deploy`; operator cutover still open). Optional-instructions browser and live-provider UAT remain pending.
+None queued for implement until a Planned ticket is approved. [9017](phase9/9017-quiz-instructions-char-limit.md) Done (quiz instructions max 4,000). Phase 9 study-history UI is complete ([9008](phase9/9008-workspace-dashboard-history-ui.md) Done). Ops sequence (parallel): [9010](phase9/9010-int-deployment-scaffold.md) Done; [9011](phase9/9011-int-runbook-cutover.md) In progress; [9012](phase9/9012-d1-deployment-docs.md) Done; [9013](phase9/9013-interim-branding-assets.md) Done; [9014](phase9/9014-local-db-snapshot-post-interview.md) Done (local DB snapshot; no app change). Optional-instructions browser and live-provider UAT remain pending.
 
 ## Phase 9 proposed order
 1. [9000](phase9/9000-optional-quiz-instructions-api.md) — API validation, versioned prompt integration, persistence, projection, and OpenAPI. Done.
 2. [9001](phase9/9001-optional-quiz-instructions-ui.md) — generation textarea, request wiring, retained state, and saved-quiz visibility. Done. Depends on 9000.
-3. [9002](phase9/9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, includes) + OpenAPI. Planned. Revises 7013 dump/aggregation split.
-4. [9003](phase9/9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Planned. Depends on 9002.
-5. [9004](phase9/9004-quiz-history-api.md) — `GET /quizzes/:quizId/history` + client service. Planned. Depends on 9002, 9003.
-6. [9005](phase9/9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Planned. Depends on 9002, 9003.
-7. [9006](phase9/9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Planned. Depends on 9004, 9005.
-8. [9007](phase9/9007-quiz-detail-history-ui.md) — compose quiz detail history/stats/weakest. Planned. Depends on 9004, 9006.
-9. [9008](phase9/9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Planned. Depends on 9003, 9005, 9006.
+3. [9002](phase9/9002-study-history-data-api.md) — enriched internal study-history (filters, pagination, includes) + OpenAPI. Done. Two keyed GETs: latest-per-quiz results and evaluated attempts.
+4. [9003](phase9/9003-dashboard-study-history-api.md) — evolve JWT `GET /study-history` onto the data API; shared dataApi client. Done. Depends on 9002.
+5. [9004](phase9/9004-quiz-history-api.md) — `GET /quizzes/:quizId/history` + client service. Done. Depends on 9002, 9003.
+6. [9005](phase9/9005-subject-history-api.md) — `GET /subjects/:subjectId/history?topicId=` + client service. Done. Depends on 9002, 9003.
+7. [9006](phase9/9006-history-ui-primitives.md) — shared list, circle, distribution, series primitives. Done. Depends on 9004, 9005.
+8. [9007](phase9/9007-quiz-detail-history-ui.md) — compose quiz detail history/stats/weakest. Done. Depends on 9004, 9006.
+9. [9008](phase9/9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Done. Depends on 9003, 9005, 9006.
+10. [9010](phase9/9010-int-deployment-scaffold.md) — INT deploy scaffold (`Release-2` → `dev-deploy` → merge into this branch; host A: VM + Compose + Atlas). Planned. Parallel to 9004–9008.
+11. [9017](phase9/9017-quiz-instructions-char-limit.md) — Raise optional `quizInstructions` max to 4,000. Done. Depends on 9000, 9001.
 
 ## Phase 9 ops order (parallel to 9002–9008)
 1. [9010](phase9/9010-int-deployment-scaffold.md) — Docker Compose + hosted static/SPA serve. Done. Compose image build on this PC unrun (no Docker Desktop).
-2. [9011](phase9/9011-int-runbook-cutover.md) — runbook, Caddy, first INT cutover to `https://int.quizcontext.app`. In progress. `Caddyfile` and `docs/getting-started-hosted.md` are written; live Droplet cutover remains. Public registration (no Cloudflare Access).
+2. [9011](phase9/9011-int-runbook-cutover.md) — runbook, Caddy, first INT cutover to `https://int.quizcontext.app`. In progress. `Caddyfile` and `docs/getting-started-hosted.md` are written; some live checks still open. Public registration (no Cloudflare Access).
+3. [9012](phase9/9012-d1-deployment-docs.md) — D1 as-built documentation. Done. Evolution plan + living hosted runbook + [D1/as-built.md](../reference/Deployment/D1/as-built.md).
+4. [9013](phase9/9013-interim-branding-assets.md) — Interim branding assets (favicon, apple-touch, in-app mark). Done.
+5. [9014](phase9/9014-local-db-snapshot-post-interview.md) — Complete local `quizcontext` mongodump after first interview use. Done. Archives stay outside Git.
+
+## Later (not Phase 9)
+1. [9015](phase9/9015-local-db-snapshot-post-final.md) — Repeat local dump after the IFN680 final. Deferred. Preferred source for 9016.
+2. [9016](phase9/9016-original-user-hosted-migration.md) — Selective original-user import into the hosted database. **TBC.** Do not plan or implement. Depends on 9014 and 9015.
 
 ## Phase 7 proposed order
 0. [7000](phase7/7000-uat-change-discovery.md) — test the MVP and capture wanted changes. Done.
@@ -122,6 +131,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-Next implement: none until a Planned ticket is approved; Phase 9 study-history starts at 9002 when approved. Ops INT host [9011](phase9/9011-int-runbook-cutover.md) is in progress: runbook and Caddyfile are written on `dev-deploy`; the operator still runs the Droplet cutover (Compose `build`/`up` included — no Docker Desktop on the implement PC). Phase 9 optional-instructions browser and live-provider UAT remain pending, alongside 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click where noted.
+Next implement: none until a Planned ticket is approved. [9017](phase9/9017-quiz-instructions-char-limit.md) Done (quiz instructions max 4,000). [9014](phase9/9014-local-db-snapshot-post-interview.md) is Done (local post-interview mongodump; archive outside Git). [9015](phase9/9015-local-db-snapshot-post-final.md) and [9016](phase9/9016-original-user-hosted-migration.md) are later, not Phase 9. Ops INT [9012](phase9/9012-d1-deployment-docs.md) and [9013](phase9/9013-interim-branding-assets.md) are Done. [9011](phase9/9011-int-runbook-cutover.md) remains In progress for leftover live checks. Phase 9 optional-instructions browser and live-provider UAT remain pending, alongside 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click where noted. JWT `GET /subjects/:subjectId/history` uses the 9002 results path; restart `server-webApp` so the 9005 route is loaded.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.

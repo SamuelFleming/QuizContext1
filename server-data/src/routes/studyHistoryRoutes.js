@@ -6,4 +6,5 @@ export const studyHistoryRoutes = Router();
 
 studyHistoryRoutes.use(requireInternalKey, requireUserId);
 
-studyHistoryRoutes.get("/", studyHistoryController.read);
+studyHistoryRoutes.get("/attempts", studyHistoryController.readAttempts);
+studyHistoryRoutes.get("/", studyHistoryController.readResults);

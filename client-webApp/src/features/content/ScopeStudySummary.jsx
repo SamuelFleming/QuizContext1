@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react";
+import HistoryCounts from "../../components/history/HistoryCounts.jsx";
+import RecentResultsList from "../../components/history/RecentResultsList.jsx";
+import ScoreCompletionCircle from "../../components/history/ScoreCompletionCircle.jsx";
+import ScoreDistributionPlot from "../../components/history/ScoreDistributionPlot.jsx";
 import { useAuth } from "../../context/useAuth.js";
-import { getStudyHistory } from "../../services/studyHistoryService.js";
+import { getSubjectHistory } from "../../services/subjectService.js";
 
-const formatDate = (value) => new Date(value).toLocaleDateString();
+const HISTORY_LIMIT = 3;
 
-// Compact study-history counts and recent results for the workspace selection.
+// Compact scoped counts, stats, and recent results for the workspace selection.
 export default function ScopeStudySummary({ subjectId, topicId, navigate }) {
   const { signOut } = useAuth();
+  const [page, setPage] = useState(1);
+  const [reloadToken, setReloadToken] = useState(0);
   const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!subjectId) return undefined;
     let active = true;
 
-    getStudyHistory({
-      subjectId,
+    getSubjectHistory(subjectId, {
       ...(topicId ? { topicId } : {}),
-      recent: "3",
+      page,
+      limit: HISTORY_LIMIT,
     })
       .then((data) => {
         if (!active) return;
@@ -28,46 +35,49 @@ export default function ScopeStudySummary({ subjectId, topicId, navigate }) {
         if (!active) return;
         if (err.status === 401) signOut();
         else setError(err.message || "Could not load study history.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
 
     return () => {
       active = false;
     };
-  }, [subjectId, topicId, signOut]);
+  }, [subjectId, topicId, page, reloadToken, signOut]);
+
+  function changePage(nextPage) {
+    setLoading(true);
+    setError("");
+    setPage(nextPage);
+  }
+
+  function retry() {
+    setLoading(true);
+    setError("");
+    setPage(1);
+    setReloadToken((token) => token + 1);
+  }
+
+  const stats = summary?.stats || {};
 
   return (
     <section className="scope-study-summary" aria-label="Study history">
       <h2>Study history</h2>
       {error ? (
-        <p className="error-text" role="alert">
-          {error}
-        </p>
-      ) : summary === null ? (
-        <p className="status-line">Loading study history…</p>
-      ) : (
         <>
-          <ul className="history-counts">
-            <li>
-              <span>Quizzes saved</span>
-              <strong>{summary.counts.quizzesSaved}</strong>
-            </li>
-            <li>
-              <span>Quizzes attempted</span>
-              <strong>{summary.counts.quizzesAttempted}</strong>
-            </li>
-            <li>
-              <span>Evaluated attempts</span>
-              <strong>{summary.counts.evaluatedAttempts}</strong>
-            </li>
-            <li>
-              <span>Last studied</span>
-              <strong>
-                {summary.lastStudiedAt
-                  ? formatDate(summary.lastStudiedAt)
-                  : "No evaluated attempt yet"}
-              </strong>
-            </li>
-          </ul>
+          <p className="error-text" role="alert">
+            {error}
+          </p>
+          <button type="button" className="link" onClick={retry}>
+            Try again
+          </button>
+        </>
+      ) : null}
+      {!summary && loading ? (
+        <p className="status-line">Loading study history…</p>
+      ) : summary ? (
+        <>
+          <HistoryCounts counts={summary.counts} lastStudiedAt={summary.lastStudiedAt} />
 
           {summary.counts.quizzesSaved === 0 ? (
             <p className="status-line">No quizzes in this scope yet.</p>
@@ -77,33 +87,27 @@ export default function ScopeStudySummary({ subjectId, topicId, navigate }) {
             </p>
           ) : (
             <>
-              <h3 className="subheading">Recent results</h3>
-              {summary.recentResults.length === 0 ? (
-                <p className="status-line">No evaluated results in this scope.</p>
-              ) : (
-                <ul className="item-list">
-                  {summary.recentResults.map((result) => (
-                    <li key={result.attemptId}>
-                      <button
-                        type="button"
-                        className="item-link"
-                        onClick={() => navigate(`/attempts/${result.attemptId}`)}
-                      >
-                        <span>{result.title}</span>
-                        <span className="usage-meta">{result.topicPath || result.subjectName}</span>
-                        <span className="usage-meta">
-                          {formatDate(result.submittedAt)} · {result.score} / {result.maxScore} (
-                          {result.percent}%)
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <div className="scope-study-stats">
+                <ScoreCompletionCircle value={stats.avgPercent} label="Average score" />
+                <ScoreDistributionPlot
+                  min={stats.minPercent}
+                  max={stats.maxPercent}
+                  mean={stats.meanPercent}
+                  last={stats.lastPercent}
+                />
+              </div>
+              <RecentResultsList
+                items={summary.recentResults}
+                pagination={summary.pagination}
+                loading={loading}
+                emptyMessage="No evaluated results in this scope."
+                onPageChange={changePage}
+                onSelectRow={(result) => navigate(`/attempts/${result.attemptId}`)}
+              />
             </>
           )}
         </>
-      )}
+      ) : null}
     </section>
   );
 }

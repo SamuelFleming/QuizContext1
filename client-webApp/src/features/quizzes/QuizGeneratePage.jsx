@@ -18,7 +18,7 @@ const DIFFICULTIES = [
 
 const DEFAULT_MODEL = "gpt-6-luna";
 const LIVE_PREVIEW_DEBOUNCE_MS = 400;
-const QUIZ_INSTRUCTIONS_MAX = 2000;
+const QUIZ_INSTRUCTIONS_MAX = 4000;
 
 function initialQuery() {
   const params = new URLSearchParams(window.location.search);
