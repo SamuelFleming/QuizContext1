@@ -232,7 +232,7 @@ export const components = {
         quizInstructions: {
           type: "string",
           nullable: true,
-          maxLength: 2000,
+          maxLength: 4000,
           description: "Trimmed learner preferences used for generation, or null.",
         },
         promptVersion: { type: "string" },
