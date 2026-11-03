@@ -118,25 +118,6 @@ export function toQuizSummary(doc, { attemptCount = 0, latestResult = null } = {
   };
 }
 
-// Study-history source row: identity, scope names, and question prompts only. Never answer keys.
-export function toQuizHistorySource(doc) {
-  if (!doc) return null;
-  return {
-    id: doc._id.toString(),
-    title: doc.title,
-    subjectId: doc.subjectId,
-    topicId: doc.topicId || null,
-    topicIds: Array.isArray(doc.topicIds) ? doc.topicIds : [],
-    subjectName: doc.subjectName,
-    topicPath: doc.topicPath || null,
-    questions: (doc.questions || []).map((question) => ({
-      id: question.id,
-      prompt: question.prompt,
-    })),
-    createdAt: doc.createdAt,
-  };
-}
-
 export function toQuiz(doc) {
   if (!doc) {
     return null;

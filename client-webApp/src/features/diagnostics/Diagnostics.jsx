@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import BrandMark from "../../components/layout/BrandMark.jsx";
 import { getConnectivity } from "../../services/diagnosticsService.js";
 
 const rows = [
@@ -40,7 +41,9 @@ export default function Diagnostics({ onBack }) {
 
   return (
     <section className="card" aria-live="polite">
-      <p className="eyebrow">QuizContext</p>
+      <p className="eyebrow brand-eyebrow">
+        <BrandMark />
+      </p>
       <h1>Service connectivity</h1>
       <p className="lede">
         This check runs from the browser through the business API to the data API and MongoDB.

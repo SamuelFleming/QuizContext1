@@ -1,24 +1,24 @@
 # QuizContext deployment evolution
 
-**Status:** Directional roadmap. D1 is the only milestone with implementation tickets (9010, 9011).  
+**Status:** Directional roadmap. D1 is hosted; tickets 9010–9012 cover packaging, cutover, and as-built docs.  
 **INT URL:** `https://int.quizcontext.app`  
 **Not production.** Apex `quizcontext.app` stays parked until a later, separate production decision.
 
-This document records **where hosting is going**, not how to provision D1. D1 execution is [9010](../../devTickets/phase9/9010-int-deployment-scaffold.md), [9011](../../devTickets/phase9/9011-int-runbook-cutover.md), and [deployment-operator-checklist.md](deployment-operator-checklist.md).
+This document records **where hosting is going**. What D1 actually is, and the commands that were run: [D1/as-built.md](D1/as-built.md). How to operate or redeploy INT **now**: [docs/getting-started-hosted.md](../../getting-started-hosted.md).
 
 Do not treat D2–D6 as a backlog to implement now.
 
 ## Progression
 
-| Milestone | Commitment | Capability added | Infrastructure |
-| --- | --- | --- | --- |
-| **D1 — Initial hosting** | **Committed now** | Internet-accessible INT, independent of a laptop | DigitalOcean Droplet, Docker Compose, Caddy, Cloudflare DNS, MongoDB Atlas |
-| **D2 — CI/CD** | **Committed next ops milestone** | Automated test/build/deploy; recorded SHA; code rollback | GitHub Actions, container registry, same Droplet + Atlas |
-| **D2 also:** local→Atlas data migration | **Committed as a separate D2 activity** | Deliberate copy of local study data, or an explicit decision to leave INT authoritative | Atlas backup + `mongodump`/`mongorestore` policy |
-| **D3 — Independent component deployment** | **Committed after D2** | Update webApp or data API without rebuilding the other | Separate image pipelines; still one VM unless hosting later splits |
-| **D4 — AWS evolution** | **Optional** | Port the same Compose stack onto EC2; IAM/VPC practice | AWS EC2 (and maybe ECR); Atlas unchanged |
-| **D5 — Multi-client platform** | **Optional / product-led** | Recall Radio or other clients reuse learning capabilities | Existing dual-API first; extra public APIs only with a real requirement |
-| **D6 — Advanced cloud** | **Optional** | Independently hosted/scaled services | ECS or similar, only if D3 hosting-split is no longer enough |
+| Milestone | Commitment | Infrastructure | New capability | Reason |
+| --- | --- | --- | --- | --- |
+| **D1 — Initial hosting** | **Done as a host** | DigitalOcean + Docker Compose + Caddy + Atlas | Internet-accessible INT | Make QuizContext usable |
+| **D2 — CI/CD** | **Next ops milestone** | GitHub Actions + registry; same Droplet + Atlas | Automated test/build/deploy; SHA rollback | Reliable delivery |
+| **D2 also:** local→Atlas migration | **Separate D2 activity** | Atlas backup / `mongodump` | Copy local study data or leave INT authoritative | Real study data |
+| **D3 — Independent component deployment** | **After D2** | Independent images/pipelines; still one VM unless hosting splits | Update webApp or data API separately | Growing solution |
+| **D4 — AWS evolution** | **Optional** | EC2, maybe ECR; Atlas unchanged | Same Compose stack on AWS | Portability / AWS practice |
+| **D5 — Multi-client platform** | **Optional / product-led** | Existing application API first | Recall Radio and others | Product expansion |
+| **D6 — Advanced cloud** | **Optional** | ECS or similar if justified | Independent hosting/scale | Operational need |
 
 D1–D3 are a natural ops sequence. D4 is not a prerequisite for D5. D6 is not a destination we are aiming at for its own sake.
 
@@ -67,7 +67,7 @@ These are the D1 choices that keep later milestones cheap. They are not a licenc
 
 **Why.** Exam revision needs a URL that works from another network. This is the smallest host that preserves the charter.
 
-**Commitment.** Committed. Tickets 9010 then 9011.
+**Commitment.** Done as a host (see [D1/as-built.md](D1/as-built.md)). Tickets 9010 (packaging) Done; 9011 runbook written (some live checks still open); 9012 documented the as-built.
 
 ---
 

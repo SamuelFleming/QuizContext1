@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BrandMark from "../../components/layout/BrandMark.jsx";
 import { useAuth } from "../../context/useAuth.js";
 import { login, register } from "../../services/authService.js";
 
@@ -45,7 +46,9 @@ export default function AuthPage({ navigate, path }) {
   return (
     <main className="page">
       <section className="card auth-card" aria-live="polite">
-        <p className="eyebrow">QuizContext</p>
+        <p className="eyebrow brand-eyebrow">
+          <BrandMark />
+        </p>
         <h1>{isRegister ? "Create your account" : "Welcome back"}</h1>
         <p className="lede">
           {isRegister

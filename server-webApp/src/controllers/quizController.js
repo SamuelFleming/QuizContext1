@@ -1,4 +1,5 @@
 import * as quizService from "../services/quizService.js";
+import * as studyHistoryService from "../services/studyHistoryService.js";
 import { sendData } from "../utils/responses.js";
 
 export async function create(req, res, next) {
@@ -36,6 +37,14 @@ export async function list(req, res, next) {
 export async function listAttempts(req, res, next) {
   try {
     sendData(res, await quizService.listQuizAttempts(req.userId, req.params.quizId));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getHistory(req, res, next) {
+  try {
+    sendData(res, await studyHistoryService.getQuizHistory(req.userId, req.params.quizId, req.query));
   } catch (err) {
     next(err);
   }
