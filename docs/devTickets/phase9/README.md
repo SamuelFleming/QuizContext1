@@ -1,6 +1,6 @@
 # Phase 9 — Optional quiz instructions + scoped study history
 
-**Status:** 9000–9008 done (browser and live-provider UAT pending). Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs); 9013 Done (interim branding); 9014 Done (local post-interview DB snapshot). Parallel, not in the product Done-when. [9015](9015-local-db-snapshot-post-final.md) and [9016](9016-original-user-hosted-migration.md) are filed here for the snapshot/migration chain only — they are **not Phase 9 work**.
+**Status:** 9000–9008 done (browser and live-provider UAT pending). Ops 9010 Done; 9011 In progress (runbook + Caddyfile written; some live checks still open); 9012 Done (D1 as-built docs); 9013 Done (interim branding); 9014 Done (local post-interview DB snapshot). [9017](9017-quiz-instructions-char-limit.md) Done (instructions max 4,000). Parallel, not in the product Done-when. [9015](9015-local-db-snapshot-post-final.md) and [9016](9016-original-user-hosted-migration.md) are filed here for the snapshot/migration chain only — they are **not Phase 9 work**.
 
 **Objective.** (1) Let a learner optionally describe what a generated quiz should prioritise or avoid, while keeping source material, enforced quiz settings, and learner preferences distinct. (2) Improve study/results surfaces with a configurable internal study-history data API, use-case business endpoints, and reusable UI primitives across dashboard, subject/topic workspace, and quiz detail.
 
@@ -23,6 +23,7 @@
 12. [9012](9012-d1-deployment-docs.md) — D1 as-built documentation cleanup. Done. Depends on 9010/9011 artefacts.
 13. [9013](9013-interim-branding-assets.md) — Interim favicon / apple-touch / in-app mark. Done. Parallel to leftover 9011 checks.
 14. [9014](9014-local-db-snapshot-post-interview.md) — Complete local `quizcontext` mongodump after first IFN680 interview use. Done. No application change.
+15. [9017](9017-quiz-instructions-char-limit.md) — Raise optional `quizInstructions` max from 2,000 to 4,000. Done. Depends on 9000, 9001.
 
 **Later (not Phase 9; filed here for the chain).**
 - [9015](9015-local-db-snapshot-post-final.md) — Repeat dump after the IFN680 final. Deferred. Preferred source for 9016.
@@ -30,7 +31,7 @@
 
 **Planning decisions (optional instructions — 9000–9001).**
 - The API/storage field is `quizInstructions`; the UI label is **Quiz instructions (optional)**.
-- Instructions are trimmed, nullable, and limited to 2,000 characters.
+- Instructions are trimmed, nullable, and limited to 4,000 characters (raised from 2,000 in 9017).
 - Empty instructions use the unchanged `quiz-generation@1` instructions and input. Non-empty instructions use `quiz-generation@2` and a distinct `LEARNER_PREFERENCES` input section.
 - Learner preferences yield to source grounding, selected format/count/difficulty/context mode, factual accuracy, validation, and safety.
 - The value is stored separately from the frozen source snapshot. It is not copied into AI usage diagnostics, manifests, logs, or quiz-list summaries.

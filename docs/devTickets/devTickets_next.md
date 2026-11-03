@@ -13,7 +13,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 | 6 | Quiz generation, completion, evaluation, history + export | Done |
 | 7 | Initial UAT: wider text extraction, content completeness, multi-topic quizzes | Build complete; manual UAT pending |
 | 8 | AI quiz generation experiment: configurable budgets, usage visibility, model catalogue, quiz model picker; workspace quiz visibility + content size | 8000–8010 done |
-| 9 | Optional quiz-generation instructions + scoped study history | 9000–9008 done (UAT pending). Ops 9010 Done; 9011 In progress; 9012 Done (D1 as-built docs); 9013 Done (interim branding); 9014 Done (local post-interview DB snapshot). 9015/9016 are later, not this phase. |
+| 9 | Optional quiz-generation instructions + scoped study history | 9000–9008 done (UAT pending). Ops 9010 Done; 9011 In progress; 9012 Done (D1 as-built docs); 9013 Done (interim branding); 9014 Done (local post-interview DB snapshot). 9017 Done (instructions max 4,000). 9015/9016 are later, not this phase. |
 
 ## Phase 1 order
 1. [P1-01](phase1/P1-01-local-applications.md) — done.
@@ -21,7 +21,7 @@ Roadmap: [00_MVP-Development-Plan.md](00_MVP-Development-Plan.md). Phases are sc
 3. [P1-03](phase1/P1-03-connectivity-screen.md) — done.
 
 ## Next approved ticket
-None queued for implement until a Planned ticket is approved. Phase 9 study-history UI is complete ([9008](phase9/9008-workspace-dashboard-history-ui.md) Done). Ops sequence (parallel): [9010](phase9/9010-int-deployment-scaffold.md) Done; [9011](phase9/9011-int-runbook-cutover.md) In progress; [9012](phase9/9012-d1-deployment-docs.md) Done; [9013](phase9/9013-interim-branding-assets.md) Done; [9014](phase9/9014-local-db-snapshot-post-interview.md) Done (local DB snapshot; no app change). Optional-instructions browser and live-provider UAT remain pending.
+None queued for implement until a Planned ticket is approved. [9017](phase9/9017-quiz-instructions-char-limit.md) Done (quiz instructions max 4,000). Phase 9 study-history UI is complete ([9008](phase9/9008-workspace-dashboard-history-ui.md) Done). Ops sequence (parallel): [9010](phase9/9010-int-deployment-scaffold.md) Done; [9011](phase9/9011-int-runbook-cutover.md) In progress; [9012](phase9/9012-d1-deployment-docs.md) Done; [9013](phase9/9013-interim-branding-assets.md) Done; [9014](phase9/9014-local-db-snapshot-post-interview.md) Done (local DB snapshot; no app change). Optional-instructions browser and live-provider UAT remain pending.
 
 ## Phase 9 proposed order
 1. [9000](phase9/9000-optional-quiz-instructions-api.md) — API validation, versioned prompt integration, persistence, projection, and OpenAPI. Done.
@@ -34,6 +34,7 @@ None queued for implement until a Planned ticket is approved. Phase 9 study-hist
 8. [9007](phase9/9007-quiz-detail-history-ui.md) — compose quiz detail history/stats/weakest. Done. Depends on 9004, 9006.
 9. [9008](phase9/9008-workspace-dashboard-history-ui.md) — compose workspace + dashboard; remove duplicated markup. Done. Depends on 9003, 9005, 9006.
 10. [9010](phase9/9010-int-deployment-scaffold.md) — INT deploy scaffold (`Release-2` → `dev-deploy` → merge into this branch; host A: VM + Compose + Atlas). Planned. Parallel to 9004–9008.
+11. [9017](phase9/9017-quiz-instructions-char-limit.md) — Raise optional `quizInstructions` max to 4,000. Done. Depends on 9000, 9001.
 
 ## Phase 9 ops order (parallel to 9002–9008)
 1. [9010](phase9/9010-int-deployment-scaffold.md) — Docker Compose + hosted static/SPA serve. Done. Compose image build on this PC unrun (no Docker Desktop).
@@ -130,6 +131,6 @@ Open follow-up (still open after Phase 5, which was verified against a mocked pr
 3. [P2-03](phase2/P2-03-auth-shell.md) — auth screens and protected shell. Done.
 
 ## Active / blocked
-Next implement: none until a Planned ticket is approved. [9014](phase9/9014-local-db-snapshot-post-interview.md) is Done (local post-interview mongodump; archive outside Git). [9015](phase9/9015-local-db-snapshot-post-final.md) and [9016](phase9/9016-original-user-hosted-migration.md) are later, not Phase 9. Ops INT [9012](phase9/9012-d1-deployment-docs.md) and [9013](phase9/9013-interim-branding-assets.md) are Done. [9011](phase9/9011-int-runbook-cutover.md) remains In progress for leftover live checks. Phase 9 optional-instructions browser and live-provider UAT remain pending, alongside 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click where noted. JWT `GET /subjects/:subjectId/history` uses the 9002 results path; restart `server-webApp` so the 9005 route is loaded.
+Next implement: none until a Planned ticket is approved. [9017](phase9/9017-quiz-instructions-char-limit.md) Done (quiz instructions max 4,000). [9014](phase9/9014-local-db-snapshot-post-interview.md) is Done (local post-interview mongodump; archive outside Git). [9015](phase9/9015-local-db-snapshot-post-final.md) and [9016](phase9/9016-original-user-hosted-migration.md) are later, not Phase 9. Ops INT [9012](phase9/9012-d1-deployment-docs.md) and [9013](phase9/9013-interim-branding-assets.md) are Done. [9011](phase9/9011-int-runbook-cutover.md) remains In progress for leftover live checks. Phase 9 optional-instructions browser and live-provider UAT remain pending, alongside 7011, 7014, 7016, 7017, 7018, 7019, and the 7032 detail-screen click where noted. JWT `GET /subjects/:subjectId/history` uses the 9002 results path; restart `server-webApp` so the 9005 route is loaded.
 
 The user-identity channel is `X-User-Id` plus the existing internal API key. Password hashing and JWT issuance stay on `server-webApp`.
